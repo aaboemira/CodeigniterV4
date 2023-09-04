@@ -1,0 +1,152 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\Public_model;
+use App\Models\admin\Orders_model;
+
+class Checkout1 extends BaseController
+{
+    protected $Public_model;
+    protected $Orders_model;
+
+   public function __construct()
+    {
+        $this->Public_model = new Public_model();
+		$this->Orders_model = new Orders_model();
+    }
+
+    public function index()
+    {
+        $data = array();
+        $head = array();
+		$arrSeo = $this->Public_model->getSeo('checkout1');
+        $head['title'] = @$arrSeo['title'];
+        $head['description'] = @$arrSeo['description'];
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        
+        
+		if (isset($_POST['first_name'])) {
+
+            if(isset($_POST['email']))
+                session()->set('email', $_POST['email']);
+            if(isset($_POST['phone']))
+                session()->set('phone', $_POST['phone']);
+            if(isset($_POST['first_name']))
+                session()->set('first_name', $_POST['first_name']);
+            if(isset($_POST['last_name']))
+                session()->set('last_name', $_POST['last_name']);
+            if(isset($_POST['company']))
+                session()->set('company', $_POST['company']);
+            if(isset($_POST['firmenzusatz']))
+                session()->set('firmenzusatz', $_POST['firmenzusatz']);
+            if(isset($_POST['street']))
+                session()->set('street', $_POST['street']);
+            if(isset($_POST['housenr']))
+                session()->set('housenr', $_POST['housenr']);
+            if(isset($_POST['adresszusatz']))
+                session()->set('adresszusatz', $_POST['adresszusatz']);
+            if(isset($_POST['country']))
+                session()->set('country', $_POST['country']);
+            if(isset($_POST['post_code']))
+                session()->set('post_code', $_POST['post_code']);
+            if(isset($_POST['city']))
+                session()->set('city', $_POST['city']);
+            if(isset($_POST['notes']))
+                session()->set('notes', $_POST['notes']);
+            if(isset($_POST['post_dataprotection']))
+                session()->set('post_dataprotection', $_POST['post_dataprotection']);
+
+			$errors = $this->userInfoValidate($_POST);
+			if (!empty($errors)) {
+				session()->setFlashdata('submit_error', $errors);
+			} else {
+				return redirect()->to(LANG_URL . '/checkout2');
+			}
+
+            
+		}
+		
+		return $this->render('checkout1', $head, $data);
+    }
+	
+	private function goToDestination()
+    {
+        if ($_POST['payment_type'] == 'cashOnDelivery' || $_POST['payment_type'] == 'Bank') {
+            $this->shoppingcart->clearShoppingCart();
+            session()->setFlashdata('success_order', true);
+        }
+        if ($_POST['payment_type'] == 'Bank') {
+            $_SESSION['order_id'] = $this->orderId;
+            $_SESSION['final_amount'] = $_POST['final_amount'] . $_POST['amount_currency'];
+            return redirect()->to(LANG_URL . '/checkout/successbank');
+        }
+        if ($_POST['payment_type'] == 'cashOnDelivery') {
+            return redirect()->to(LANG_URL . '/checkout/successcash');
+        }
+        if ($_POST['payment_type'] == 'PayPal') {
+            @set_cookie('paypal', $this->orderId, 2678400);
+            $_SESSION['discountAmount'] = $_POST['discountAmount'];
+            return redirect()->to(LANG_URL . '/checkout/paypalpayment');
+        }
+    }
+
+    private function userInfoValidate($post)
+    {
+        $errors = array();
+        if (mb_strlen(trim($post['first_name'])) == 0) {
+            $errors[] = lang_safe('first_name_empty');
+        }
+        if (mb_strlen(trim($post['last_name'])) == 0) {
+            $errors[] = lang_safe('last_name_empty');
+        }
+        if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = lang_safe('invalid_email');
+        }
+        // $post['phone'] = preg_replace("/[^0-9]/", '', $post['phone']);
+        // if (mb_strlen(trim($post['phone'])) == 0) {
+        //     $errors[] = lang_safe('invalid_phone');
+        // }
+        if (mb_strlen(trim($post['street'])) == 0) {
+            $errors[] = lang_safe('invalid_street');
+        }
+        $post['housenr'] = preg_replace("/[^0-9]/", '', $post['housenr']);
+        if (mb_strlen(trim($post['housenr'])) == 0) {
+            $errors[] = lang_safe('invalid_housenr');
+        }
+
+        if (mb_strlen(trim($post['country'])) == 0) {
+            $errors[] = lang_safe('invalid_country');
+        }
+        if (mb_strlen(trim($post['city'])) == 0) {
+            $errors[] = lang_safe('invalid_city');
+        }
+        $post['post_code'] = preg_replace("/[^0-9]/", '', $post['post_code']);
+        if (mb_strlen(trim($post['post_code'])) == 0) {
+            $errors[] = lang_safe('invalid_post_code');
+        }
+        if(!isset($_POST['post_dataprotection'])){
+            $errors[] = lang_safe('invalid_dataprotection');
+        }
+
+        return $errors;
+    }
+
+    public function orderError()
+    {
+        if (session('order_error')) {
+            $data = array();
+            $head = array();
+            $arrSeo = $this->Public_model->getSeo('checkout');
+            $head['title'] = @$arrSeo['title'];
+            $head['description'] = @$arrSeo['description'];
+            $head['keywords'] = str_replace(" ", ",", $head['title']);
+            return $this->render('checkout_parts/order_error', $head, $data);
+        } else {
+            return redirect()->to(LANG_URL . '/checkout1');
+        }
+    }
+	
+		
+   
+}

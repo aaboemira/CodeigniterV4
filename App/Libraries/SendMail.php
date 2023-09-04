@@ -1,0 +1,100 @@
+<?php
+namespace App\Libraries;
+
+use PHPMailer;
+
+require 'PHPMailer/PHPMailerAutoload.php';
+
+class SendMail
+{
+
+    public $mail;
+
+    public function __construct()
+    {
+		$this->mail = new PHPMailer(); 
+		$this->mail->isSMTP(); 
+		$this->mail->SMTPDebug = 2; 
+		var_dump($this->mail->ErrorInfo);
+		$this->mail->Debugoutput = 'html'; 
+		$this->mail->Host = 'mx.freenet.de'; 
+		$this->mail->Port = 465; 
+		$this->mail->SMTPSecure = 'ssl'; 
+		$this->mail->SMTPAuth = true; 
+		$this->mail->Username = "Kontaktformular_ND@freenet.de"; 
+		$this->mail->Password = "gQQK5Q5wuxUDJJP";
+		$this->mail->CharSet = 'UTF-8';
+    }
+
+    public function sendTo($toEmail, $recipientName, $subject, $msg)
+    {
+        $this->mail->setFrom('Kontaktformular_ND@freenet.de', 'Node Devices GmbH');
+		
+        $this->mail->addAddress($toEmail, $recipientName);
+        //$this->mail->isHTML(true); 
+        $this->mail->Subject = $subject;
+        $this->mail->Body = $msg;
+        if (!$this->mail->send()) {
+            log_message('error', 'Mailer Error: ' . $this->mail->ErrorInfo);
+			var_dump($this->mail->ErrorInfo);
+            return false;
+        }
+        return true;
+    }
+	
+    public function sendContactMail($fromEmail, $fromName,  $toEmail, $recipientName, $subject, $msg)
+    {
+		if (filter_var($fromEmail, FILTER_VALIDATE_EMAIL) && filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
+	
+			$this->mail->setFrom($fromEmail, $fromName);			
+			$this->mail->addAddress($toEmail, $recipientName);
+			//$this->mail->isHTML(true); 
+			$this->mail->Subject = $subject;
+			$this->mail->Body = $msg;
+			
+			if (array_key_exists('attachment', $_FILES)) {
+				//Don't trust providerrrrRRd filename - same goes for MIME types
+				//See http://php.net/manual/en/features.file-upload.php#114004 for more thorough upload validation
+				//Extract an extension from the provided filename
+				$ext = PHPMailer::mb_pathinfo($_FILES['attachment']['name'], PATHINFO_EXTENSION);
+				//Define a safe location to move the uploaded file to, preserving the extension
+
+				//sleep(20);
+				//move_uploaded_file($_FILES['attachment']['tmp_name'] , '/var/www/nodedevices.de/tmp/'. $_FILES['attachment']['name']);
+				$uploadfile = tempnam('/var/www/nodedevices.de/tmp/', $_FILES['attachment']['tmp_name'] );
+				  if (move_uploaded_file($_FILES['attachment']['tmp_name'], $uploadfile)) {
+        // Upload handled successfully
+        // Now create a message
+	           if ($this->mail->addAttachment($uploadfile, $_FILES['attachment']['name'])) {
+					
+							if ($this->mail->send()) {
+				        return true;
+			        }
+		      }
+				}	
+			}
+			}
+				return false;		
+			}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
