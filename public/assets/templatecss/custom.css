@@ -3608,10 +3608,13 @@ a:hover {
 
 /* Content Styles */
 #content {
-    margin-top: 125px !important;
+    margin-top: 138px !important;
     padding: 0px !important;
     position: relative;
     overflow-x: hidden;
+}
+#content > div:nth-child(2){
+    margin-top: 8px !important;
 }
 
 /* Carousel Indicators Styles */
@@ -3711,7 +3714,7 @@ a:hover {
 /* Media Queries */
 @media (max-width: 772px) {
     #content {
-        margin-top: 84px !important;
+        margin-top: 98px !important;
         padding: 0px !important;
         position: relative;
     }

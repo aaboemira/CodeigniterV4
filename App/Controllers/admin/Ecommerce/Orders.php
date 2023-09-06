@@ -121,6 +121,7 @@ class Orders extends ADMIN_Controller
             $this->saveHistory('Go to orders page');
         }
         $page = 'ecommerce/orders';
+        
         return view('templates/admin/_parts/template', ['page'=> $page, 'head' => $head ,'data' => $data, 'footer' => []]);
     }
 

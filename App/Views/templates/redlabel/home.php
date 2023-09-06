@@ -179,7 +179,7 @@
 			</div>
 			<div class="col-xs-2 col-sm-3">
 				<div class="d-flex justify-content-center align-items-end h-100">
-					<a href="#">
+					<a href="<?= base_url('contacts'); ?>">
 						<svg class="svg-custom-style" fill="currentColor" viewBox="0 0 600 1100" width="600" height="1100"
 							xmlns="http://www.w3.org/2000/svg">
 							<path

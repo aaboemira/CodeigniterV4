@@ -1,7 +1,7 @@
 <?php
 namespace App\Libraries;
 
-require_once APPPATH.'libraries/dompdf/autoload.inc.php';
+require_once APPPATH.'Libraries/dompdf/autoload.inc.php';
 use Dompdf\Dompdf;
 
 class GeneratePDF
@@ -20,7 +20,7 @@ class GeneratePDF
         $this->dompdf->set_option('isHtml5ParserEnabled', true); // Enable HTML5 parsing
         //$this->dompdf->set_option('isRemoteEnabled', true); // Allow loading remote content (including images)
         $this->dompdf->setPaper($paper, $orientation);
-        $this->dompdf->loadHtml($html);
+        $this->dompdf->loadHtml("<p>Hello world</p>");
         $this->dompdf->render();
         return $this->dompdf->output();
     }
