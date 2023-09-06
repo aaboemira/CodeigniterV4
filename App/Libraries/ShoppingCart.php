@@ -38,6 +38,16 @@ class ShoppingCart
                 unset($_SESSION['shopping_cart'][$key]);
             }
         }
+        if ($_POST['action'] == 'removeProduct') {
+            $count = count(array_keys($_SESSION['shopping_cart'], $_POST['article_id']));
+            $i=1;
+            do {
+                if (($key = array_search($_POST['article_id'], $_SESSION['shopping_cart'])) !== false) {
+                    unset($_SESSION['shopping_cart'][$key]);
+                }
+                $i++;
+            } while ($i <= $count);
+        }
         @set_cookie('shopping_cart', serialize($_SESSION['shopping_cart']), $this->cookieExpTime);
         $result = 0;
         if (!empty($_SESSION['shopping_cart'])) {
@@ -52,7 +62,7 @@ class ShoppingCart
     public function removeFromCart()
     {
         $count = count(array_keys($_SESSION['shopping_cart'], $_GET['delete-product']));
-        $i = 1;
+        $i=1;
         do {
             if (($key = array_search($_GET['delete-product'], $_SESSION['shopping_cart'])) !== false) {
                 unset($_SESSION['shopping_cart'][$key]);

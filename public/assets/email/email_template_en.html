@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation</title>
+    <style>
+        /* Define CSS styles for the email */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: bold; /* Bold */
+            margin-bottom: 10px; /* Add space below */
+        }
+
+        h2 {
+            font-size: 20px; /* Adjust font size */
+            color: #930313; /* Red color */
+        }
+
+        h3 {
+            font-size: 18px; /* Adjust font size */
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        a {
+            color: #930313; /* Red color */
+            text-decoration: none;
+        }
+
+        .signature {
+            font-style: italic;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .centered {
+            text-align: center;
+            margin-top: 20px; /* Add space above */
+            margin-bottom: 20px; /* Add space below */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img class="nav_logo " alt="Brand" src="http://www.nodematic.store/png/NODEMATIC_SMALL_TR.png">
+        <hr>
+        <h1>THANK YOU FOR YOUR ORDER!</h1>
+        <h2>Order Confirmation</h2>
+        <h3>
+            Hello {FULL_NAME},
+        </h3>
+        <p>
+            We hereby confirm your order, your order number: {ORDER_NUMBER}.
+            <br>
+            Your invoice can be found attached to this email.
+        </p>
+        <p>
+            Your order is being prepared for shipment and will be handed over to the shipping company DHL.
+            <br>
+            <span style="font-weight: bold;">Tracking Number:</span>
+            {SHIPPING_TYPE}
+        </p>
+        <p>
+            If you have any questions about your order, please feel free to contact our email support hotline at <a href="mailto:kontakt@nodedevices.de" style="color: #930313;">kontakt@nodedevices.de</a> at any time.
+        </p>
+        <p>Best regards,</p>
+        <p>Node Devices GmbH</p>
+        <hr style="margin-top: 5px;">
+        <div class=" signature centered" style="margin-top: 5px;"> <!-- Centered content -->
+            <p>NODEMATIC is a brand of Node Devices GmbH<br>
+            Neuhauserstr. 36c<br>
+            70599 Stuttgart<br>
+            Email: <a href="mailto:kontakt@nodedevices.de" style="color:blue;">kontakt@nodedevices.de</a>
+            <br>Website: <a href="https://www.nodedevices.de" style="color:blue;">www.nodedevices.de</a></p>
+        </div>
+        <div class=" signature centered" style="margin-top: 5px; margin-bottom: 5px;"> <!-- Centered content -->
+            <p>VAT ID: DE341495844<br>
+            Court of Registration: Amtsgericht Stuttgart HRB 778133
+            <br>Managing Director: Stefan Nothdurft</p>
+        </div>
+
+        <p class="signature">
+            This email and all attachments are confidential. The information contained is intended for use by the individuals named. If you are not one of the named or intended recipients, please notify the sender immediately, do not disclose the contents to others, do not use the information for any other purpose, and do not store or copy the contents using any medium.
+            <br><br>
+            This e-mail and any attachments are confidential and privileged. The information is intended to be for the use of the individual(s) named above. If you are not the named or intended recipient, please notify the sender immediately and do not disclose the contents to another person, use it for any purpose, or store or copy the information in any medium.
+        </p>
+    </div>
+</body>
+</html>

@@ -16,7 +16,13 @@ $('a.add-to-cart').click(function () {
     manageShoppingCart('add', article_id, reload);
 });
 
-
+$(document).ready(function() {
+    // Add a click event listener to the close button
+    $(".closeModal").click(function(e) {
+        e.preventDefault();
+        location.reload();
+    });
+});
 //DatePicker
 if (typeof datepicker !== 'undefined') {
     $('.input-group.date').datepicker({
@@ -71,39 +77,29 @@ function submitForm() {
  * Discount code checker
  */
 var is_discounted = false;
+
 function checkDiscountCode() {
     var enteredCode = $('[name="discountCode"]').val();
     $.ajax({
         type: "POST",
         url: variable.discountCodeChecker,
-        data: {enteredCode: enteredCode}
+        data: { enteredCode: enteredCode }
     }).done(function (data) {
         if (data == 0) {
             ShowNotificator('alert-danger', lang.discountCodeInvalid);
         } else {
-            if (is_discounted == false) {
-                var obj = jQuery.parseJSON(data);
-                var final_amount_before = parseFloat($('.final-amount').text());
-                var discountAmoun;
-                if (obj.type == 'percent') {
-                    var substract_num = (obj.amount / 100) * final_amount_before;
-                    var final_amount = final_amount_before - substract_num;
-                    discountAmoun = substract_num;
-                }
-                if (obj.type == 'float') {
-                    var final_amount = final_amount_before - obj.amount;
-                    discountAmoun = obj.amount;
-                }
-                $('.final-amount').text(final_amount.toFixed(2));
-                $('.final-amount').val(final_amount.toFixed(2));
-                $('[name="discountAmount"]').val(discountAmoun);
-                $('#discountdiv').css('display', 'block'); // Show the discount section
-                $('#discount').text(discountAmoun.toFixed(2));
-                is_discounted = true;
+            // Check if the data is not an error (you can define your own criteria here)
+            if (data !== 'error') {
+                // Refresh the page
+                window.location.reload();
+            } else {
+                // Handle any specific error message or behavior here
+                console.log('Data returned an error');
             }
         }
     });
 }
+
 function updateTotalWithShipping(shipping,currency) {
     var shippingPrice = shipping;
     var currentTotal = parseFloat($('#final_amount').text().replace(/[^\d.-]/g, ''));
@@ -112,8 +108,13 @@ function updateTotalWithShipping(shipping,currency) {
     // Update the currency along with the numerical value
     $('#final_amount').append(' ' + currency);
 }
-function removeProduct(id, reload) {
-    manageShoppingCart('remove', id, reload);
+function removeProduct(id, reload,bool) {
+    if(bool){
+        manageShoppingCart('removeProduct', id, reload);
+    }
+    else{
+        manageShoppingCart('remove', id, reload);
+    }
 }
 function manageShoppingCart(action, article_id, reload) {
     var action_error_msg = lang.error_to_cart;
@@ -122,7 +123,7 @@ function manageShoppingCart(action, article_id, reload) {
         $('.add-to-cart a[data-id="' + article_id + '"] img').show();
         var action_success_msg = lang.added_to_cart;
     }
-    if (action == 'remove') {
+    if (action == 'remove'||action == 'removeProduct') {
         var action_success_msg = lang.remove_from_cart;
     }
     $.ajax({
@@ -130,6 +131,10 @@ function manageShoppingCart(action, article_id, reload) {
         url: variable.manageShoppingCartUrl,
         data: {article_id: article_id, action: action}
     }).done(function (data) {
+        console.log(variable.manageShoppingCartUrl);
+        console.log(data);
+        console.log(action);
+
         $(".dropdown-cart").empty();
         $(".dropdown-cart").append(data);
         var sum_items = parseInt($('.sumOfItems').text());
@@ -148,6 +153,7 @@ function manageShoppingCart(action, article_id, reload) {
         }
         ShowNotificator('alert-info', action_success_msg);
     }).fail(function (err) {
+        console.log(err)
         ShowNotificator('alert-danger', action_error_msg);
     }).always(function () {
         if (action == 'add') {

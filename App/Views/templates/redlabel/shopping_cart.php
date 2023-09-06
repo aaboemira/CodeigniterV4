@@ -1,18 +1,21 @@
 <?php
 if (!isset($cartItems['array'])) {?>
 
-
-
-    <div class="alert alert-info"><? lang_safe('no_products_in_cart') ?>
+    <div class="container">
+        <div class="col-sm-6">
+            <div class="alert alert-info"><?= lang_safe('no_products_in_cart') ?></div>
+        </div>        
     </div>
-
 
     <?php
 } else if ($cartItems['array'] == null) {
     ?>
 
-    <div class="alert alert-info"><?=lang_safe('no_products_in_cart')?></div>
-
+    <div class="container">
+        <div class="col-sm-6">
+            <div class="alert alert-info"><?= lang_safe('no_products_in_cart') ?></div>
+        </div>        
+    </div>
 
     <?php
 } else {
@@ -29,7 +32,6 @@ if (!isset($cartItems['array'])) {?>
                     <th class="text-uppercase text-black align-left"><?=lang_safe("product")?></th>
                         <th class="align-center text-uppercase text-black" ><?=lang_safe('quantity')?></th>
                         <th class="text-uppercase text-black align-center menge-th"><?=lang_safe('price')?></th>
-
                         <th  class="align-right text-uppercase text-black" ><?=lang_safe('Summe')?></th>
                     </tr>
                 </thead>
@@ -44,7 +46,7 @@ if (!isset($cartItems['array'])) {?>
                                 <div>
                                     <img class="max-675-w-100 prod-img" src="<?=base_url('/attachments/shop_images/' . $item['image'])?>"
                                         alt="">
-                                    <a href="<?=base_url('home/removeFromCart?delete-product=' . $item['id'] . '&back-to=shopping-cart')?>"
+                                    <a onclick="removeProduct(<?=$item['id']?>, true,true)"
                                         class="btn btn-xs btn-danger remove-product rounded-xl color-white bg-black border-black">
                                         <span class="glyphicon glyphicon-remove top-2"></span>
                                     </a>
@@ -138,20 +140,17 @@ if (!isset($cartItems['array'])) {?>
     </div> -->
 
 
-    <div class="col-sm-6">
+    <div class="col-sm-12 checkout-buttons">
+        <a class="btn btn-primary go-checkout" class="pull-left" href="<?= LANG_URL . '/checkout1'?>">
+            <?= lang_safe('go_to_checkout') ?> 
+            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+        </a>
         <a href="<?= LANG_URL . '/shop'?>" class="btn btn-primary go-shop">
             <span class="glyphicon glyphicon-circle-arrow-left"></span>
             <?= lang_safe('back_to_shop') ?>
         </a>
-        <a class="btn btn-primary go-checkout" onclick="document.getElementById('goOrder').submit();" class="pull-left">
-            <?= lang_safe('custom_order') ?> 
-            <span class="glyphicon glyphicon-circle-arrow-right"></span>
-        </a>
-
-        <a href="<?= LANG_URL . '/checkout1'?>" class="btn btn-primary go-checkout">
-            <span class="glyphicon glyphicon-circle-arrow-right"></span>
-            <?= lang_safe('go_to_checkout') ?>
-        </a>
+        <div style="margin-top:60px"></div>
+    </div>
     </div>
     
   

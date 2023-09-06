@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bestellbestätigung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: bold; /* Bold */
+            margin-bottom: 10px; /* Add space below */
+        }
+
+        h2 {
+            font-size: 20px; /* Adjust font size */
+            color: #930313; /* Red color */
+        }
+
+        h3 {
+            font-size: 18px; /* Adjust font size */
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        a {
+            color: #930313; /* Red color */
+            text-decoration: none;
+        }
+
+        .signature {
+            font-style: italic;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .centered {
+            text-align: center;
+            margin-top: 20px; /* Add space above */
+            margin-bottom: 20px; /* Add space below */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img class="nav_logo " alt="Brand" src="http://www.nodematic.store/png/NODEMATIC_SMALL_TR.png">
+        <hr style="margin-top: 5px;">
+        <h1>VIELEN DANK FÜR IHRE BESTELLUNG!</h1>
+
+        <h2>Bestellbestätigung</h2>
+        <h3>
+            Hallo {FULL_NAME},
+        </h3>
+        <p>
+            hiermit bestätigen wir Ihre Bestellung, Ihre Bestellnummer: SHND{ORDER_NUMBER}.
+            <br>
+            Ihre Rechnung finden Sie im Anhang dieser Email.
+        </p>
+        <p>
+            Ihre Bestellung wird umgehend für den Versand vorbereitet und dem Versandunternehmen <span style="font-weight: bold;">DHL</span> übergeben.
+            <br>
+            <span style="font-weight: bold;">Sendungsnummer:</span> 
+            {SHIPPING_TYPE}
+        </p>
+
+        <p>
+            Falls Sie Fragen zu Ihrer Bestellung haben, können Sie unsere Mailsupport-Hotline gerne jederzeit über <a href="mailto:kontakt@nodedevices.de" style="color: #930313;">kontakt@nodedevices.de</a> kontaktieren.
+        </p>
+        <p>Freundliche Grüße</p>
+        <p>Node Devices GmbH</p>
+
+        <hr style="margin-top: 5px;">
+        <div class=" signature centered" style="margin-top: 5px;"> 
+            <p>
+                NODEMATIC ist eine Marke der Node Devices GmbH<br>
+                Neuhauserstr. 36c<br>
+                70599 Stuttgart<br>
+                Email: <a href="mailto:kontakt@nodedevices.de" style="color:blue;">kontakt@nodedevices.de</a>
+                <br>Internet: <a href="https://www.nodedevices.de" style="color:blue;">www.nodedevices.de</a>
+            </p>
+        </div>
+        <div class=" signature centered" style="margin-top: 5px; margin-bottom: 5px;"> <!-- Centered content -->
+            <p>USt-IdNr. DE341495844<br>
+                Registergericht: Amtsgericht Stuttgart HRB 778133
+                <br>Geschäftsführer: Stefan Nothdurft
+            </p>
+        </div>
+        <p class="signature">
+            Diese e-Mail und alle Anhänge sind vertraulich. Die enthaltenen Informationen sind für den Gebrauch der angeführten Personen gedacht. Wenn Sie nicht einer der benannten oder gewünschten Empfänger sind, informieren Sie den Absender bitte sofort und geben Sie den Inhalt nicht an dritte Personen weiter, benutzen Sie den Inhalt nicht für andere Zwecke und speichern oder kopieren Sie den Inhalt nicht auf anderen Medien.
+            <br><br>
+            This e-mail and any attachments are confidential and privileged. The information is intended to be for the use of the individual(s) named above. If you are not the named or intended recipient, please notify the sender immediately and do not disclose the contents to another person, use it for any purpose, or store or copy the information in any medium.
+        </p>
+    </div>
+</body>
+</html>

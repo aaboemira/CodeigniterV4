@@ -73,7 +73,7 @@ class Checkout extends BaseController
         if (!empty($users)) {
             //$this->sendmail->clearAddresses();
             foreach ($users as $user) {
-                $this->sendmail->sendTo($user, 'Admin', 'New order in ' . $myDomain, 'Check it https://www.nodedevices.de/admin/orders');
+                $this->sendmail->sendTo($user, 'Admin', 'New order Recieved in ' . $myDomain, 'Check it https://www.nodedevices.de/admin/orders');
             }
         }
     }
@@ -189,6 +189,9 @@ class Checkout extends BaseController
     public function successPaymentCashOnD()
     {
         if (session('success_order')) {
+            unset($_SESSION['discountCodeResult']);
+            unset($_SESSION['shopping_cart']);
+            $this->shoppingcart->clearShoppingCart();
             $data = array();
             $head = array();
             $arrSeo = $this->Public_model->getSeo('checkout');
@@ -204,6 +207,8 @@ class Checkout extends BaseController
     public function successPaymentBank()
     {
         if (session('success_order')) {
+            unset($_SESSION['discountCodeResult']);
+            unset($_SESSION['shopping_cart']);
             $data = array();
             $head = array();
             $arrSeo = $this->Public_model->getSeo('checkout');
@@ -211,6 +216,7 @@ class Checkout extends BaseController
             $head['description'] = @$arrSeo['description'];
             $head['keywords'] = str_replace(" ", ",", $head['title']);
             $data['bank_account'] = $this->Orders_model->getBankAccountSettings();
+            $this->shoppingcart->clearShoppingCart();
             return $this->render('checkout_parts/payment_success_bank', $head, $data);
         } else {
             return redirect()->to(LANG_URL . '/checkout');
@@ -221,7 +227,6 @@ class Checkout extends BaseController
     {
 
         if (get_cookie('paypal') == null) {
-            die(var_dump(base_url()));
             return redirect()->to(base_url());
         }
         @delete_cookie('paypal');
@@ -239,8 +244,10 @@ class Checkout extends BaseController
     {
         if (get_cookie('paypal') == null) {
             return redirect()->to(base_url());
-        }
         @delete_cookie('paypal');
+        $this->shoppingcart->clearShoppingCart();
+        unset($_SESSION['discountCodeResult']);
+        unset($_SESSION['shopping_cart']);
         $this->shoppingcart->clearShoppingCart();
         $orderId = get_cookie('paypal');
         $this->Public_model->changePaypalOrderStatus($orderId, 'payed');
@@ -252,4 +259,5 @@ class Checkout extends BaseController
         return $this->render('checkout_parts/paypal_success', $head, $data);
     }
 
+}
 }

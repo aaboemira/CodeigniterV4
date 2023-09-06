@@ -298,5 +298,20 @@ class Products_model extends Model
         }
         return $arr;
     }
-
+    public function getProductTranslationTitle($productId)
+    {
+        $builder = $this->db->table('products_translations');
+        $builder->select('title');
+        $builder->where('for_id', $productId);
+        $builder->where('abbr', MY_DEFAULT_LANGUAGE_ABBR);
+        $query = $builder->get();
+    
+        if ($query->getNumRows() > 0) {
+            $row = $query->getRow();
+            return $row->title;
+        } else {
+            return false; // Return false if no translation is found for the specified product and language abbreviation.
+        }
+    }
+    
 }

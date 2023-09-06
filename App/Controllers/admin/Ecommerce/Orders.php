@@ -8,7 +8,10 @@ namespace App\Controllers\Admin\Ecommerce;
 use App\Controllers\admin\ADMIN_Controller;
 use App\Models\admin\Orders_model;
 use App\Models\admin\Home_admin_model;
+use App\Models\admin\Products_model;
+
 use App\Libraries\SendMail;
+use App\Libraries\GeneratePDF;
 use Config\Config;
 
 class Orders extends ADMIN_Controller
@@ -17,12 +20,21 @@ class Orders extends ADMIN_Controller
     private $num_rows = 10;
     protected $Orders_model;
     protected $Home_admin_model;
+    protected $Products_model;
+
+    protected $sendmail;
+    protected $generatePDF;
 
     public function __construct()
     {
         //$this->SendMail = new SendMail();
         $this->Orders_model = new Orders_model();
         $this->Home_admin_model = new Home_admin_model();
+        $this->Products_model = new Products_model();
+
+        $this->sendmail = new Sendmail(); // Initialize the $sendmail property
+        $this->generatePDF = new GeneratePDF(); // Initialize the $sendmail property
+
     }
 
     public function index($page = 0)
@@ -69,6 +81,37 @@ class Orders extends ADMIN_Controller
             session()->setFlashdata('bank_account', 'Bank account settings saved');
             $this->saveHistory('Bank account settings saved for : ' . $_POST['name']);
             return redirect()->to('admin/orders?settings');
+        }
+        if (isset($_POST['action']) && $_POST['action'] === 'sendBestellbestaetigung') {
+            $products = $this->addProductTitle((unserialize($_POST['products'])));
+    
+            $discount = empty($_POST['discount']) ? 0 : $_POST['discount'];
+            $shippingNum = empty($_POST['shipping_number']) ? "-" : $_POST['shipping_number'];
+    
+            $userDetails = array(
+                'addr_1' => $_POST['addr_1'],
+                'addr_2' => $_POST['addr_2'],
+                'company' => $_POST['company'],
+                'country' => $_POST['country'],
+                'full_name' => $_POST['full_name'],
+                'email' => $_POST['email']
+            );
+    
+            $orderData = array(
+                'id' => $_POST['id'],
+                'full_name' => $_POST['full_name'],
+                'shipping_number' => $shippingNum,
+                'shipping_type' => $_POST['shipping_type'],
+                'payment_type' => $_POST['payment_type'],
+                'order_id' => $_POST['order_id'],
+                'discount' => $discount,
+                'products' => $products,
+                'user_details' => $userDetails,
+                'order_date' => date('d.m.Y ', $_POST['order_date']),
+                'shipping_price' => $_POST['shipping_price'],
+                'currency' => config('config')->currency
+            );
+            $this->sendBestellbestaetigung($orderData);
         }
         $data['paypal_sandbox'] = $this->Home_admin_model->getValueStore('paypal_sandbox');
         $data['paypal_email'] = $this->Home_admin_model->getValueStore('paypal_email');
@@ -131,18 +174,46 @@ class Orders extends ADMIN_Controller
             }
             return true;
         }
-    }
-    public function sendBestellbestaetigung()
+    }    public function sendBestellbestaetigung($orderData)
     {
-        
         $users = $this->Public_model->getNotifyUsers();
         $myDomain = config('config')->base_url;
-        if (!empty($users)) {
-            //$this->sendmail->clearAddresses();
-            foreach ($users as $user) {
-                $this->sendmail->sendTo($user, 'Admin', 'New order in ' . $myDomain, 'Check it https://www.nodedevices.de/admin/orders');
+        $german = ($orderData['user_details']['country'] == 'Deutschland') ? true : false;
+        if (!empty($users)) {   
+            if ($german) {
+                $pdf = $this->generatePDF->generateInvoiceHtml($orderData, $orderData['products']);
+            } else {
+                $pdf = $this->generatePDF->generateInvoiceHtmlEnglish($orderData, $orderData['products']);
+            }
+            $title=$german?"Ihre Bestellung bei nodedevices.de":"Your order on nodedevices.de";
+            $attachmentName=$german?"Rechung_SHND".$orderData['order_id']:"Invoice_SHND".$orderData['order_id'];
+            $this->sendmail->sendToBestellbestaetigung($orderData['user_details']['email'], 'Admin', $title , 'Check it https://www.nodedevices.de/admin/orders',$orderData,$pdf,$attachmentName,$german);
+
+        }
+        $this->Orders_model->changeOrderStatus($orderData['id'],'1');
+        echo '<script>window.location.href = "'.site_url('admin/orders').'";</script>';
+    }
+
+
+    public function addProductTitle($productsData)
+    {
+        $result = array();
+    
+        foreach ($productsData as $product) {
+            if (isset($product['product_info']['id'])) {
+                $productId = $product['product_info']['id'];
+                $translationTitle = $this->Products_model->getProductTranslationTitle($productId);
+    
+                if ($translationTitle !== false) {
+                    $product['product_info']['title'] = $translationTitle;
+                } else {
+                    $product['product_info']['title'] = 'Translation Not Found'; // You can customize this message.
+                }
+    
+                $result[] = $product;
             }
         }
-               
+    
+        return $result;
     }
 }

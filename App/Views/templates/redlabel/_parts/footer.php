@@ -145,7 +145,7 @@ var slideIndex = 0;
 
 var slides = document.getElementsByClassName("mySlides");
 var dots = document.getElementsByClassName("dot");
-
+/*
 showSlides();
 
 
@@ -173,7 +173,7 @@ function showSlides() {
     setTimeout(showSlides, 5000); // Change image every 2 seconds
 
 }
-
+*/
 
 
 function plusDivs(n) {
@@ -241,8 +241,49 @@ gtag('event', 'conversion', {
     'send_to': 'AW-428847483/z16ECLWjkZEDEPvivswB'
 });
 </script>
+<script>
+$(document).ready(function() {
+    // Add a click event listener for the WhatsApp link
+    $("#float_wa").click(function(e) {
+        e.preventDefault(); // Prevent the default behavior of the link (opening a new page)
+        // Show the modal
+        $("#contactModal").modal("show");
+    });
 
+    // Add a click event listener for the phone link
+    $("#float_phone").click(function(e) {
+        e.preventDefault(); // Prevent the default behavior of the link (making a phone call)
+        // Show the modal
+        $("#contactModal").modal("show");
+    });
 
+    // Add a click event listener for the email link
+    $("#float_mail").click(function(e) {
+        e.preventDefault(); // Prevent the default behavior of the link (opening the default email client)
+        // Show the modal
+        $("#contactModal").modal("show");
+    });
+});
+$('#contactOptionsList a').click(function(e) {
+        if (!$('#acceptPolicyCheckbox').prop('checked')) {
+            e.preventDefault();
+            ShowNotificator('alert-danger', 'Bitte akzeptieren Sie die Richtlinie, um diese Kontaktmöglichkeit zu verwenden.');
+        }
+    });
+</script>
+<script>
+function redirectToGoogleMaps() {
+    // Get the value entered in the input field
+    var plzOrStadt = document.getElementById("plz").value;
+
+    // Construct the Google Maps URL with the entered value
+    var googleMapsUrl = "https://www.google.de/maps/search/elektroinstallateur+torbauer+rolltore+" + encodeURIComponent(plzOrStadt);
+
+    // Redirect to the Google Maps URL
+    window.location.href = googleMapsUrl;
+}
+
+</script>
 
 
 

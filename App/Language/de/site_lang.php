@@ -344,5 +344,17 @@ $lang['modal_cart_total'] = 'Zwischensumme des Warenkorbs';
 $lang['modal_show_cart'] = 'Warenkorb anzeigen';
 $lang['shipping_price']='Versandpreis';
 $lang['sub_total']='Zwischensumme';
+$lang['partner_description']='
+Sie suchen qualifizierte Elektroinstallateur/innen in Ihrer Nähe? 
+Finden Sie geschulte Fachkräfte in Ihrer Umgebung, die Sie zu den
+JUNG Produkten und Systemen beraten.';
+$lang['partner_title']='Fachpartner finden';
+
+$lang['contact_text_whatsapp'] = 'WhatsApp: WhatsApp-Nachricht senden.';
+$lang['contact_text_phone'] = 'Telefon: Text auf Telefon senden';
+$lang['contact_text_email'] = 'E-Mail: Eine E-Mail senden';
+$lang['contact_policy']='Durch die Initiierung des Gesprächs stimme ich der Verarbeitung meiner persönlichen Daten'.
+                        '(z. B. E-Mail-Adresse) zur Kommunikation bezüglich der Vorbereitung und Durchführung'.
+                        'von Bestellungen über den jeweiligen Chat-Kanal zu.';
 return $lang;
 

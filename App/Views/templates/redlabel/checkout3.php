@@ -1,16 +1,35 @@
 <div class="container" id="checkout-page">
 
 
-    <?php
-     $discountCodePostedAndValid = ($codeDiscounts == 1 && isset($_POST['discountCode']));
-     $finalSum = str_replace(',', '', $cartItems['finalSum']); // Remove commas if present
-     $finalSum = is_numeric($finalSum) ? floatval($finalSum) : 0;
- 
-     $shippingPrice = is_numeric($shipping_price) ? floatval($shipping_price) : 0;
-     $totalAmount = $finalSum + $shippingPrice;
-     $totalAmount=number_format($totalAmount, 2);
-
+<?php
     if (isset($cartItems['array']) && $cartItems['array'] != null) {
+    ?>
+
+<?php
+        $discountCodePostedAndValid = ($codeDiscounts == 1 && isset($_POST['discountCode']));
+        $finalSum = str_replace(',', '', $cartItems['finalSum']); // Remove commas if present
+        $finalSum = is_numeric($finalSum) ? floatval($finalSum) : 0;
+        $discountAmount=0;
+        $discount=0;;
+        if ($codeDiscounts == 1 && session('discountCodeResult')) {
+            $discountCodeResult = session('discountCodeResult');
+            $discountType = $discountCodeResult['type'];
+            $discount = isset($discountCodeResult['amount']) ? floatval($discountCodeResult['amount']) : 0;
+            
+            if ($discountType === 'percent') {
+                // If the discount type is percentage, calculate the discount amount as a percentage of finalSum
+                $discountPercent = $discount/100;
+                $discountAmount = $finalSum * $discountPercent;
+            } else {
+                // If the discount type is not percentage, multiply it directly with finalSum
+                $discountAmount = $discount*$finalSum;
+            }
+        }
+        $shippingPrice = is_numeric($shipping_price) ? floatval($shipping_price) : 0;
+        $shippingPrice=number_format($shipping_price,2);
+        $totalAmount = round($finalSum,2) + $shippingPrice-round($discountAmount,2);
+        $totalAmount=number_format(round($totalAmount, 2),2);
+        $discountAmount=number_format($discountAmount, 2);
         ?> 
     <?= purchase_steps(1, 2, 3, 4) ?>
     <div class="row">
@@ -62,10 +81,10 @@
                                                     <img class="max-675-w-100 prod-img"
                                                          src="<?= base_url('/attachments/shop_images/' . $item['image']) ?>"
                                                          alt="">
-                                                    <a href="<?= base_url('home/removeFromCart?delete-product=' . $item['id'] . '&back-to=shopping-cart') ?>"
-                                                       class="btn btn-xs btn-danger remove-product rounded-xl color-white bg-black border-black">
-                                                        <span class="glyphicon glyphicon-remove top-2"></span>
-                                                    </a>
+                                                         <a onclick="removeProduct(<?=$item['id']?>, true,true)"
+                                                            class="btn btn-xs btn-danger remove-product rounded-xl color-white bg-black border-black">
+                                                            <span class="glyphicon glyphicon-remove top-2"></span>
+                                                        </a>
                                                 </div>
                                                 <div class="max-675-counter max-675">
                                                     <a class="btn btn-xs bg-white text-black "
@@ -148,48 +167,59 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="fw-bold text-black align-right min-675 fs-12 mb-1"><?= lang_safe('sub_total') ?> :
-                        <span  class="ml-3"><?= $cartItems['finalSum'] . CURRENCY ?></span>
+                    <div class="fw-light text-black align-right min-675 fs-12 mb-1"><?= lang_safe('sub_total') ?> :
+                        <span  class="ml-3 sum-amount"><?= $cartItems['finalSum'] . CURRENCY ?></span>
                     </div>
-                    <div class="fw-bold text-black align-right min-675 fs-12 mb-1"><?= $shipping_type ?> :
+                    <div class="fw-light text-black align-right min-675 fs-12 mb-1"><?= $shipping_type ?> :
                         <span  class="ml-3"><?= $shipping_price . CURRENCY ?></span>
                     </div>
-                    <div id="discountdiv" class="fw-bold text-black align-right min-675 fs-12 mb-1" style="<?= $discountCodePostedAndValid ? 'display: block;' : 'display: none;' ?>">
-                        <?php if ($codeDiscounts == 1) { ?>
-                            <?= lang_safe('discount_code') ?> : <span id="discount" class="ml-3">0.00</span><?= CURRENCY ?>
-                        <?php } ?>
-                    </div>
+                    <?php if ($codeDiscounts == 1 && session('discountCodeResult') !== false&&$discountAmount!=0) { ?>
+                        <div id="discountdiv" class="fw-light text-black align-right min-675 fs-12 mb-1 discountdiv-large">
+                            <?= lang_safe('discount_code') ?> :  - <span id="discount1" class="ml-3"><?= $discountAmount ?><?= CURRENCY ?></span>
+                        </div>
+                    <?php } ?>
 
             
                     <hr>
+                    <input type="hidden" class="final-amount" name="final_amount" value="<?= $totalAmount  ?>">
+                    <input type="hidden" name="amount_currency" value="<?= CURRENCY ?>">
+                    <input type="hidden" name="discountAmount" value=<?= $discountAmount ?>>
+                    <input type="hidden" name="discount" value=<?= $discount ?>>
+
                     <div class="fw-bold text-black align-right min-675 fs-12 mb-1 "><?= lang_safe('total') ?> :
                         <span id="final_amount" class="ml-14 final-amount"><?=$totalAmount?></span><?= CURRENCY ?>
-
-                        <input type="hidden" class="final-amount" name="final_amount" value="<?= $totalAmount  ?>">
-                        <input type="hidden" name="amount_currency" value="<?= CURRENCY ?>">
-                        <input type="hidden" name="discountAmount" value="">
                     </div>
                     <div class="text-black min-675 align-right mb-10">
                         <span><?= lang_safe('mwst') ?></span>
                     </div>
 
-                    <div class="fw-bold text-black align-right max-675 max-675-gesamt final-amount">
+                    <div class="fw-light text-black align-right max-675 max-675-gesamt fs-10  ">
                         <div class="max-675-justify-between">
-                            <div><?= lang_safe('shipping_price') ?> :</div>
-                            <div ><?= $cartItems['finalSum'] . CURRENCY ?></div>
+                            <div class="fs-12"><?= lang_safe('sub_total') ?> :</div>
+                            <span  class="ml-3 fs-12 sub-amount"><?= $cartItems['finalSum'] . CURRENCY ?></span>
                         </div>
                     </div>
-                    <div class="fw-bold text-black align-right max-675 max-675-gesamt final-amount">
+                    <?php if ($codeDiscounts == 1 && session('discountCodeResult') !== false &&$discountAmount!=0) { ?>
+                        <div id="discountdiv" class="fw-light text-black align-right max-675 max-675-gesamt fs-10 discountdiv-small">
+                            <div class="max-675-justify-between fs-12">
+                                <?php if (session('discountCodeResult')['type'] == 'percent') { ?>
+                                    <div class="fs-12"><?= lang_safe('discount_code') ?> :</div>
+                                    <div class="fs-12">- <span id="discount2" class="ml-3"><?= $discountAmount ?><?= CURRENCY ?></span></div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    <?php } ?>
+                    <div class="fw-light text-black align-right max-675 max-675-gesamt fs-10 ">
                         <div class="max-675-justify-between">
-                            <div><?= lang_safe('sub_total') ?> :</div>
-                            <div ><?= $shipping_price.CURRENCY ?></div>
+                            <div class="fs-12"><?= $shipping_type ?> :</div>
+                            <div class="fs-12"><?= $shipping_price . CURRENCY ?></div>
                         </div>
                     </div>
-                    <hr>
-                    <div class="fw-bold text-black align-right max-675 max-675-gesamt final-amount">
+                    <br><br>
+                    <div class="fw-bold text-black align-right max-675 max-675-gesamt">
                         <div class="max-675-justify-between">
-                            <div><?= lang_safe('total') ?> :</div>
-                            <div id="final_amount"><?= $totalAmount . CURRENCY ?></div>
+                            <div class="fs-12"><?= lang_safe('total') ?> :</div>
+                            <div class="fs-12 final-amount" id="final_amount"><?= $totalAmount . CURRENCY ?></div>
                         </div>
                         <div class="align-right mb-5 fw-lighter">
                             <span><?= lang_safe('mwst') ?></span>
@@ -197,9 +227,9 @@
                     </div>
 
                     <?php if ($codeDiscounts == 1) { ?>
-                        <div class="discount">
+                        <div class="discount align-right">
                             
-                            <input class="form-control" name="discountCode" value="<?= @$_POST['discountCode'] ?>"
+                            <input class="form-control discount-form align-right"  name="discountCode" value="<?= @$_POST['discountCode'] ?>"
                                    placeholder="<?= lang_safe('enter_discount_code') ?>" type="text">
                             <a href="javascript:void(0);" class="btn btn-default"
                                onclick="checkDiscountCode()"><?= lang_safe('check_code') ?></a>
@@ -211,13 +241,22 @@
                            type="text" placeholder="">
 
 
-                    <div class="align-right max-675-flex-col">
-                        <a class="custom-btn text-dark bg-light fw-light p-2 w-40 max-675-w-100 go-shop"
-                           href="<?= LANG_URL . '/checkout2' ?>"><?= lang_safe('back_to_checkout2') ?> </a>
-                        <a class="custom-btn text-light bg-black p-2 w-40 max-675-w-100 go-order"
-                           href="javascript:void(0);"
-                           onclick="document.getElementById('goOrder').submit();"><?= lang_safe('custom_order') ?></a>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 checkout-buttons">
+                            <br> 
+                            <br> 
+                            <a class="btn btn-primary go-order w3-right" onclick="document.getElementById('goOrder').submit();" href="javascript:void(0);">
+                                <?= lang_safe('custom_order') ?>
+                                <i class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></i>
+                            </a>
+                            <a href="<?= LANG_URL . '/checkout1'?>" class="btn btn-primary" href="<?= LANG_URL . '/checkout2' ?>">
+                                <span class="glyphicon glyphicon-circle-arrow-left"></span>
+                                <?= lang_safe('back_to_checkout2') ?>
+                            </a>
+                         </div>
                     </div>
+                </div>
 
 
                     

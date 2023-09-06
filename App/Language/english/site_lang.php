@@ -255,3 +255,17 @@ $lang['enter_subject'] = 'Betreff eingeben';
 $lang['enter_message'] = 'Nachricht eingeben';
 $lang['shipping_price']='Shipping price';
 $lang['sub_total']='Sub Total';
+
+$lang['dataprotection_contact_accept1'] = 'I agree to the ';
+$lang['dataprotection_contact_accept2'] = 'data protection regulations';
+$lang['dataprotection_contact_accept3'] = '';
+$lang['partner_description']='
+Are you looking for qualified electricians in your area? 
+Find skilled professionals in your vicinity who can advise you on
+JUNG products and systems.';
+$lang['partner_title']='Find a Specialist Partner';
+
+$lang['contact_text_whatsapp']='WhatsApp:write on whatsapp';
+$lang['contact_text_phone']='Phone:text on phone';
+$lang['contact_text_email']='Email:send an email';
+$lang['contact_policy']='By initiating the conversation, I consent to the processing of my personal data (e.g., email address) for communication regarding the preparation and execution of orders via the respective chat channel.';

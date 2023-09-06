@@ -50,8 +50,7 @@
 		<link rel="icon" type="image/vnd.microsoft.icon" href="<?= base_url('ico/favicon.ico') ?>">
 		<link rel="stylesheet" href="<?= base_url('assets/css/w3.css') ?>" />
 
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<!-- <link rel="stylesheet" href="<?= base_url('assets/css/font-awesome.min.css') ?>" /> -->
+		<link rel="stylesheet" href="<?= base_url('assets/css/font-awesome.min.css') ?>" />
 
 		<link rel="stylesheet" href="<?= base_url('assets/css/bootstrap.min.css') ?>" />
 		<link rel="stylesheet" href="<?= base_url('assets/bootstrap-select-1.12.1/bootstrap-select.min.css') ?>" />
@@ -89,13 +88,13 @@
 				});
 			</script>
 			<script>
-			if (window.sessionStorage.getItem("stopanimate") == null) { 
+			/*if (window.sessionStorage.getItem("stopanimate") == null) { 
 				
 				window.sessionStorage.setItem("stopanimate" ,1);
 			} 
 			else{
 				document.getElementById("float_phone").classList.add("animate_once");
-			}
+			}*/
 			</script>
 
 		<?php } ?>
@@ -125,13 +124,69 @@
 	?>
 
 	<body>
-		<a id="float_wa" class="float_wa " href="https://wa.me/+4917641736450"><img class="wa_widget_img" alt="Chat on WhatsApp" src="<?= base_url('png/wa_widget.png') ?>" /> </a>
-		<a id="float_phone" class="float_phone" href="tel:+4917641736450"><img class="phone_widget_img" alt="Chat on WhatsApp" src="<?= base_url('png/phone_widget.png') ?>" /> </a>
-		<a id="float_mail" class="float_mail resize-animation-stopper" href="mailto:kontakt@nodedevices.de"><img class="mail_widget_img" alt="Chat on WhatsApp" src="<?= base_url('png/mail_widget.png') ?>" /> </a>
+	<a id="float_wa" class="float_wa " href="https://wa.me/+4971125286437">
+			<img class="wa_widget_img" alt="Chat on WhatsApp" src="<?= base_url('png/wa_widget.png') ?>" /> 
+		</a>
+		<a id="float_phone" class="float_phone" href="tel:+4971125286437">
+			<img class="phone_widget_img" alt="Chat on WhatsApp" src="<?= base_url('png/phone_widget.png') ?>" /> 
+		</a>
+		<a id="float_mail" class="float_mail" href="mailto:kontakt@nodedevices.de">
+			<img class="mail_widget_img" alt="Chat on WhatsApp" src="<?= base_url('png/mail_widget.png') ?>" /> 
+		</a>
 
+		<div id="contactModal" class="modal" role="dialog">
+			<div class="modal-dialog" >
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" style="color:white; opacity:1;" id="closeModalButton">&times;</button>
+						<h4 class="modal-title" style="text-align: left"><span class="glyphicon glyphicon-ok"></span> Contact Options</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row" style="padding: 5px;">
+							<!-- Add a checkbox for policy acceptance -->
+							
+							<div class="col-md-12" style="text-align:left; margin-bottom: 15px;">
+								<p style="text-align:left;"><?= lang_safe('contact_policy')?></p>
+							<label style="text-align:left;" for="acceptPolicyCheckbox">
+								<?= lang_safe('dataprotection_contact_accept1') ?>
+								<a href="<?= LANG_URL . '/page/' . "Datenschutz" ?>"><?= lang_safe('dataprotection_contact_accept2') ?></a>
+								<?= lang_safe('dataprotection_contact_accept3') ?>
+								<sup>
+                                            <?= lang_safe('required') ?>
+								</sup>
+							</label>
+							<input type="checkbox" id="acceptPolicyCheckbox">
+							</div>
 
-		
+							<ul id="contactOptionsList" style="list-style: none; font-size: large;">
+								<li>
+									<a href="https://wa.me/+4971125286437" id="whatsappLink">
+										<img class="wa_widget_img" alt="Chat on WhatsApp"  src="<?= base_url('png/wa_widget.png') ?> " />
+										<span class="contactOptionText"><?= lang_safe('contact_text_whatsapp')?></span>
+									</a>
+								</li>
+								<li>
+									<a href="tel:+4971125286437" id="phoneLink">
+										<img class="phone_widget_img" alt="Call"  src="<?= base_url('png/phone_widget.png') ?>" />
+										<span class="contactOptionText"><?= lang_safe('contact_text_phone')?></span>
+									</a>
+								</li>
+								<li>
+									<a href="mailto:kontakt@nodedevices.de" id="emailLink">
+										<img class="mail_widget_img" alt="Email"  src="<?= base_url('png/mail_widget.png') ?>" />
+										<span class="contactOptionText"><?= lang_safe('contact_text_email')?></span>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="modal-footer">
+					</div>
+				</div>
+			</div>
+		</div>
 
+	
 		<div id="wrapper">
 			<div id="content">
 			<!-- <div class="user-panel">

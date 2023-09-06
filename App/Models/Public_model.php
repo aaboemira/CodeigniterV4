@@ -399,7 +399,7 @@ class Public_model extends Model
         }
     }
     
-    private function getOneProductForSerialize($id)
+    public function getOneProductForSerialize($id)
     {
         $builder = $this->db->table('products');
         $builder->select('vendors.name as vendor_name, vendors.id as vendor_id, products.*, products_translations.price');

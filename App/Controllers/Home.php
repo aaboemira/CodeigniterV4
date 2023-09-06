@@ -196,6 +196,7 @@ class Home extends BaseController
         if ($result == null) {
             echo 0;
         } else {
+            session()->set('discountCodeResult', $result);
             echo json_encode($result);
         }
     }

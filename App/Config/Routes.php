@@ -46,7 +46,8 @@ $routes->add('(\w{2})?/?checkout3', 'Checkout3');
 // Ajax called. Functions for managing shopping cart
 $routes->post('(\w{2})?/?manageShoppingCart', 'Home::manageShoppingCart');
 $routes->get('(\w{2})?/?clearShoppingCart', 'Home::clearShoppingCart');
-$routes->get('(\w{2})?/?discountCodeChecker', 'Home::discountCodeChecker');
+$routes->get('(\w{2})?/?removeFromCart', 'Home::removeFromCart');
+$routes->post('(\w{2})?/?discountCodeChecker', 'Home::discountCodeChecker');
 
 // home page pagination
 $routes->get(rawurlencode('home') . '/(:num)', "Home::index/$1");

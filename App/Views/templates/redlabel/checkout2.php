@@ -79,16 +79,16 @@
 
                 <div class="container">
                     <div class="row">
-                        <div class="col-sm-9">
+                        <div class="col-sm-12 checkout-buttons">
                             <br> 
                             <br> 
-                            <a href="<?= LANG_URL . '/checkout1'?>" class="btn btn-primary go-shop">
-                                <span class="glyphicon glyphicon-circle-arrow-left"></span>
-                                <?= lang_safe('back_to_adressinput') ?>
-                            </a>
                             <a class="btn btn-primary go-checkout w3-right" onclick="document.getElementById('goOrder').submit();" href="javascript:void(0);">
                                 <?= lang_safe('to_checkout3') ?>
                                 <i class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></i>
+                            </a>
+                            <a href="<?= LANG_URL . '/checkout1'?>" class="btn btn-primary go-shop">
+                                <span class="glyphicon glyphicon-circle-arrow-left"></span>
+                                <?= lang_safe('back_to_adressinput') ?>
                             </a>
                          </div>
                     </div>
