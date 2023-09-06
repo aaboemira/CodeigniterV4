@@ -3721,6 +3721,10 @@ a:hover {
     .headline-container{
         font-size: 11px;
     }
+    .headline-container .headline-title{
+        font-size: 3em !important;
+        font-weight: bold !important;
+    }
 }
 
 @media (max-width: 675px) {
@@ -3734,4 +3738,26 @@ a:hover {
         text-align: center;
         margin-top: 20px;
     }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0; /* Start with opacity 0 for full transparency */
+        transform: translateY(20px); /* Optional: Add a slight upward movement */
+    }
+    to {
+        opacity: 1; /* End with opacity 1 for full visibility */
+        transform: translateY(0); /* Move to the final position */
+    }
+}
+
+/* Apply the animation to the panel */
+.fade-in-panel {
+    animation: fade-in 0.5s ease-in-out; /* Adjust duration and easing as needed */
+    opacity: 0; /* Initially set opacity to 0 to hide the panel */
+}
+
+/* Add a class to trigger the animation */
+.fade-in-panel.active {
+    opacity: 1; /* Set opacity to 1 to make the panel visible */
 }

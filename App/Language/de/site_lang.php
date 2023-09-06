@@ -356,5 +356,17 @@ $lang['contact_text_email'] = 'E-Mail: Eine E-Mail senden';
 $lang['contact_policy']='Durch die Initiierung des Gesprächs stimme ich der Verarbeitung meiner persönlichen Daten'.
                         '(z. B. E-Mail-Adresse) zur Kommunikation bezüglich der Vorbereitung und Durchführung'.
                         'von Bestellungen über den jeweiligen Chat-Kanal zu.';
+
+$lang['home_panel_text']='Licht, Schatten, Temperatur: JUNG HOME besteht aus Systemeinsätzen, Aufsätzen und Steckdosen. Lokal vernetzt über Bluetooth Mesh. Die 230-Volt-Installation genügt!';
+$lang['home_panel_button']='Mehr erfahren ';
+$lang['home_quote_title']='Oder gleich ein Angebot anfordern!';
+$lang['home_quote_head']='Unser Teckentrup-Service für Sie:';
+$lang['home_quote_text']='Einfach das Anfrageformular ausfüllen und wir suchen Ihnen einen Partner in Ihrer Nähe, der Ihnen
+umgehend ein konkretes Angebot macht.';
+$lang['home_arrivals_title']='Neuheiten 2023';
+$lang['home_arrivals_text']='Fortschritt als Tradition: JUNG Innovationen prägen seit über 100 Jahren die Branche. Diesen Trend setzen wir regelmäßig fort und präsentieren hier auch in 2023 unsere ersten neuen Entwicklungen und Produkte in diesem Jahr.';
+$lang['home_headline_title'] = 'Zukunftsorientierte Gebäudetechnik in zeitlosem Design';
+$lang['home_headline_text'] = 'Licht, Beschattung, Klima, Energie, Sicherheit, Türkommunikation und Multimedia – JUNG Systeme bieten die passende Lösung für jede Anforderung. Ästhetisches Design verschmilzt dabei mit intelligenter Smart-Home- und Smart-Building-Technologie. Alle Systeme folgen einem einfachen Konzept: smart und schön.';
+
 return $lang;
 

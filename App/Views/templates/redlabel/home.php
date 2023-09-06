@@ -73,11 +73,9 @@
 		</a>
 	</div>
 	<div class="headline-container">
-		<h1 class="headline-title">Zukunftsorientierte Gebäudetechnik in zeitlosem Design</h1>
+		<h1 class="headline-title"><?=lang_safe('home_headline_title')?></h1>
 		<p class="headline-text">
-			Licht, Beschattung, Klima, Energie, Sicherheit, Türkommunikation und Multimedia – JUNG Systeme bieten die
-			passende Lösung für jede Anforderung. Ästhetisches Design verschmilzt dabei mit intelligenter Smart-Home-
-			und Smart-Building-Technologie. Alle Systeme folgen einem einfachen Konzept: smart und schön.
+		<?=lang_safe('home_headline_text')?>
 		</p>
 	</div>
 	<div class="w3-center" style="margin-bottom:25px;">
@@ -87,59 +85,62 @@
 		<img src="./jpg/Node_Devices.jpg" style="width:50%" onClick="Javascript:window.location.href = 'login.php'">
 	</div>
 	<div class="arrivals-container" style="background-color: #707070; padding: 20px;">
-        <h1 class="title" style="margin-bottom: 20px;">Neuheiten 2023</h1>
-        <p class="text" style="word-wrap: break-word;">Fortschritt als Tradition: JUNG Innovationen prägen seit über 100 Jahren die Branche. Diesen Trend setzen wir regelmäßig fort und präsentieren hier auch in 2023 unsere ersten neuen Entwicklungen und Produkte in diesem Jahr.</p>
-
+        <h1 class="title" style="margin-bottom: 20px;"><?=lang_safe('home_arrivals_title')?></h1>
+        <p class="text" style="word-wrap: break-word;"><?=lang_safe('home_arrivals_text')?></p>
         <div class="row">
-            <div class=" col-lg-3 col-md-6 col-sm-6">
+            <div class=" col-lg-3 col-md-6 col-sm-6 fade-in-panel">
                 <div class="panel panel-default">
 					<div class="panel-heading">
 						<a href="#">
-							<img src="http://localhost:8080/attachments/shop_images/arrival.jpg" class="img-responsive" alt="Card Image">
-						</a>
-					</div>
-                    <div class="panel-body">
-                        <p class="panel-text">Licht, Schatten, Temperatur: JUNG HOME besteht aus Systemeinsätzen, Aufsätzen und Steckdosen. Lokal vernetzt über Bluetooth Mesh. Die 230-Volt-Installation genügt!</p>
-						<a href="#" class="panel-button">
-							<span class="button-text">Mehr erfahren</span>
-							<svg class="svg-custom-style" fill="currentColor" viewBox="0 0 600 1100" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-								<path d="m592.44452,558.58248q0,13 -10,23l-466,466q-10,10 -23,10t-23,-10l-50,-50q-10,-10 -10,-23t10,-23l393,-393l-393,-393q-10,-10 -10,-23t10,-23l50,-50q10,-10 23,-10t23,10l466,466q10,10 10,23z"></path>
-							</svg>
-                    	</a>
-                    </div>
-                </div>
-            </div>
-            <div class=" col-lg-3 col-md-6 col-sm-6">
-                <div class="panel panel-default">
-					<div class="panel-heading">
-						<a href="#">
-							<img src="http://localhost:8080/attachments/shop_images/arrival.jpg" class="img-responsive" alt="Card Image">
-						</a>
-					</div>
-                    <div class="panel-body">
-                        <p class="panel-text">Licht, Schatten, Temperatur: JUNG HOME besteht aus Systemeinsätzen, Aufsätzen und Steckdosen. Lokal vernetzt über Bluetooth Mesh. Die 230-Volt-Installation genügt!</p>
-						<a href="#" class="panel-button">
-							<span class="button-text">Mehr erfahren</span>
-							<svg class="svg-custom-style" fill="currentColor" viewBox="0 0 600 1100" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-								<path d="m592.44452,558.58248q0,13 -10,23l-466,466q-10,10 -23,10t-23,-10l-50,-50q-10,-10 -10,-23t10,-23l393,-393l-393,-393q-10,-10 -10,-23t10,-23l50,-50q10,-10 23,-10t23,10l466,466q10,10 10,23z"></path>
-							</svg>
-                    	</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="panel panel-default">
-					<div class="panel-heading">
-						<a href="#">
-							<img src="http://localhost:8080/attachments/shop_images/arrival.jpg" class="img-responsive" alt="Card Image">
+							<img src="<?php echo base_url('attachments/shop_images/arrival.jpg'); ?>" class="img-responsive" alt="Card Image">
 						</a>
 					</div>
                     <div class="panel-body">
 						<p class="panel-text">
-							Licht, Schatten, Temperatur: JUNG HOME besteht aus Systemeinsätzen, Aufsätzen und Steckdosen. Lokal vernetzt über Bluetooth Mesh. Die 230-Volt-Installation genügt!
+							<?=lang_safe('home_panel_text')?>
+						</p>						
+						<a href="#" class="panel-button">
+							<span class="button-text"><?=lang_safe('home_panel_button')?></span>
+							<svg class="svg-custom-style" fill="currentColor" viewBox="0 0 600 1100" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+								<path d="m592.44452,558.58248q0,13 -10,23l-466,466q-10,10 -23,10t-23,-10l-50,-50q-10,-10 -10,-23t10,-23l393,-393l-393,-393q-10,-10 -10,-23t10,-23l50,-50q10,-10 23,-10t23,10l466,466q10,10 10,23z"></path>
+							</svg>
+                    	</a>
+                    </div>
+                </div>
+            </div>
+            <div class=" col-lg-3 col-md-6 col-sm-6 fade-in-panel">
+                <div class="panel panel-default">
+					<div class="panel-heading">
+						<a href="#">
+							<img src="<?php echo base_url('attachments/shop_images/arrival.jpg'); ?>" class="img-responsive" alt="Card Image">
+						</a>
+					</div>
+                    <div class="panel-body">
+						<p class="panel-text">
+							<?=lang_safe('home_panel_text')?>
 						</p>
 						<a href="#" class="panel-button">
-							<span class="button-text">Mehr erfahren</span>
+							<span class="button-text"><?=lang_safe('home_panel_button')?></span>
+							<svg class="svg-custom-style" fill="currentColor" viewBox="0 0 600 1100" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+								<path d="m592.44452,558.58248q0,13 -10,23l-466,466q-10,10 -23,10t-23,-10l-50,-50q-10,-10 -10,-23t10,-23l393,-393l-393,-393q-10,-10 -10,-23t10,-23l50,-50q10,-10 23,-10t23,10l466,466q10,10 10,23z"></path>
+							</svg>
+                    	</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 fade-in-panel">
+                <div class="panel panel-default">
+					<div class="panel-heading">
+						<a href="#">
+							<img src="<?php echo base_url('attachments/shop_images/arrival.jpg'); ?>" class="img-responsive" alt="Card Image">
+						</a>
+					</div>
+                    <div class="panel-body">
+						<p class="panel-text">
+							<?=lang_safe('home_panel_text')?>
+						</p>
+						<a href="#" class="panel-button">
+							<span class="button-text"><?=lang_safe('home_panel_button')?></span>
 							<svg class="svg-custom-style" fill="currentColor" viewBox="0 0 600 1100" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
 								<path d="m592.44452,558.58248q0,13 -10,23l-466,466q-10,10 -23,10t-23,-10l-50,-50q-10,-10 -10,-23t10,-23l393,-393l-393,-393q-10,-10 -10,-23t10,-23l50,-50q10,-10 23,-10t23,10l466,466q10,10 10,23z"></path>
 							</svg>
@@ -147,17 +148,19 @@
 				    </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="col-lg-3 col-md-6 col-sm-6 fade-in-panel">
                 <div class="panel panel-default">
 					<div class="panel-heading">
 						<a href="#">
-							<img src="http://localhost:8080/attachments/shop_images/arrival.jpg" class="img-responsive" alt="Card Image">
+							<img src="<?php echo base_url('attachments/shop_images/arrival.jpg'); ?>" class="img-responsive" alt="Card Image">
 						</a>
 					</div>
                     <div class="panel-body">
-						<p class="panel-text">Licht, Schatten, Temperatur: JUNG HOME besteht aus Systemeinsätzen, Aufsätzen und Steckdosen. Lokal vernetzt über Bluetooth Mesh. Die 230-Volt-Installation genügt!</p>
+					<p class="panel-text">
+							<?=lang_safe('home_panel_text')?>
+						</p>							
 						<a href="#" class="panel-button">
-							<span class="button-text">Mehr erfahren</span>
+							<span class="button-text"><?=lang_safe('home_panel_button')?></span>
 							<svg class="svg-custom-style" fill="currentColor" viewBox="0 0 600 1100" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
 								<path d="m592.44452,558.58248q0,13 -10,23l-466,466q-10,10 -23,10t-23,-10l-50,-50q-10,-10 -10,-23t10,-23l393,-393l-393,-393q-10,-10 -10,-23t10,-23l50,-50q10,-10 23,-10t23,10l466,466q10,10 10,23z"></path>
 							</svg>
@@ -170,10 +173,9 @@
 	<div class="row quote-partner">
 		<div class="row row-flex quote col-lg-6 col-md-6">
 			<div class="col-xs-10 col-sm-9">
-				<h3 class="quote-title">Oder gleich ein Angebot anfordern!</h3>
-				<p class="quote-head"><strong>Unser Teckentrup-Service für Sie:</strong></p>
-				<p class="quote-text">Einfach das Anfrageformular ausfüllen und wir suchen Ihnen einen Partner in Ihrer Nähe, der Ihnen
-					umgehend ein konkretes Angebot macht.</p>
+				<h3 class="quote-title"><?=lang_safe('home_quote_title')?></h3>
+				<p class="quote-head"><strong><?=lang_safe('home_quote_head')?></strong></p>
+				<p class="quote-text"><?=lang_safe('home_quote_text')?></p>
 			</div>
 			<div class="col-xs-2 col-sm-3">
 				<div class="d-flex justify-content-center align-items-end h-100">
@@ -200,7 +202,7 @@
 					</p>
 				</div>
 				<div class="icon">
-					<i class="fas fa-map-location-dot"></i>
+					<i class="fa fa-map-marker"></i>
 				</div>
 			</div>
 			<div class="form-container">

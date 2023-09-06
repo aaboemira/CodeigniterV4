@@ -285,8 +285,19 @@ function redirectToGoogleMaps() {
 
 </script>
 
-
-
+<script>
+    $(document).ready(function() {
+        // Select all elements with the class "fade-in-panel"
+        $(".fade-in-panel").each(function(index) {
+            var panel = $(this);
+            
+            // Add the "active" class to each panel with a delay
+            setTimeout(function() {
+                panel.addClass("active");
+            }, index * 1); // Adjust the delay (in milliseconds) between panels
+        });
+    });
+</script>
 </body>
 
 </html>
