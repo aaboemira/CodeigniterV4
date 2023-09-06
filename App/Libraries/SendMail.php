@@ -30,7 +30,7 @@ class SendMail
     {
 		$this->mail->clearAddresses();
         $this->mail->setFrom('Kontaktformular_ND@freenet.de', 'Node Devices GmbH');
-        $this->mail->addAddress('a.aboemira1@gmail.com', $recipientName);
+        $this->mail->addAddress($toEmail, $recipientName);
 		//$this->mail->addBCC('kontakt@nodedevices.de');
         //$this->mail->isHTML(true); 
         $this->mail->Subject = $subject;
@@ -47,7 +47,7 @@ class SendMail
         $this->mail->setFrom('Kontaktformular_ND@freenet.de', 'Node Devices GmbH');
 		
         $this->mail->addAddress($toEmail, $recipientName);
-		//$this->mail->addBCC('kontakt@nodedevices.de');
+		$this->mail->addBCC('kontakt@nodedevices.de');
 
 		if($german){
 			$templatePath = FCPATH.'/assets/email/email_template.html';
