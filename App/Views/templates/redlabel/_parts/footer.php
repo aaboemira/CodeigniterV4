@@ -37,16 +37,12 @@ if (!empty($nonDynPages)) {
                 </div>
 
                 <div class="col-xs-9 col-md-3">
-                    <h6><?=lang_safe('footer_menu_save_buy')?></h6>
+                    <h6><?=lang_Safe('footer_menu_save_buy')?></h6>
                     <ul class="footer-links">
-                        <li><a
-                                href="<?=LANG_URL . '/' . "/page/howto-order"?>"><?=lang_safe('footer_submenu_fast_shipment')?></a>
-                        </li>
-                        <li><a href="<?=LANG_URL . '/' . "/page/payment"?>"><?=lang_safe('footer_submenu_return')?></a></li>
-                        <li><a href="<?=LANG_URL . '/' . "/page/shipment"?>"><?=lang_safe('footer_submenu_save_pay')?></a>
-                        </li>
-                        <li><a href="<?=LANG_URL . '/' . "/page/shipment"?>"><?=lang_safe('footer_submenu_save_data')?></a>
-                        </li>
+                        <li><?=lang_Safe('footer_submenu_fast_shipment')?></li>
+                        <li><?=lang_Safe('footer_submenu_return')?></li>
+                        <li><?=lang_Safe('footer_submenu_save_pay')?></li>
+                        <li><?=lang_Safe('footer_submenu_save_data')?></li>
                     </ul>
                 </div>
 

@@ -2,7 +2,21 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
 	integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
 	crossorigin="anonymous"></script>
-
+<style>
+	#content {
+    margin-top: 138px !important;
+    padding: 0px !important;
+    position: relative;
+    overflow-x: hidden;
+	}
+	@media (max-width: 772px) {
+    #content {
+        margin-top: 98px !important;
+        padding: 0px !important;
+        position: relative;
+    }
+	}
+</style>
 
 <div class="home-container">
 	<div id="carousel-example-generic" class="carousel slide  carousel-fade" data-ride="carousel">

@@ -91,10 +91,10 @@ class Checkout3 extends BaseController
             );
             if ($orderId != false) {
                 $this->orderId = $orderId;
-                $this->sendBestellbestaetigung($orderData);
+               $this->sendBestellbestaetigung($orderData);
                 $this->setActivationLink();
                 $this->sendNotifications();
-                return $this->goToDestination();
+                $this->goToDestination();
             } else {
                 ///log_message('error', 'Cant save order!! ' . json_encode( $_POST));
                 session()->setFlashdata('order_error', true);

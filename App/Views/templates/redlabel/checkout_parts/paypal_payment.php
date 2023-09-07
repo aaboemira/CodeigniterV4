@@ -47,7 +47,7 @@
         <input type="hidden" name="currency_code" value="<?= CURRENCY_KEY ?>">
         <input type="hidden" value="utf-8" name="charset">
         <input type="hidden" value="<?= base_url('checkout/paypal_success') ?>" name="return">
-        <input type="hidden" value="<?= base_url('checkout') ?>" name="cancel_return">
+        <input type="hidden" value="<?= base_url('shopping-cart') ?>" name="cancel_return">
         <input type="hidden" value="authorization" name="paymentaction">
         <a href="<?= base_url('checkout3') ?>" class="btn btn-lg btn-danger btm-10"><?= lang_safe('cancel_payment') ?></a>
         <button type="submit" class="btn btn-lg btn-success btm-10"><?= lang_safe('go_to_paypal') ?> <i
