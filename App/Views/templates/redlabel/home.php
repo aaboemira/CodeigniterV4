@@ -65,15 +65,25 @@
 					<p>Caption goes here</p>
 				</div>
 			</div>
-			<div class="item">
-				<a href="#your-link-5">
-					<img src="https://s26.postimg.cc/l7244vg2x/cg2.jpg" width="100%">
+            <div class="item">
+                <a href="#your-link-5">
+                    <picture>
+                        <!-- Small image for screens with a max-width of 768px -->
+                        <source srcset="https://s26.postimg.cc/7g2ozrxgp/cg4.jpg" media="(max-width: 768px)">
+                        <!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
+                        <source srcset="https://s26.postimg.cc/hyxmrttt5/cg1.jpg" media="(min-width: 769px) and (max-width: 1200px)">
+                        <!-- Large image for screens with a min-width of 1201px -->
+                        <source srcset="https://s26.postimg.cc/l7244vg2x/cg4.jpg" media="(min-width: 1201px)">
+
+                        <!-- Fallback image for browsers that don't support srcset -->
+                        <img src="https://s26.postimg.cc/fallback-image.jpg" alt="Fifth slide" width="100%">
+                    </picture>
                 </a>
-				<div class="carousel-caption">
-					<h3>Fifth slide</h3>
-					<p>Caption goes here</p>
-				</div>
-			</div>
+                <div class="carousel-caption">
+                    <h3>Fifth slide</h3>
+                    <p>Caption goes here</p>
+                </div>
+            </div>
 		</div>
 
 		<!-- Controls -->
@@ -93,10 +103,7 @@
 		</p>
 	</div>
 	<div class="w3-center" style="margin-bottom:25px;">
-		<h1>
-			<class="w3-black w3-display-center><b>In Kürze verfügbar </b>
-		</h1>
-		<img src="./jpg/Node_Devices.jpg" style="width:50%" onClick="Javascript:window.location.href = 'login.php'">
+		<img src="./png/NODEMATIC_SMALL_TR.png" style="width:50%" onClick="Javascript:window.location.href = 'login.php'">
 	</div>
 	<div class="arrivals-container" style="background-color: #707070; padding: 20px;">
         <h1 class="title" style="margin-bottom: 20px;"><?=lang_safe('home_arrivals_title')?></h1>

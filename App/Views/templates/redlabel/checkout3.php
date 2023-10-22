@@ -241,7 +241,7 @@
                            type="text" placeholder="">
 
 
-                <div class="container">
+                <div class="container checkout-container">
                     <div class="row">
                         <div class="col-sm-12 checkout-buttons">
                             <br> 

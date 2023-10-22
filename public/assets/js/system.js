@@ -131,9 +131,7 @@ function manageShoppingCart(action, article_id, reload) {
         url: variable.manageShoppingCartUrl,
         data: {article_id: article_id, action: action}
     }).done(function (data) {
-        console.log(variable.manageShoppingCartUrl);
-        console.log(data);
-        console.log(action);
+
 
         $(".dropdown-cart").empty();
         $(".dropdown-cart").append(data);
@@ -151,7 +149,7 @@ function manageShoppingCart(action, article_id, reload) {
             location.href = reload;
             return;
         }
-        ShowNotificator('alert-info', action_success_msg);
+        //ShowNotificator('alert-info', action_success_msg);
     }).fail(function (err) {
         console.log(err)
         ShowNotificator('alert-danger', action_error_msg);

@@ -218,7 +218,7 @@
                     <a class="custom-btn text-light bg-black p-2 w-15 max-675-w-100 go-checkout go-order" onclick="document.getElementById('goOrder').submit();" href="javascript:void(0);"><?= lang_safe('to_checkout2') ?></a>
                 </div> -->
 
-                <div class="container">
+                <div class="container checkout1-container">
                     <div class="row">
                         <div class="col-sm-12 checkout-buttons">
                             <br> 

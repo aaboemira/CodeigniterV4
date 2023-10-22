@@ -3419,6 +3419,9 @@ a:hover {
         align-items: center;
         /* Center the buttons vertically */
     }
+    .checkout-container{
+        padding: 0 !important;
+    }
 
     .checkout-buttons .btn {
         margin: 10px 0;
@@ -3600,11 +3603,14 @@ a:hover {
 /* Carousel Styles */
 .home-container .carousel-inner .item:hover img {
     transform: scale(1.1);
+    transition: transform 0.1s ease; /* Add transition on hover */
 }
 
 .home-container .carousel-inner .item img {
-    transition: transform 0.1s ease;
+    transition: transform 0.5s ease; 
 }
+
+
 
 
 /* Carousel Indicators Styles */
@@ -3713,6 +3719,9 @@ a:hover {
     .headline-container .headline-title{
         font-size: 3em !important;
         font-weight: bold !important;
+    }
+    .quote-partner .partner .content .description{
+        padding: 0 !important;
     }
 }
 

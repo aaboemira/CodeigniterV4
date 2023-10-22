@@ -261,10 +261,10 @@ $(document).ready(function() {
     });
 });
 $('#contactOptionsList a').click(function(e) {
-        if (!$('#acceptPolicyCheckbox').prop('checked')) {
-            e.preventDefault();
-            ShowNotificator('alert-danger', 'Bitte akzeptieren Sie die Richtlinie, um diese Kontaktmöglichkeit zu verwenden.');
-        }
+    if (!$('#acceptPolicyCheckbox').prop('checked')) {
+        e.preventDefault();
+        ShowNotificator('alert-danger', '<?= lang_safe('contact_check')?>');
+    }
     });
 </script>
 <script>
@@ -293,6 +293,10 @@ function redirectToGoogleMaps() {
             }, index * 1); // Adjust the delay (in milliseconds) between panels
         });
     });
+    $('#carousel-example-generic').carousel({
+        interval: 4000, // Set the desired interval in milliseconds (e.g., 5000ms or 5 seconds)
+        pause: false
+  });
 </script>
 </body>
 

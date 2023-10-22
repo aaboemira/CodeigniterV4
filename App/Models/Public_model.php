@@ -156,6 +156,22 @@ class Public_model extends Model
 		
         return $query->getResultArray();
     }
+    public function getShippingsByDist($dist)
+    {
+        $builder = $this->db->table('products');
+        $builder->select('vendors.url as vendor_url, products.id,products.image, products.quantity, products.is_main_view_from_variant, products.is_variant, products.variant_id, 
+        products.article_nr, products.is_visible, products.shipment_destination, products.Reserve_Produkt_03,
+        products_translations.title, products_translations.title2, products_translations.bullet1, products_translations.bullet2, products_translations.bullet3, products_translations.bullet4, products_translations.bullet5, products_translations.bullet6, products_translations.bullet7, products_translations.variant_name, products_translations.variant_description, products_translations.price, products_translations.old_price, products_translations.shipping_cost, products_translations.shipping_time, products_translations.delivery_status, products.url');
+        $builder->join('products_translations', 'products_translations.for_id = products.id', 'left');
+        $builder->join('vendors', 'vendors.id = products.vendor_id', 'left');
+        $builder->where('products_translations.abbr', MY_LANGUAGE_ABBR);
+		$builder->where('shipment_destination =', $dist);
+       
+        $builder->orderBy('position', 'asc');
+        $query = $builder->get();
+		
+        return $query->getResultArray();
+    }
 	
     public function getOneLanguage($myLang)
     {

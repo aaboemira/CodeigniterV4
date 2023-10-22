@@ -257,6 +257,6 @@ $lang['enter_message'] = 'Nachricht eingeben';
 $lang['shipping_price']='Shipping price';
 $lang['sub_total']='Sub Total';
 $lang['welcome_message']='Sub Total';
-
+$lang['contact_check']='Bitte akzeptieren Sie die Richtlinie, um diese Kontaktmöglichkeit zu verwenden';
 
 return $lang;

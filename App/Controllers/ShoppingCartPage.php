@@ -22,6 +22,7 @@ class ShoppingCartPage extends BaseController
         $head['title'] = @$arrSeo['title'];
         $head['description'] = @$arrSeo['description'];
         $head['keywords'] = str_replace(" ", ",", $head['title']);
+        
         return $this->render('shopping_cart', $head, $data);
     }
 

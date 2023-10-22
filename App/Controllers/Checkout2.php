@@ -24,8 +24,9 @@ class Checkout2 extends BaseController
         $head['title'] = @$arrSeo['title'];
         $head['description'] = @$arrSeo['description'];
         $head['keywords'] = str_replace(" ", ",", $head['title']);
+        $dist = isset($_SESSION['country']) && $_SESSION['country'] === 'Deutschland' ? 1 : 2;
+        $data['shipments'] = $this->Public_model->getShippingsByDist($dist);
         
-		$data['shipments'] = $this->Public_model->getShippings();
 		if (isset($_POST['payment_type'])) {
             
             if(isset($_POST['payment_type']))

@@ -368,5 +368,6 @@ $lang['home_arrivals_text']='Fortschritt als Tradition: JUNG Innovationen präge
 $lang['home_headline_title'] = 'Zukunftsorientierte Gebäudetechnik in zeitlosem Design';
 $lang['home_headline_text'] = 'Licht, Beschattung, Klima, Energie, Sicherheit, Türkommunikation und Multimedia – JUNG Systeme bieten die passende Lösung für jede Anforderung. Ästhetisches Design verschmilzt dabei mit intelligenter Smart-Home- und Smart-Building-Technologie. Alle Systeme folgen einem einfachen Konzept: smart und schön.';
 
+$lang['contact_check']='Bitte akzeptieren Sie die Richtlinie, um diese Kontaktmöglichkeit zu verwenden';
 return $lang;
 

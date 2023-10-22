@@ -91,10 +91,10 @@ class Checkout3 extends BaseController
             );
             if ($orderId != false) {
                 $this->orderId = $orderId;
-               $this->sendBestellbestaetigung($orderData);
+               //$this->sendBestellbestaetigung($orderData);
                 $this->setActivationLink();
-                $this->sendNotifications();
-                $this->goToDestination();
+                //$this->sendNotifications();
+                return $this->goToDestination();
             } else {
                 ///log_message('error', 'Cant save order!! ' . json_encode( $_POST));
                 session()->setFlashdata('order_error', true);
@@ -158,15 +158,17 @@ class Checkout3 extends BaseController
          if ($_POST['payment_type'] == 'Bank') {
              $_SESSION['order_id'] = $this->orderId;
              $_SESSION['final_amount'] = $_POST['final_amount'] . $_POST['amount_currency'];
-             return redirect()->to(LANG_URL . '/checkout/successbank');
+             unset($_COOKIE['shopping_cart']);
+
+             return redirect()->to(LANG_URL . '/checkout/successbank')->withCookies();
          }
          if ($_POST['payment_type'] == 'cashOnDelivery') {
-            return redirect()->to(LANG_URL . '/checkout/successcash');
+            return redirect()->to(LANG_URL . '/checkout/successcash')->withCookies();
          }
          if ($_POST['payment_type'] == 'PayPal') {
              @set_cookie('paypal', $this->orderId, 2678400);
              $_SESSION['discountAmount'] = $_POST['discountAmount'];
-             return redirect()->to(LANG_URL . '/checkout/paypalpayment');
+             return redirect()->to(LANG_URL . '/checkout/paypalpayment')->withCookies();
          }
      }	
      public function sendBestellbestaetigung($orderData)
