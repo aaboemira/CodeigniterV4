@@ -82,7 +82,7 @@
 
                                         <?= lang_safe('dataprotection_contact_accept1') ?>
                                         <a
-                                            href="<?= LANG_URL . '/' . "Datenschutz" ?>"><?= lang_safe('dataprotection_contact_accept2') ?></a>
+                                            href="<?= LANG_URL . '/page/' . "Datenschutz" ?>"><?= lang_safe('dataprotection_contact_accept2') ?></a>
 
                                         <?= lang_safe('dataprotection_contact_accept3') ?>
                                         <sup>
@@ -98,7 +98,7 @@
                                 </div>
                             </div>
                             <div class="col-md-12">
-                                <button type="submit" class="btn btn-primary pull-left" id="btnContactUs">
+                                <button type="submit" class="btn btn-primary btn-new pull-left" id="btnContactUs">
                                     <?= lang_safe('send_message') ?>
                                 </button>
                             </div>
@@ -138,6 +138,3 @@
         </script>
     <?php } ?>
 </div>
-<script>
-   
-</script>

@@ -1,5 +1,5 @@
 <?php
-namespace App\Controllers\Admin\Ecommerce;
+namespace App\Controllers\Admin\textual_pages;
 /*
  * @Author:    Kiril Kirkov
  *  Gitgub:    https://github.com/kirilkirkov

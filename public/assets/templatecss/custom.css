@@ -6,7 +6,7 @@ body {
 body {
     color: #424449;
     font-family: arial;
-    padding-top: 30px;
+
 }
 
 #wrapper {
@@ -71,7 +71,6 @@ body {
 #languages-bar ul li.last-item {
     border-right: none;
 }
-
 #top-part {
     position: fixed;
     width: 100%;
@@ -133,7 +132,7 @@ body {
 
 @media (max-width:367px) {
     #top-part .nav_logo {
-        height: 55px;
+        height: 50px !important;
     }
 }
 
@@ -152,11 +151,32 @@ body {
     max-width: 40px;
     min-height: 20px;
     min-width: 20px;
-    height: 8vw;
     width: 8vw;
+    height:8vw;
 }
+#top-part .dropdown-image {
+    /* border: 1px solid #FFF; */
+    max-height: 40px;
+    max-width: 40px;
+    min-height: 20px;
+    min-width: 20px;
 
+}
 #top-part .shopping_cart_img {
+    position: relative;
+    width: 100%;
+    height: auto;
+    /* border: 1px solid red;
+    */
+}
+#top-part .shopping_cart_img {
+    position: relative;
+    width: 100%;
+    height: auto;
+    /* border: 1px solid red;
+    */
+}
+#top-part .login_div .login_img {
     position: relative;
     width: 100%;
     height: auto;
@@ -222,7 +242,6 @@ body {
     vertical-align: middle;
     overflow: hidden;
     text-decoration: none;
-    ;
     background-color: inherit;
     text-align: center;
     cursor: pointer;
@@ -238,6 +257,13 @@ body {
     .top-burger {
         font-size: 30px;
         line-height: 50px;
+    }
+    #top-part .nav_logo {
+        height: 53px;
+        width: auto;
+    }
+    #top-part .login-wrapper{
+        right: 55px;
     }
 }
 
@@ -387,7 +413,7 @@ body {
     position: relative;
 }
 
-.navbar li a {
+.navbar li .custom-a {
     border-radius: 10px;
     color: #E7E5E5;
     display: block;
@@ -404,8 +430,8 @@ body {
     webkit-border-radius: 10px;
 }
 
-.navbar .active a,
-.navbar li:hover a {
+.navbar .active .custom-a,
+.navbar li:hover .custom-a {
     background: #0399D4;
     background: linear-gradient(top, #EBEBEB, #A1A1A1);
     background: -moz-linear-gradient(top, #EBEBEB, #A1A1A1);
@@ -750,9 +776,13 @@ div.product-list {
     cursor: pointer;
     margin-bottom: 5px;
     padding-bottom: 15px;
-    padding-top: 15px;
+    /* padding-top: 15px; */
+	text-align: center;
 }
-
+/* #products-side{ */
+	/* width: 80%; */
+	/* border: 5px solid black; */
+/* } */
 #products-side div.product-list,
 #small_carousel.carousel .carousel-inner {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.276);
@@ -760,7 +790,6 @@ div.product-list {
     margin-bottom: 20px;
     margin-right: 10px;
 }
-
 #products-side div.product-list:hover,
 #small_carousel.carousel .carousel-inner {
     box-shadow: 0px 0px 15px 6px rgba(31, 149, 255, 0.75);
@@ -807,7 +836,7 @@ div.product-list h2 {
     height: 45px;
     line-height: 20px;
     margin: 0;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
 }
 
 div.product-list h2 a {
@@ -879,7 +908,7 @@ div.product-list div.delivery_status_available {
     margin-top: 10px;
     font-weight: bolder;
     font-size: 16px;
-    color: yellow
+    color: rgb(185, 121, 0)
 }
 
 div.product-list div.delivery_status_not_available {
@@ -932,6 +961,7 @@ div.product-sort .form-group {
 
 .paypal-image {
     margin: 20px 0;
+    
 }
 
 #checkout-page form .btm-10 {
@@ -1276,12 +1306,13 @@ div.product-sort .form-group {
 
 .product-list .price,
 .product-list {
-    margin-top: 16px;
+    /* margin-top: 16px; */
     overflow: hidden;
 }
 
 .product-list .price-discount {
-    margin-top: 0px;
+	height: 25px;
+    margin-top: 8px;
     margin-bottom: 0px;
     overflow: hidden;
 }
@@ -1392,13 +1423,12 @@ div.product-sort .form-group {
     max-width: 700px;
     width: 80%;
 }
-
 #modalImagePreview #caption {
     color: #ccc;
     display: block;
     height: 150px;
     margin: auto;
-    max-width: 700px;
+    max-width: 700px; 
     padding: 10px 0;
     text-align: center;
     width: 80%;
@@ -1477,28 +1507,38 @@ div.product-sort .form-group {
 }
 
 .steps .step {
+    text-transform: uppercase;
     text-align: center;
     padding-top: 7px;
     padding-bottom: 7px;
-    border-left: 2px solid #fff;
+    /* border-left: 2px solid #fff; */
+    text-decoration: none;
 }
 
 .step-bg-ok {
-    background: #7db9e8;
+    background: #000;
+    /* background: #7db9e8;
     background: -moz-linear-gradient(top, #7db9e8 0%, #337ab7 100%);
     background: -webkit-linear-gradient(top, #7db9e8 0%, #337ab7 100%);
-    background: linear-gradient(to bottom, #7db9e8 0%, #337ab7 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#7db9e8', endColorstr='#337ab7', GradientType=0);
+    background: linear-gradient(to bottom, #7db9e8 0%, #337ab7 100%); */
+    /* filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#7db9e8', endColorstr='#337ab7', GradientType=0); */
     color: #fff;
+    cursor: pointer;
+    border: 2px solid black;
+
 }
 
 .step-bg-not-ok {
-    background: #d9edf7;
+    background: #FFF;
+    /* background: #d9edf7;
     background: -moz-linear-gradient(top, #d9edf7 0%, #a6dbf4 100%);
     background: -webkit-linear-gradient(top, #d9edf7 0%, #a6dbf4 100%);
-    background: linear-gradient(to bottom, #d9edf7 0%, #a6dbf4 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d9edf7', endColorstr='#a6dbf4', GradientType=0);
+    background: linear-gradient(to bottom, #d9edf7 0%, #a6dbf4 100%); */
+    /* filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d9edf7', endColorstr='#a6dbf4', GradientType=0); */
     color: #424449;
+    border: 2px solid black;
+
+    pointer-events: none;
 }
 
 #dynPage .top-bg {
@@ -1691,7 +1731,14 @@ footer .footer-icon li {
     font-size: 18px;
     text-transform: uppercase;
     margin-top: 5px;
-    letter-spacing: 2px
+    letter-spacing: 2px;
+}
+.site-footer h6::after {
+    content: "";
+    display: block;
+    width: 50px; /* Adjust this value to control the width of the line */
+    border-bottom: 3px solid #0292b6;
+    margin:14px 0 14px 0 ;
 }
 
 .site-footer a {
@@ -1857,7 +1904,7 @@ footer .footer-icon li {
 
 .footer_payment_types {
     margin-top: 5px;
-    margin-bottom: 0;
+    margin-bottom: 10px;
 }
 
 .footer_ship_cost {
@@ -2136,10 +2183,6 @@ footer .footer-icon li {
         width: auto;
     }
 
-    div.product-list {
-        text-align: center;
-    }
-
     #view-article .the-image {
         margin-bottom: 40px;
     }
@@ -2357,7 +2400,7 @@ footer .footer-icon li {
     position: fixed;
     bottom: 0px;
     right: -20px;
-    z-index: 999;
+    z-index: 3;
     transform: scale(0.44);
     animation-name: wa_widget_ani;
     animation-duration: 0.7s;
@@ -2399,7 +2442,7 @@ footer .footer-icon li {
     position: fixed;
     bottom: 80px;
     right: -20px;
-    z-index: 999;
+    z-index: 3;
     transform: scale(0.4);
     animation-name: phone_widget_ani;
     animation-duration: 1.0s;
@@ -2441,7 +2484,7 @@ footer .footer-icon li {
     position: fixed;
     bottom: 160px;
     right: -20px;
-    z-index: 999;
+    z-index: 3;
     transform: scale(0.4);
     animation-name: mail_widget_ani;
     animation-duration: 1.3s;
@@ -3603,19 +3646,17 @@ a:hover {
 /* Carousel Styles */
 .home-container .carousel-inner .item:hover img {
     transform: scale(1.1);
-    transition: transform 0.1s ease; /* Add transition on hover */
 }
 
 .home-container .carousel-inner .item img {
-    transition: transform 0.5s ease; 
+    transition: transform 0.1s ease;
 }
-
-
 
 
 /* Carousel Indicators Styles */
 .home-container .carousel-indicators {
     z-index: 1;
+    
 }
 
 /* Arrivals Container Styles */
@@ -3736,6 +3777,7 @@ a:hover {
         text-align: center;
         margin-top: 20px;
     }
+
 }
 
 @keyframes fade-in {
@@ -3759,3 +3801,392 @@ a:hover {
 .fade-in-panel.active {
     opacity: 1; /* Set opacity to 1 to make the panel visible */
 }
+
+.btn-new {
+    font-weight:600;
+    text-transform: uppercase;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #FFF;
+    color: #000;
+
+    border: 2px solid black;
+    border-radius: 0px;
+}
+.btn-new:hover {
+    background-color: #000;
+    color: #FFF;
+}
+.checkboxDiv{
+    margin-bottom: 1.8em;
+}
+@media (max-width: 767px) {
+    .btn-new{
+        font-size: 12px;
+    }
+}
+.custom-center {
+    display: flex;
+    justify-content: center;
+}
+
+@media (min-width: 767px) {
+    .login-dropdown-li {
+        position: absolute !important;
+        bottom: -5px;
+        right: 55px;
+        height: 55px;
+    }
+
+    .login-dropdown-li .icon:hover, .login-dropdown-li .icon:active {
+        background-color: rgb(255, 255, 255, 0.2) !important;
+    }
+
+    /* Display dropdown on hover */
+    .dropdown:hover .dropdown-menu,
+    .dropdown.open .dropdown-menu {
+        display: block;
+    }
+
+    /* Hide the caret icon when the dropdown is open */
+    .dropdown.open .caret {
+        display: none;
+    }
+
+    .login-dropdown-li .dropdown-menu {
+        position: absolute;
+        top: 73%;
+        right: 6px;
+        z-index: 999;
+        display: none;
+        min-width: 28rem;
+        padding: 1.5rem 1.5rem;
+        margin: 0.125rem 0 0;
+        font-size: 1.8rem;
+        color: #212529;
+        text-align: left;
+        list-style: none;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: none;
+        border-radius: 0.5rem;
+    }
+
+    .login-dropdown-li .dropdown-menu li {
+        margin-bottom: 20px;
+        display: block;
+    }
+}
+.login-dropdown-li .dropdown-menu a .icon {
+    margin-right: 15px;
+    display: inline-block;
+    width:20px;
+    height:auto;
+}
+.login-dropdown-li .dropdown-menu span{
+    margin-bottom:10px;
+}
+.login-dropdown-li .account-menu-login-button{
+    color:white;
+    padding:10px;
+}
+.login-dropdown-li .account-menu-login-button:hover{
+    color:white;
+    background-color: #4f90ff;
+    border: none;
+}
+.login-dropdown-li .account-menu-register{
+    font-size: 1.5rem;
+}
+.register-link .icon svg{
+    height:1.5rem;
+    width:auto;
+}
+.icon-arrow-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.dropdown-menu .dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    margin-bottom:1rem;
+    border: 0;
+    font-size: 1.7rem;
+}
+
+/* Style the Logout button */
+.dropdown-menu .logout-button {
+    width: 80%;
+    margin: 0 auto; /* Center horizontally */
+    display: block; /* Ensure it takes the full width */
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+/* Style the Logout button on hover */
+
+
+
+.dropdown-item.active, .dropdown-item:active {
+    color: #fff;
+    text-decoration: none;
+    background-color: #007bff; }
+.dropdown-item.disabled, .dropdown-item:disabled {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: transparent; }
+
+.dropdown-item:hover, .dropdown-item:focus {
+    color: #16181b;
+    text-decoration: none;
+    background-color: #f8f9fa;
+}
+
+.dropdown-menu .register-link {
+    margin-top: 10px;
+    /* Add other styles as needed */
+}
+
+/* Style the user name in the dropdown menu */
+.dropdown-menu .logged-user-name {
+    font-size: 1.8rem; /* Adjust the font size */
+    font-weight: bold; /* Make the text bold */
+    color: black; /* Change the text color to blue */
+    margin: 20px 0 5px 0; /* Add spacing around the user name */
+    /* Add other styles as needed */
+}
+
+
+.dropdown-menu .account-divider {
+    margin: 10px 0;
+    border-color:black;
+    /* Add other styles as needed */
+}
+
+.dropdown-menu .account-page-link {
+    display: block;
+    /* Add other styles as needed */
+}
+
+.center-vertically {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Ensure the container takes the full height */
+}
+
+.logged-user-name_mobile{
+    display:none;
+}
+li.login-dropdown-li.open > .login-icon{
+    background: transparent;
+}
+.no-hover{
+    background: transparent !important;
+}
+li.login-dropdown-li .login-icon:hover{
+    background: #0399D4;
+    background: linear-gradient(top, #EBEBEB, #A1A1A1);
+    background: -moz-linear-gradient(top, #EBEBEB, #A1A1A1);
+    background: -ms-linear-gradient(top, #EBEBEB, #A1A1A1);
+    background: -webkit-gradient(linear, left top, left bottom, from(#EBEBEB), to(#A1A1A1));
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    color: #3B3944;
+    moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    text-shadow: 2px 2px 3px #FFFFFF;
+    webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    border-radius: 10px;
+}
+/* Mobile view adjustments */
+
+@media (max-width: 767px) {
+    #top-part .shopping_cart_div{
+        top:30px !important;
+    }
+    .login-nav{
+        width:100%;
+        margin:0 !important;
+        padding-bottom: 2px !important;
+
+    }
+    .login-dropdown-li{
+        position:relative !important;
+        padding: 8px 0 2px 0 !important;
+        height:auto;
+        top:0;
+        left:0;
+    }
+    .login-nav .dropdown .icon {
+        display: inline-block!important; /* Use inline-block to set width and height */
+
+    }
+
+    .shopping_cart_div.max-675{
+      display:block !important;
+        right:0px !important;
+        top:8px !important;
+    }
+    .username_item_web{
+        display:none !important;
+    }
+    .login-dropdown-li.open .icon.login-icon {
+        display: flex !important;
+        align-items: center;
+    }
+    .login-dropdown-li.open .icon.login-icon .dropdown-image {
+        margin-right: 10px; /* Adjust the margin as needed */
+        min-width: auto !important;
+    }
+    .login-dropdown-li.open .icon.login-icon .logged-user-name_mobile {
+        color: white;
+        text-shadow: none;
+        font-size: 18px;
+        font-weight:400;
+
+    }
+    .login-dropdown-li.open .dropdown-menu{
+        margin-top:5px !important;
+    }
+    .login-dropdown-li.open .logged-user-name_mobile {
+        display: inline !important;
+    }
+    .dropdown-menu:not(hr) {
+        padding-left: 0;
+
+    }
+    .dropdown-item hr{
+        padding-right:0px !important;
+    }
+    .dropdown-menu .dropdown-item:not(hr) {
+        padding-left: 12px;
+    }
+    .dropdown-item:has(> hr) {
+        padding-left:0px !important;
+        padding-right:0px !important;
+    }
+    .login-dropdown-li .icon{
+        height:auto;
+        padding:0;
+    }
+    .login-dropdown-li .login-icon:focus {
+        background: transparent !important;
+    }
+    .login-dropdown-li .login-icon img:hover{
+        border-radius: 10px;
+        background: #0399D4;
+        background: linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -moz-linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -ms-linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -webkit-gradient(linear, left top, left bottom, from(#EBEBEB), to(#A1A1A1));
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+        color: #3B3944 !important;
+        moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+        text-shadow: 2px 2px 3px #FFFFFF;
+        webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    }
+    li.login-dropdown-li.open > a{
+        background: transparent;
+    }
+    li.login-dropdown-li.open > .login-icon{
+        background: transparent;
+    }
+
+    .dropdown-menu .hr2_div{
+        margin-top:0px !important;
+        margin-bottom: 12.5px !important;
+
+    }
+    .dropdown-item,.logged-user-name{
+        color:#E7E5E5 !important;
+    }
+    .dropdown-item hr{
+        border-color:#E7E5E5 !important;
+    }
+    .dropdown-menu .account-page-link span{
+        margin-bottom: 0px!important;
+    }
+    .account-page-link{
+        border-radius: 10px;
+        padding: 8px 12px !important;
+        margin-bottom: 10px !important;
+    }
+    .account-page-link:hover{
+        background: #0399D4;
+        background: linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -moz-linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -ms-linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -webkit-gradient(linear, left top, left bottom, from(#EBEBEB), to(#A1A1A1));
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+        color: #3B3944 !important;
+        moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+        text-shadow: 2px 2px 3px #FFFFFF;
+        webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    }
+
+    .btn-new-inverse{
+        font-weight:600;
+        text-transform: uppercase;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border: 2px solid rgb(32, 77, 116);
+        border-radius: 0px;
+        background-color: #000;
+        color: #FFF;
+    }
+
+    .btn-new-inverse:hover {
+        background-color: #FFF;
+        color: #000;
+    }
+
+}
+/* Style the radio buttons */
+.form-check-input {
+
+    margin-right: 10px !important; /* Adjust the margin to create space between the radio button and label */
+}
+
+.hidden {
+    display: none !important;
+}
+/*@media (max-width: 768px) {*/
+/*    !* Adjust dropdown menu styles for mobile *!*/
+
+/*    .dropdown.login-dropdown-li .dropdown-menu {*/
+/*        background-color: #fff; !* Background color for the dropdown menu on mobile *!*/
+/*        border: none; !* Remove borders for the dropdown menu on mobile *!*/
+/*    }*/
+
+/*    !* Display a new mobile menu button on mobile screens *!*/
+
+/*}*/
+
+
+/* Hide the text in other views */
+
+/* .btn-new-do {
+    font-weight: bold;
+    text-transform: uppercase;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #000;
+    color: #FFF;
+    
+    border: 2px solid black;
+    border-radius: 0px;
+}
+.btn-new-do:hover {
+    background-color: #FFF;
+    color: #000;
+
+} */

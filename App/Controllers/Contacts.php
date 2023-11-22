@@ -28,7 +28,7 @@ class Contacts extends BaseController
                 if ($result) {
                     session()->setFlashdata('resultSend', 'Ihre Nachricht wurde erfolgreich an uns übermittelt.');
                 } else {
-                    session()->set_flashdata('resultSend', 'Email send error!');
+                    session()->setFlashdata('resultSend', 'Fehler bei der Übertragung. Entschuldigung - Bitte verwenden Sie eine andere Kontaktmöglichkeit.');
                 }
                 return redirect()->to('contacts');
         }
@@ -71,8 +71,8 @@ class Contacts extends BaseController
     {
         $myEmail = $this->Home_admin_model->getValueStore('contactsEmailTo');
         if (filter_var($myEmail, FILTER_VALIDATE_EMAIL) && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-            $this->sendmail->sendTo($myEmail, $_POST['email'] . ',', $_POST['subject'], $_POST['email'] . ' ' . $_POST['name'] . ' -> ' . $_POST['message']);
-            return true;
+            $result = $this->sendmail->sendTo($myEmail, $_POST['email'] . ',', $_POST['subject'], $_POST['email'] . ' ' . $_POST['name'] . ' -> ' . $_POST['message']);
+            return  $result;
         }
         return false;
     }

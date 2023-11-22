@@ -26,32 +26,37 @@ class Checkout1 extends BaseController
         $head['keywords'] = str_replace(" ", ",", $head['title']);
         
         
-		if (isset($_POST['first_name'])) {
+		if (isset($_POST['email'])) {
 
             if(isset($_POST['email']))
                 session()->set('email', $_POST['email']);
             if(isset($_POST['phone']))
                 session()->set('phone', $_POST['phone']);
-            if(isset($_POST['first_name']))
-                session()->set('first_name', $_POST['first_name']);
-            if(isset($_POST['last_name']))
-                session()->set('last_name', $_POST['last_name']);
-            if(isset($_POST['company']))
-                session()->set('company', $_POST['company']);
-            if(isset($_POST['firmenzusatz']))
-                session()->set('firmenzusatz', $_POST['firmenzusatz']);
-            if(isset($_POST['street']))
-                session()->set('street', $_POST['street']);
-            if(isset($_POST['housenr']))
-                session()->set('housenr', $_POST['housenr']);
-            if(isset($_POST['adresszusatz']))
-                session()->set('adresszusatz', $_POST['adresszusatz']);
-            if(isset($_POST['country']))
-                session()->set('country', $_POST['country']);
-            if(isset($_POST['post_code']))
-                session()->set('post_code', $_POST['post_code']);
-            if(isset($_POST['city']))
-                session()->set('city', $_POST['city']);
+
+            $shippingAddress = [
+                'first_name'=>$_POST['shipping_first_name'],
+                'last_name'=>$_POST['shipping_last_name'],
+                'company'=>$_POST['shipping_company'],
+                'street' => $_POST['shipping_street'],
+                'housenr' => $_POST['shipping_housenr'],
+                'country' => $_POST['shipping_country'],
+                'post_code' => $_POST['shipping_post_code'],
+                'city' => $_POST['shipping_city'],
+            ];
+            $billingAddress = [
+                'first_name'=>$_POST['billing_first_name'],
+                'last_name'=>$_POST['billing_last_name'],
+                'company'=>$_POST['billing_company'],
+                'street' => $_POST['billing_street'],
+                'housenr' => $_POST['billing_housenr'],
+                'country' => $_POST['billing_country'],
+                'post_code' => $_POST['billing_post_code'],
+                'city' => $_POST['billing_city'],
+            ];
+            session()->set('shipping_address', $shippingAddress);
+            session()->set('billing_address', $billingAddress);
+            session()->set('same_address',$_POST['sameShipping']);
+
             if(isset($_POST['notes']))
                 session()->set('notes', $_POST['notes']);
             if(isset($_POST['post_dataprotection']))
@@ -94,10 +99,10 @@ class Checkout1 extends BaseController
     private function userInfoValidate($post)
     {
         $errors = array();
-        if (mb_strlen(trim($post['first_name'])) == 0) {
+        if (mb_strlen(trim($post['shipping_first_name'])) == 0||mb_strlen(trim($post['billing_first_name'])) == 0) {
             $errors[] = lang_safe('first_name_empty');
         }
-        if (mb_strlen(trim($post['last_name'])) == 0) {
+        if (mb_strlen(trim($post['shipping_last_name'])) == 0||mb_strlen(trim($post['billing_last_name'])) == 0) {
             $errors[] = lang_safe('last_name_empty');
         }
         if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
@@ -107,22 +112,26 @@ class Checkout1 extends BaseController
         // if (mb_strlen(trim($post['phone'])) == 0) {
         //     $errors[] = lang_safe('invalid_phone');
         // }
-        if (mb_strlen(trim($post['street'])) == 0) {
+        if (mb_strlen(trim($post['shipping_street'])) == 0 ||mb_strlen(trim($post['billing_street'])) == 0) {
             $errors[] = lang_safe('invalid_street');
         }
-        $post['housenr'] = preg_replace("/[^0-9]/", '', $post['housenr']);
-        if (mb_strlen(trim($post['housenr'])) == 0) {
+        $post['shipping_housenr'] = preg_replace("/[^0-9]/", '', $post['shipping_housenr']);
+        $post['billing_housenr'] = preg_replace("/[^0-9]/", '', $post['billing_housenr']);
+
+        if (mb_strlen(trim($post['shipping_housenr'])) == 0||mb_strlen(trim($post['billing_housenr'])) == 0) {
             $errors[] = lang_safe('invalid_housenr');
         }
 
-        if (mb_strlen(trim($post['country'])) == 0) {
+        if (mb_strlen(trim($post['shipping_country'])) == 0||mb_strlen(trim($post['billing_country'])) == 0) {
             $errors[] = lang_safe('invalid_country');
         }
-        if (mb_strlen(trim($post['city'])) == 0) {
+        if (mb_strlen(trim($post['shipping_city'])) == 0||mb_strlen(trim($post['billing_city'])) == 0) {
             $errors[] = lang_safe('invalid_city');
         }
-        $post['post_code'] = preg_replace("/[^0-9]/", '', $post['post_code']);
-        if (mb_strlen(trim($post['post_code'])) == 0) {
+        $post['shipping_post_code'] = preg_replace("/[^0-9]/", '', $post['shipping_post_code']);
+        $post['billing_post_code'] = preg_replace("/[^0-9]/", '', $post['billing_post_code']);
+
+        if (mb_strlen(trim($post['shipping_post_code'])) == 0 ||mb_strlen(trim($post['billing_post_code'])) == 0) {
             $errors[] = lang_safe('invalid_post_code');
         }
         if(!isset($_POST['post_dataprotection'])){

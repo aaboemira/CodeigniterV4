@@ -17,8 +17,9 @@ class App extends BaseConfig
      *
      *    http://example.com/
      */
-    public string $baseURL = 'https://nodematic.store/';
-
+    //public string $baseURL = 'https://nodematic.store/';
+	//public string $baseURL = 'https://www.nodedevices.de/';
+	public string $baseURL = 'http://localhost:8080/';
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
      * If you want to accept multiple Hostnames, set this.
@@ -98,7 +99,7 @@ class App extends BaseConfig
      *
      * @var string[]
      */
-    public array $supportedLocales = ['en', 'de', 'bg', 'es', 'fr', 'ja'];
+    public array $supportedLocales = ['en', 'de'];
 
     /**
      * --------------------------------------------------------------------------

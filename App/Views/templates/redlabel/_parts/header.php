@@ -16,21 +16,24 @@
 		</script> -->
 
 
-		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<!-- Global site tag (gtag.js) - Google Analytics
 		<script async src="https://www.googletagmanager.com/gtag/js?id=G-X9N04MYG16">
 		</script>
 
-		<script>
-			window.dataLayer = window.dataLayer || [];
+		 <script>
+			// window.dataLayer = window.dataLayer || [];
 
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag('js', new Date());
-			gtag('config', 'G-X9N04MYG16');
-			gtag('config', 'AW-428847483');
-		</script>
+			// function gtag() {
+				// dataLayer.push(arguments);
+			// }
+			// gtag('js', new Date());
+			// gtag('config', 'G-X9N04MYG16');
+			// gtag('config', 'AW-428847483');
+		 </script>-->
 
+<?php
+  header("Cache-Control: max-age=2592000"); //30days (60sec * 60min * 24hours * 30days)
+?>
 
 		<!-- <meta http-equiv="cache-control" content="no-cache" /> -->
 		<meta charset="utf-8" />
@@ -58,8 +61,11 @@
 		<link href="<?= base_url('assets/css/bootstrap-datepicker.min.css') ?>" rel="stylesheet" />
 		<link href="<?= base_url('assets/templatecss/custom.css') ?>" rel="stylesheet" />
 		<link href="<?= base_url('cssloader/theme') ?>" rel="stylesheet" />
-		<script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
-		<script src="<?= base_url('loadlanguage/all') ?>"></script>
+
+
+	<script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
+	<script src="<?= base_url('loadlanguage/all') ?>"></script>
+
 
 		<!-- cookie 2 -->
 		<link href="/dist/cookieconsent.css" rel="stylesheet" />
@@ -88,10 +94,10 @@
 				});
 			</script>
 			<script>
-			/*if (window.sessionStorage.getItem("stopanimate") == null) { 
-				
+			/*if (window.sessionStorage.getItem("stopanimate") == null) {
+
 				window.sessionStorage.setItem("stopanimate" ,1);
-			} 
+			}
 			else{
 				document.getElementById("float_phone").classList.add("animate_once");
 			}*/
@@ -104,19 +110,19 @@
 				<![endif]-->
 	</head>
 
-	<?php if (isset($_GET['ID'])) 
+	<?php if (isset($_GET['ID']))
 	{
 		$ID = $_GET['ID'];
 		if($ID == '2021000100011')
 		{
 			header('Location: ' . base_url('ND_GC_1S_9'));
 			die();
-		} 
+		}
 	if($ID == '0')
 		{
 			header('Location: ' . base_url('/admin'));
 			die();
-		} 
+		}
 	}
 
 	// header('Location: ' . base_url('/shop'));
@@ -124,14 +130,14 @@
 	?>
 
 	<body>
-	<a id="float_wa" class="float_wa " href="https://wa.me/+4971125286437">
-			<img class="wa_widget_img" alt="Chat on WhatsApp" src="<?= base_url('png/wa_widget.png') ?>" /> 
+		<a id="float_wa" class="float_wa " href="https://wa.me/+4971125286437">
+			<img class="wa_widget_img" alt="WhatsApp us" src="<?= base_url('png/wa_widget.png') ?>" />
 		</a>
 		<a id="float_phone" class="float_phone" href="tel:+4971125286437">
-			<img class="phone_widget_img" alt="Chat on WhatsApp" src="<?= base_url('png/phone_widget.png') ?>" /> 
+			<img class="phone_widget_img" alt="Call us" src="<?= base_url('png/phone_widget.png') ?>" />
 		</a>
 		<a id="float_mail" class="float_mail" href="mailto:kontakt@nodedevices.de">
-			<img class="mail_widget_img" alt="Chat on WhatsApp" src="<?= base_url('png/mail_widget.png') ?>" /> 
+			<img class="mail_widget_img" alt="Mail us" src="<?= base_url('png/mail_widget.png') ?>" />
 		</a>
 
 		<div id="contactModal" class="modal" role="dialog">
@@ -139,12 +145,12 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" style="color:white; opacity:1;" id="closeModalButton">&times;</button>
-						<h4 class="modal-title" style="text-align: left"><span class="glyphicon glyphicon-ok"></span> Contact Options</h4>
+						<h4 class="modal-title" style="text-align: left"><span class="glyphicon "></span>  &#10; <?= lang_safe('Modal_contact_options_header') ?> </h4>
 					</div>
 					<div class="modal-body">
 						<div class="row" style="padding: 5px;">
 							<!-- Add a checkbox for policy acceptance -->
-							
+
 							<div class="col-md-12" style="text-align:left; margin-bottom: 15px;">
 								<p style="text-align:left;"><?= lang_safe('contact_policy')?></p>
 							<label style="text-align:left;" for="acceptPolicyCheckbox">
@@ -186,28 +192,11 @@
 			</div>
 		</div>
 
-	
+
 		<div id="wrapper">
 			<div id="content">
-			<!-- <div class="user-panel">
-                <?php if (isset($_SESSION['logged_user'])) { ?>
-                    <a href="<?= LANG_URL . '/myaccount' ?>" class="my-acc">
-                        <?= lang_safe('my_acc') ?>
-                    </a>
-                <?php } else { ?>
-                    <a href="<?= LANG_URL . '/login' ?>" class="my-acc-login">
-                        <?= lang_safe('login') ?>
-                    </a>
-                    <a href="<?= LANG_URL . '/register' ?>" class="my-acc-register">
-                        <?= lang_safe('register') ?>
-                    </a>
-                <?php } ?>
-                <div class="clearfix"></div>
-            </div> -->
-			
                 <div class="top-part " id="top-part">
-				
-				<div id="languages-bar">
+				<!-- <div id="languages-bar">
 						<?php
 						$num_langs = count($allLanguages);
 						if ($num_langs > 0) {
@@ -229,6 +218,7 @@
 							</ul>
 						<?php } ?>
 					</div>
+					-->
 
 					<nav class="navbar navbar-custom" role="navigation">
 						<div class="container-fluid">
@@ -240,44 +230,148 @@
 									<span class="icon-bar"></span>
 									<span class="icon-bar"></span>
 								</button>
-								<a class="navbar-brand" href="#">
-									<img class="nav_logo " alt="Brand" src="<?= base_url('png/NODEMATIC_BRAND_TRANSPARENT.png') ?>">
+								<a class="navbar-brand custom-a" href="<?= LANG_URL ?>">
+									<img class="nav_logo " alt="Brand" src="<?= base_url('jpg/NODEMATIC-BRAND-WEB-171-650.jpg') ?>">
 								</a>
-								
-								<a class="shopping_cart_div" href="<?= base_url() ?>shopping-cart">
-									<img class="shopping_cart_img " src="<?= base_url('png/cart_white128.png') ?>">
-									<span class="shopping_cart_counter sumOfItems">
-										<?= is_numeric($cartItems) && (int) $cartItems == 0 ? 0 : $sumOfItems ?>
-							</span>
-							</img>
-								<!-- <div class="burger_div">
-								<a href="javascript:void(0);" class="top_burger" onclick="myFunction()">
-									<i class="fa fa-bars burger"></i>
-								</a> 
-								</div>-->
+
+                                <a class="shopping_cart_div custom-a "  href="<?= base_url() ?>shopping-cart">
+									<img class="shopping_cart_img " alt="shopping cart" src="<?= base_url('png/cart_white128.png') ?>">
+										<span class="shopping_cart_counter sumOfItems"> <?= is_numeric($cartItems) && (int) $cartItems == 0 ? 0 : $sumOfItems ?></span>
+									</img>
 								</a>
 							</div>
-						
-						
 						</div><!-- /.container-fluid -->
 
 						<!-- Collect the nav links, forms, and other content for toggling -->
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav">
-								<li><a href="<?= LANG_URL ?>"><?= lang_safe('nav_startseite') ?></a></li>
-								<li><a href="<?= LANG_URL . '/shop' ?>"><?= lang_safe('nav_shop') ?></a></li>
+								<li><a class="custom-a" href="<?= LANG_URL ?>"><?= lang_safe('nav_startseite') ?></a></li>
+								<li><a class="custom-a" href="<?= LANG_URL . '/shop' ?>"><?= lang_safe('nav_shop') ?></a></li>
 								<?php
 								if (!empty($nonDynPages)) {
 									foreach ($nonDynPages as $addonPage) { ?>
-										<li><a href="<?= LANG_URL . $addonPage ?>"><?= mb_ucfirst(lang_safe($addonPage)) ?></a></li>
+										<li><a class="custom-a" href="<?= LANG_URL . $addonPage ?>"><?= mb_ucfirst(lang_safe($addonPage)) ?></a></li>
 										<?php
 									}
 								}
 								?>
 
-								<li><a href="<?= LANG_URL . '/contacts' ?>"><?= lang_safe('nav_kontakt') ?></a></li>							
+								<li><a class="custom-a" href="<?= LANG_URL . '/contacts' ?>"><?= lang_safe('nav_kontakt') ?></a></li>
 							</ul>
+                            <ul class="nav navbar-nav navbar-right login-nav">
+                                <li class="dropdown login-dropdown-li" >
+
+                                    <a id="myAccountLink" class="icon login-icon" href="#"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >
+                                        <img src="<?= base_url('png/myaccount_white.png') ?>" alt="login" class="dropdown-image" onmouseenter="changeImageToBlack()" onmouseleave="changeImageToWhite()">
+                                        <?php if (isset($_SESSION['logged_user'])) { ?>
+
+                                        <span class="logged-user-name_mobile no-hover">
+                                                    <?php echo $_SESSION['user_name']; ?>
+                                        </span>
+                                        <?php }?>
+                                    </a>
+<!--                                    <a class="icon shopping_cart_div max-675 hidden"  href="--><?//= base_url() ?><!--shopping-cart">-->
+<!--                                        <img class="dropdown-image " alt="shopping cart" src="--><?//= base_url('png/cart_white128.png') ?><!--">-->
+<!--                                        <span class="shopping_cart_counter sumOfItems"> --><?//= is_numeric($cartItems) && (int) $cartItems == 0 ? 0 : $sumOfItems ?><!--</span>-->
+<!--                                        </img>-->
+<!--                                    </a>-->
+                                    <div class="dropdown-menu" id="hover-dropdown-menu">
+                                        <?php if (!isset($_SESSION['logged_user'])) { ?>
+                                                <a class="btn btn-primary btn-new " href="<?= base_url("/register")?>" title="nodematic Login">
+
+                                                    <?= lang_safe('nodematic_login')?>
+                                                </a>
+                                            <hr class="no-hover" style="margin:10px;" >
+                                                <div class="account-menu-register">
+                                                    <a class=" register-link" style="margin-top: 10px;" href="<?= base_url("/register")?>" title="Registrierung">
+                                                        <span><?= lang_safe('register')?></span>
+                                                        <span class="icon icon-arrow-right ">
+                                                            <svg  viewBox="0 0 24 24" version="1.1"
+                                                                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                                                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                                    <g id="Desktop-HD" transform="translate(0.000000, -384.000000)">
+                                                                        <g id="arrow_right" transform="translate(1.000000, 384.000000)" fill="#000000"
+                                                                           fill-rule="nonzero">
+                                                                            <path
+                                                                                    d="M10.1231887,0.710064646 L21.2720179,12.0187229 L10.1231887,23.3273812 L8.69894628,21.9232681 L17.4660248,13.0290646 L0.752024771,13.03 L0.752024771,11.03 L17.4860248,11.0290646 L8.69894628,2.11417775 L10.1231887,0.710064646 Z"
+                                                                                    id="Combined-Shape"></path>
+                                                                        </g>
+                                                                        <g id="slices"></g>
+                                                                    </g>
+                                                                </g>
+                                                            </svg>
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                        <?php } else { ?>
+                                            <!-- Display logout button -->
+
+
+                                            <!-- Display logged user's name -->
+                                            <p class="dropdown-item username_item_web no-hover ">
+                                                <span class="logged-user-name">
+                                                    <?php echo $_SESSION['user_name']; ?>
+                                                </span>
+                                            </p>
+
+                                            <!-- Add a horizontal line -->
+                                            <div class="dropdown-item hr2_div no-hover">
+                                                <hr class="account-divider">
+                                            </div>
+                                            <!-- Display links for managing the account -->
+                                            <?php
+                                            $accountPages = array(
+                                                array('title' => 'Overview', 'url' => base_url('myaccount'), 'icon' => 'fa fa-th'),
+                                                array('title' => 'Address', 'url' => base_url('address'), 'icon' => 'fa fa-address-book'),
+                                                array('title' => 'Orders', 'url' => base_url('orders'), 'icon' => 'fa fa-shopping-bag'),
+                                                array('title' => 'Smart Home', 'url' => base_url('smart-home'), 'icon' => 'fa fa-h-square'),
+                                                array('title' => 'Newsletter', 'url' => base_url('newsletter'), 'icon' => 'fa fa-newspaper-o'),
+                                                array('title' => 'Account', 'url' => base_url('account'), 'icon' => 'fa fa-user'),
+                                                array('title' => 'Password', 'url' => base_url('password'), 'icon' => 'fa fa-key'),
+                                            );
+
+
+                                            foreach ($accountPages as $page) { ?>
+                                                <a class="account-page-link dropdown-item  " href="<?php echo $page['url']; ?>">
+                                                    <span class="icon <?php echo $page['icon']; ?>"></span><?php echo $page['title']; ?>
+                                                </a>
+                                            <?php } ?>
+
+                                            <div class="dropdown-item no-hover">
+                                                <hr class="account-divider no-hover">
+                                            </div>
+                                            <a class=" btn btn-primary btn-new  logout-button" style="text-align: center" href="<?= base_url('logout')?>">
+                                                Logout
+                                            </a>
+                                        <?php } ?>
+                                    </div>
+
+                                </li>
+
+                            </ul>
 						</div><!-- /.navbar-collapse -->
 					</nav>
 				</div>
-
+<!--<script>-->
+<!--    document.addEventListener('DOMContentLoaded', function() {-->
+<!--        var navbarToggle = document.querySelector('.navbar-toggle');-->
+<!--        var defaultCart = document.querySelector('.shopping_cart_div.custom-a');-->
+<!--        var mobileCart = document.querySelector('.icon.shopping_cart_div.max-675');-->
+<!---->
+<!--        navbarToggle.addEventListener('click', function() {-->
+<!--            var isExpanded = navbarToggle.getAttribute('aria-expanded') !== 'true';-->
+<!---->
+<!--            // Toggle the cart icons based on the expanded state of the navbar-->
+<!--            if (isExpanded) {-->
+<!--                // Navbar is expanded, show the mobile cart and hide the default-->
+<!--                defaultCart.classList.add('hidden');-->
+<!--                mobileCart.classList.remove('hidden');-->
+<!--            } else {-->
+<!--                // Navbar is collapsed, show the default cart and hide the mobile-->
+<!--                defaultCart.classList.remove('hidden');-->
+<!--                mobileCart.classList.add('hidden');-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+<!---->
+<!--</script>-->

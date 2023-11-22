@@ -1,0 +1,4 @@
+13102023
+
+1. Homepage als Startseite, Header, Footer, Routes
+2. Nodematic symbol, ohne by node devices, da nicht sichtbar, text zu klein. header

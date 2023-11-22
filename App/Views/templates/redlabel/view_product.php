@@ -115,7 +115,7 @@
                             <?php
 
                             if ($product['is_main_view_from_variant'] != 0) {
-                                echo "<option value='" . $product['url'] . "'>" . "Bitte auswählen" . "</option>";
+                                echo "<option value='" . $product['url'] . "'>" .  lang_safe('product_select_variant') . "</option>";
                             }
                             foreach ($all_products as $product_) {
 
@@ -321,7 +321,7 @@
     <div class="row">
         <div class="col-sm-6">
             <br>
-            <a href="<?= LANG_URL . '/shop' ?>" class="btn btn-primary go-shop">
+            <a href="<?= LANG_URL . '/shop' ?>" class="btn btn-primary btn-new go-shop">
                 <span class="glyphicon glyphicon-circle-arrow-left"></span>
                 <?= lang_safe('back_to_shop') ?>
             </a>
@@ -346,35 +346,34 @@
 
 <div id="myModal" class="modal" role="dialog">
     <div class="modal-dialog" style="width: 90%;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close closeModal" data-dismiss="modal">&times;</button><br>
-                <h4 class="modal-title" style="text-align:left"><span class="glyphicon glyphicon-ok"></span>
-                    <?= lang_safe('modal_product_added') ?>
-                </h4>
+        <div class="modal-content" style="padding: 0 !important; border-radius: 5px !important;">
+            <div class="modal-header" style="padding: 1.4em; background-color: #3e89c9; color: white">
+                <button type="button" class="close" style="color:white; opacity:1;" data-dismiss="modal">&times;</button><br>
+                <h4 class="modal-title" style="text-align:left"><span class="glyphicon glyphicon-ok"></span> &nbsp; &nbsp; <?= lang_safe('modal_product_added') ?> </h4>
             </div>
             <div class="modal-body">
                 <div class="row" style="padding:5px;">
                     <div class="left-col-product col-md-6 border-right">
                         <div class="col-md-5">
-                            <img class="" width="100%"
-                                src="<?= base_url('/attachments/shop_images/' . $product['image']) ?>" alt="">
+                            <img class="" style="width: 100%; margin-top: -20px"
+                                src="<?= base_url('/attachments/shop_images/' . $product['image']) ?>" alt="product image">
 
                         </div>
                         <div class="col-md-7">
-                            <p>
+                            <p style="font-weight:bold; -webkit-hyphens: none; -ms-hyphens: none; hyphens: none;">
                                 <?= $product['title'] ?>
                             </p>
                             <p>
                                 <?= $product['price'] . CURRENCY ?>
                             </p>
+					
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="col-12">
                             <hr class="max-675">
                             <div class="col-6" style="font-weight:bold;">
-                                <p>
+                                <p style="font-weight:bold;">
                                     <?= lang_safe('modal_cart_total') ?><br><span style="font-weight:normal;">
                                         <?php if ((int) $cartItems != 0) {
                                             $finalSum = str_replace(',', '', $cartItems['finalSum']);
@@ -393,8 +392,13 @@
                                     <?php } ?>
                             </div>
                             <div class="col-12">
-                                <a class="btn btn-primary go-shop" href="<?= LANG_URL . '/shopping-cart' ?>">
+                                <a class="btn btn-primary btn-new go-shop" style="margin-top: 10px; width:80%;" href="<?= LANG_URL . '/shopping-cart' ?>">
                                     <?= lang_safe('modal_show_cart') ?>
+                                </a>
+							</div>
+							<div class="col-12">
+								<a class="btn btn-primary btn-new go-checkout" style="margin-top: 5px; width:80%;" href="<?= LANG_URL . '/checkout1' ?>">
+                                    <?= lang_safe('modal_checkout') ?>
                                 </a>
                             </div>
                         </div>
@@ -409,3 +413,4 @@
             </div>
         </div>
     </div>
+    

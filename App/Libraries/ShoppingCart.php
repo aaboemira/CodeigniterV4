@@ -5,8 +5,6 @@ namespace App\Libraries;
 use App\Models\admin\Home_admin_model;
 use App\Models\Public_model;
 use Config\Services;
-
-
 /*
  * Shopping Cart class for manage products
  */
@@ -24,14 +22,12 @@ class ShoppingCart
     public function __construct()
     {
         helper('cookie');
-
         $this->Home_admin_model = new Home_admin_model();
         $this->Public_model = new Public_model();
     }
 
     public function manageShoppingCart()
     {
-        
         if ($_POST['action'] == 'add') {
             if (!isset($_SESSION['shopping_cart'])) {
                 $_SESSION['shopping_cart'] = array();
@@ -84,7 +80,6 @@ class ShoppingCart
         } elseif (!isset($_SESSION['shopping_cart']) || !is_array($_SESSION['shopping_cart'])) {
             return 0;
         }
-        
         $result['array'] = $this->Public_model->getShopItems(array_unique($_SESSION['shopping_cart']));
         if (empty($result['array'])) {
             unset($_SESSION['shopping_cart']);
@@ -118,7 +113,6 @@ class ShoppingCart
     {
         session()->remove('shopping_cart');
         Services::response()->deleteCookie('shopping_cart');
-
         if (request()->isAJAX()) {
             echo 1;
         }

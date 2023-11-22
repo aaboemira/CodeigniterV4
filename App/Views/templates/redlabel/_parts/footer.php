@@ -4,8 +4,9 @@
 <!-- Site footer -->
 <footer>
     <div class="site-footer" id="footer">
-        <div class="container">
+        <div class="container" style="padding-left: 10%;  width:100%;" >
             <div class="row">
+			
                 <div class="col-xs-9 col-md-2">
                     <h6><?=lang_safe('footer_hauptmenu')?></h6>
                     <ul class="footer-links">
@@ -28,10 +29,10 @@ if (!empty($nonDynPages)) {
                     <h6><?=lang_safe('footer_help-text')?></h6>
                     <ul class="footer-links">
                         <li><a
-                                href="<?=LANG_URL . '/' . "/page/howto-order"?>"><?=lang_safe('footer_submenu_howto_order')?></a>
+                                href="<?=LANG_URL . '/' . "page/Bestellablauf"?>"><?=lang_safe('footer_submenu_howto_order')?></a>
                         </li>
-                        <li><a href="<?=LANG_URL . '/' . "/page/payment"?>"><?=lang_safe('payments-text')?></a></li>
-                        <li><a href="<?=LANG_URL . '/' . "/page/shipment"?>"><?=lang_safe('footer_submenu_shipment')?></a>
+                        <li><a href="<?=LANG_URL . '/' . "page/Bezahlung"?>"><?=lang_safe('payments-text')?></a></li>
+                        <li><a href="<?=LANG_URL . '/' . "page/Versand"?>"><?=lang_safe('footer_submenu_shipment')?></a>
                         </li>
                     </ul>
                 </div>
@@ -51,48 +52,49 @@ if (!empty($nonDynPages)) {
                     <ul class="footer-links">
                         <li><a href="<?=LANG_URL . '/' . "page/Impressum"?>"><?=lang_safe('Impressum')?></a></li>
                         <li><a
-                                href="<?=LANG_URL . '/' . "/page/revocation"?>"><?=lang_safe('footer_submenu_revocation')?></a>
+                                href="<?=LANG_URL . '/' . "page/Widerrufsrecht"?>"><?=lang_safe('footer_submenu_revocation')?></a>
                         </li>
                         <li><a href="<?=LANG_URL . '/' . "page/AGB"?>"><?=lang_safe('AGB')?></a></li>
                         <li><a href="<?=LANG_URL . '/' . "page/Datenschutz"?>"><?=lang_safe('Datenschutzerklärung')?></a>
                         </li>
                         <li><a
-                                href="<?=LANG_URL . '/' . "page/Cookie_Bestimmungen"?>"><?=lang_safe('Cookie-Richtlinie')?></a>
+                                href="<?=LANG_URL . '/' . "page/Cookie-Bestimmungen"?>"><?=lang_safe('Cookie-Richtlinie')?></a>
                         </li>
                     </ul>
                 </div>
-            </div>
+            
 
-            <div style="margin-top:20px"></div>
+            <div class="col-md-12" style="margin-top:20px"></div>
 
-            <div class="col-xs-9 col-md-6 ">
-                <h6><?=lang_safe('payments-text')?></h6>
-                <ul class="footer-links">
-                    <img class="payment_img img-thumbnail " alt="Paypal" src="<?=base_url('png/PayPal35.png')?>" />
-                    <img class="payment_img img-thumbnail " alt="Visa" src="<?=base_url('png/VISA35.png')?>" />
-                    <img class="payment_img img-thumbnail " alt="Mastercard"
-                        src="<?=base_url('png/MasterCard35.png')?>" />
-                    <img class="payment_img img-thumbnail " alt="American Express"
-                        src="<?=base_url('png/AMEX35.png')?>" />
-                    <img class="payment_img img-thumbnail " alt="Vorkasse per Banküberweisung"
-                        src="<?=base_url('png/bank35.png')?>" />
-                    <p class="footer_payment_types">Paypal, <?=lang_safe('Kreditkarte-text')?> (Visa, Mastercard, American
-                        Express), <?=lang_safe('vork_bank-text')?></p>
-                </ul>
-            </div>
-
-            <div class="col-xs-9 col-md-6 ">
-                <h6><?=lang_safe('footer_ship_head')?></h6>
-                <ul class="footer-links">
-                    <img class="shipping_img " alt="dhl" src="<?=base_url('png/DHL_logo_rgb50.png')?>" />
-                    <img class="shipping_img " alt="Visa" src="<?=base_url('png/DHL_Express_logo_rgb50.png')?>" />
-                    <p class="footer_ship_cost"> <?=lang_safe('footer_ship_with')?> </p>
-                    <p class="footer_ship_cost1"> -&nbsp <?=lang_safe('footer_free_ship_germany')?> </p>
-                    <p class="footer_ship_cost1"> -&nbsp <?=lang_safe('footer_ship_EU')?> </p>
-                </ul>
-            </div>
+	            <div class="col-xs-9 col-md-6 ">
+	                <h6><?=lang_safe('payments-text')?></h6>
+	             
+	                    <img class="payment_img img-thumbnail " alt="Paypal" src="<?=base_url('png/PayPal35.png')?>" />
+	                    <img class="payment_img img-thumbnail " alt="Visa" src="<?=base_url('png/VISA35.png')?>" />
+	                    <img class="payment_img img-thumbnail " alt="Mastercard"
+	                        src="<?=base_url('png/MasterCard35.png')?>" />
+	                    <img class="payment_img img-thumbnail " alt="American Express"
+	                        src="<?=base_url('png/AMEX35.png')?>" />
+	                    <img class="payment_img img-thumbnail " alt="Vorkasse per Banküberweisung"
+	                        src="<?=base_url('png/bank35.png')?>" />
+	                    <p class="footer_payment_types">Paypal, <?=lang_safe('Kreditkarte-text')?> (Visa, Mastercard, American
+	                        Express), <?=lang_safe('vork_bank-text')?></p>
+	               
+	            </div>
+	
+	            <div class="col-xs-9 col-md-6 ">
+	                <h6><?=lang_safe('footer_ship_head')?></h6>
+	                
+	                    <img class="shipping_img " alt="dhl" src="<?=base_url('png/DHL_logo_rgb50.png')?>" />
+	                    <img class="shipping_img " alt="Visa" src="<?=base_url('png/DHL_Express_logo_rgb50.png')?>" />
+	                    <p class="footer_ship_cost"> <?=lang_safe('footer_ship_with')?> </p>
+	                    <p class="footer_ship_cost1"> -&nbsp <?=lang_safe('footer_free_ship_germany')?> -&nbsp <?=lang_safe('footer_ship_EU')?></p>
+	                    
+	                  
+	                
+	            </div>
+	        </div>
         </div>
-
         <div class="container">
             <div class="row">
                 <hr>
@@ -103,11 +105,12 @@ if (!empty($nonDynPages)) {
 
                 <div class="col-md-4 col-sm-6 col-xs-12">
 
+
                     <ul class="social-icons">
-                        <span class="app_icon-text"> Mobile app </span>
-                        <li><a class="facebook" href="http://onelink.to/q7zjvn"><i class="fa fa-android"></i></a></li>
-                        <li><a class="twitter" href="http://onelink.to/q7zjvn"><i class="fa fa-apple"></i></a></li>
-                        <li><a class="dribbble" href="http://onelink.to/q7zjvn"><i class="fa fa-windows"></i></a></li>
+                        <li><span class="app_icon-text"> Mobile app </span></li>
+                        <li><a class="facebook" href="https://www.onelink.to/q7zjvn"><i class="fa fa-android"></i></a></li>
+                        <li><a class="twitter" href="https://www.onelink.to/q7zjvn"><i class="fa fa-apple"></i></a></li>
+                        <li><a class="dribbble" href="https://www.onelink.to/q7zjvn"><i class="fa fa-windows"></i></a></li>
 
                     </ul>
                 </div>
@@ -119,11 +122,14 @@ if (!empty($nonDynPages)) {
 
 <div id="notificator" class="alert"></div>
 
+
 <script src="<?=base_url('assets/js/bootstrap.min.js')?>"></script>
 <script src="<?=base_url('assets/js/bootstrap-confirmation.min.js')?>"></script>
 <script src="<?=base_url('assets/bootstrap-select-1.12.1/js/bootstrap-select.min.js')?>"></script>
 <script src="<?=base_url('assets/js/placeholders.min.js')?>"></script>
 <script src="<?=base_url('assets/js/bootstrap-datepicker.min.js')?>"></script>
+
+
 <script>
 var variable = {
     clearShoppingCartUrl: "<?=base_url('clearShoppingCart')?>",
@@ -131,10 +137,9 @@ var variable = {
     discountCodeChecker: "<?=base_url('discountCodeChecker')?>"
 };
 </script>
+
 <script src="<?=base_url('assets/js/system.js')?>"></script>
 <script src="<?=base_url('templatejs/mine')?>"></script>
-
-
 
 <script>
 var slideIndex = 0;
@@ -213,25 +218,7 @@ function showDivs(n) {
 }
 </script>
 
-<script>
-// Script to open and close sidebar
 
-function w3_open() {
-
-    document.getElementById("mySidebar").style.display = "block";
-
-    // document.getElementById("myOverlay").style.display = "block";
-
-}
-
-function w3_close() {
-
-    document.getElementById("mySidebar").style.display = "none";
-
-    // document.getElementById("myOverlay").style.display = "none";
-
-}
-</script>
 <script>
 gtag('event', 'conversion', {
     'send_to': 'AW-428847483/z16ECLWjkZEDEPvivswB'
@@ -261,11 +248,11 @@ $(document).ready(function() {
     });
 });
 $('#contactOptionsList a').click(function(e) {
-    if (!$('#acceptPolicyCheckbox').prop('checked')) {
-        e.preventDefault();
-        ShowNotificator('alert-danger', '<?= lang_safe('contact_check')?>');
-    }
-    });
+if (!$('#acceptPolicyCheckbox').prop('checked')) {
+e.preventDefault();
+ShowNotificator('alert-danger', '<?= lang_safe('contact_check')?>');
+}
+});
 </script>
 <script>
 function redirectToGoogleMaps() {
@@ -283,6 +270,7 @@ function redirectToGoogleMaps() {
 
 <script>
     $(document).ready(function() {
+
         // Select all elements with the class "fade-in-panel"
         $(".fade-in-panel").each(function(index) {
             var panel = $(this);
@@ -293,11 +281,83 @@ function redirectToGoogleMaps() {
             }, index * 1); // Adjust the delay (in milliseconds) between panels
         });
     });
-    $('#carousel-example-generic').carousel({
-        interval: 4000, // Set the desired interval in milliseconds (e.g., 5000ms or 5 seconds)
-        pause: false
-  });
 </script>
-</body>
+<script>
+    function changeImageToBlack() {
 
+            // Change the image source to myaccount_black.png
+            $("#myAccountLink img").attr("src", "<?= base_url('png/myaccount_black.png') ?>");
+        // Change the image source to myaccount_black.png
+    }
+
+    function changeImageToWhite() {
+        // Change the image source back to myaccount_white.png
+        $("#myAccountLink img").attr("src", "<?= base_url('png/myaccount_white.png') ?>");
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Function to toggle password visibility
+        function togglePasswordVisibility(targetInput) {
+            const passwordInput = document.getElementById(targetInput);
+            const eyeIcon = document.querySelector(`[data-target="${targetInput}"] i.fa`);
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                eyeIcon.classList.remove("fa-eye");
+                eyeIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                eyeIcon.classList.remove("fa-eye-slash");
+                eyeIcon.classList.add("fa-eye");
+            }
+        }
+
+        // Add click event for all toggle password buttons
+        const toggleButtons = document.querySelectorAll('.toggle-password');
+        toggleButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                const targetInputId = this.getAttribute("data-target");
+                const targetEyeIcon = document.getElementById("eye-icon-" + targetInputId);
+                togglePasswordVisibility(targetInputId, targetEyeIcon);
+            });
+        });
+
+        // ... (rest of your code)
+    });
+
+</script>
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        function adjustButtonClasses() {
+            // Find all buttons within .dropdown-menu
+            const dropdownButtons = document.querySelectorAll('.dropdown-menu .btn');
+
+            // Check the viewport width
+            if (window.innerWidth <= 768) { // Assumes 768px is your breakpoint for mobile devices
+                dropdownButtons.forEach(button => {
+                    if (button.classList.contains('btn-new')) {
+                        button.classList.remove('btn-new');
+                        button.classList.add('btn-new-inverse');
+                    }
+                });
+            } else {
+                dropdownButtons.forEach(button => {
+                    if (button.classList.contains('btn-new-inverse')) {
+                        button.classList.remove('btn-new-inverse');
+                        button.classList.add('btn-new');
+                    }
+                });
+            }
+        }
+
+        // Adjust the button classes on load
+        adjustButtonClasses();
+
+        // Adjust the button classes when the window is resized
+        window.addEventListener('resize', adjustButtonClasses);
+    });
+</script>
+
+</body>
 </html>

@@ -1,7 +1,5 @@
 
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-	integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-	crossorigin="anonymous"></script>
+
 <style>
 	#content {
     margin-top: 138px !important;
@@ -11,7 +9,7 @@
 	}
 	@media (max-width: 772px) {
     #content {
-        margin-top: 98px !important;
+        margin-top: 94px !important;
         padding: 0px !important;
         position: relative;
     }
@@ -26,64 +24,100 @@
 			<li data-target="#carousel-example-generic" data-slide-to="2"></li>
 			<li data-target="#carousel-example-generic" data-slide-to="3"></li>
 			<li data-target="#carousel-example-generic" data-slide-to="4"></li>
+			<li data-target="#carousel-example-generic" data-slide-to="5"></li>
 		</ol>
 
 		<div class="carousel-inner" role="listbox">
 			<div class="item active">
-				<a href="#your-link-1">
-                    <img src="https://s26.postimg.cc/7ayxq3q5l/cg5.jpg" width="100%">
-                </a>
-				<div class="carousel-caption">
-					<h3>First Slide</h3>
-					<p>Caption goes here<br></p>
-				</div>
-			</div>
-			<div class="item">
-				<a href="#your-link-2">
-					<img src="https://s26.postimg.cc/zccz3svft/cg6.jpg" width="100%">
-                </a>
-				<div class="carousel-caption">
-					<h3>Second slide</h3>
-					<p>Caption goes here</p>
-				</div>
-			</div>
-			<div class="item">
-				<a href="#your-link-3">
-					<img src="https://s26.postimg.cc/hyxmrttt5/cg1.jpg" width="100%">
-                </a>
-				<div class="carousel-caption">
-					<h3>Third slide</h3>
-					<p>Caption goes here</p>
-				</div>
-			</div>
-			<div class="item">
-				<a href="#your-link-4">
-					<img src="https://s26.postimg.cc/7g2ozrxgp/cg4.jpg" width="100%">
-                </a>
-				<div class="carousel-caption">
-					<h3>Fourth slide</h3>
-					<p>Caption goes here</p>
-				</div>
-			</div>
-            <div class="item">
-                <a href="#your-link-5">
-                    <picture>
-                        <!-- Small image for screens with a max-width of 768px -->
-                        <source srcset="https://s26.postimg.cc/7g2ozrxgp/cg4.jpg" media="(max-width: 768px)">
-                        <!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
-                        <source srcset="https://s26.postimg.cc/hyxmrttt5/cg1.jpg" media="(min-width: 769px) and (max-width: 1200px)">
-                        <!-- Large image for screens with a min-width of 1201px -->
-                        <source srcset="https://s26.postimg.cc/l7244vg2x/cg4.jpg" media="(min-width: 1201px)">
+				<a href="<?= base_url('Touch-Funk-Wandsender-2-Kanal-433-MHz-ND-TXCW-2S-75') ?>">
+					<picture>
+					<!-- Small image for screens with a max-width of 768px -->
+					<source srcset="<?= base_url('png/Slider/Slider-ND-TXCW-2S-mobile.png') ?>" media="(max-width: 768px)" >
+					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
+					<!-- <source srcset="<?= base_url('png/Slider/Slider-ND-TXCW-2S.png') ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
+					<!-- Large image for screens with a min-width of 1201px -->
+					<source srcset="<?= base_url('png/Slider/Slider-ND-TXCW-2S.png') ?>" media="(min-width: 1201px)">
 
-                        <!-- Fallback image for browsers that don't support srcset -->
-                        <img src="https://s26.postimg.cc/fallback-image.jpg" alt="Fifth slide" width="100%">
-                    </picture>
-                </a>
-                <div class="carousel-caption">
-                    <h3>Fifth slide</h3>
-                    <p>Caption goes here</p>
-                </div>
-            </div>
+					<!-- Fallback image for browsers that don't support srcset -->
+					<img src="<?= base_url('png/Slider/Slider-ND-TXCW-2S.png') ?>" alt="Fifth slide" width="100%">
+					</picture>
+				</a>
+			</div>
+			<div class="item">
+				<a href="<?= base_url('shop') ?>">
+					<picture>
+					<!-- Small image for screens with a max-width of 768px -->
+					<source srcset="<?= base_url('png/Slider/Slider-ND-FC-A-2S-mobile.png') ?>" media="(max-width: 768px)" >
+					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
+					<!-- <source srcset="<?= base_url('png/Slider/Slider-ND-FC-A-2S-mobile.png') ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
+					<!-- Large image for screens with a min-width of 1201px -->
+					<source srcset="<?= base_url('png/Slider/Slider-ND-FC-A-2S.png') ?>" media="(min-width: 1201px)">
+
+					<!-- Fallback image for browsers that don't support srcset -->
+					<img src="<?= base_url('png/Slider/Slider-ND-FC-A-2S.png') ?>" alt="Fifth slide" width="100%">
+					</picture>
+				</a>
+			</div>
+			<div class="item">
+				<a href="https://onelink.to/q7zjvn">
+					<picture>
+					<!-- Small image for screens with a max-width of 768px -->
+					<source srcset="<?= base_url('png/Slider/Slider-App-5-mobile.png') ?>" media="(max-width: 768px)" >
+					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
+					<!-- <source srcset="<?= base_url('png/Slider/Slider-App-5-mobile.png') ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
+					<!-- Large image for screens with a min-width of 1201px -->
+					<source srcset="<?= base_url('png/Slider/Slider-App-5.png') ?>" media="(min-width: 1201px)">
+
+					<!-- Fallback image for browsers that don't support srcset -->
+					<img src="<?= base_url('png/Slider/Slider-App-5.png') ?>" alt="Fifth slide" width="100%">
+					</picture>
+				</a>
+			</div>
+			<div class="item">
+				<a href="<?= base_url('ND-HRC-2S-37') ?>">
+					<picture>
+					<!-- Small image for screens with a max-width of 768px -->
+					<source srcset="<?= base_url('png/Slider/Slider-ND-HXC-2S-mobile.png') ?>" media="(max-width: 768px)" >
+					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
+					<!-- <source srcset="<?= base_url('png/Slider/Slider-ND-HXC-2S-mobile.png') ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
+					<!-- Large image for screens with a min-width of 1201px -->
+					<source srcset="<?= base_url('png/Slider/Slider-ND-HXC-2S.png') ?>" media="(min-width: 1201px)">
+
+					<!-- Fallback image for browsers that don't support srcset -->
+					<img src="<?= base_url('png/Slider/Slider-ND-HXC-2S.png') ?>" alt="Fifth slide" width="100%">
+					</picture>
+				</a>
+			</div>
+			<div class="item">
+				<a href="<?= base_url('ND-HRC-2S-37') ?>">
+					<picture>
+					<!-- Small image for screens with a max-width of 768px -->
+					<source srcset="<?= base_url('png/Slider/Slider-ND-HXCE-2S-mobile2.png') ?>" media="(max-width: 768px)" >
+					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
+					<!-- <source srcset="<?= base_url('png/Slider/Slider-ND-HXCE-2S-mobile2.png') ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
+					<!-- Large image for screens with a min-width of 1201px -->
+					<source srcset="<?= base_url('png/Slider/Slider-ND-HXCE-2S2.png') ?>" media="(min-width: 1201px)">
+
+					<!-- Fallback image for browsers that don't support srcset -->
+					<img src="<?= base_url('png/Slider/Slider-ND-HXCE-2S2.png') ?>" alt="Fifth slide" width="100%">
+					</picture>
+				</a>
+			</div>
+			<div class="item">
+				<a href="<?= base_url('Touch-Funk-Wandsender-2-Kanal-433-MHz-ND-TXCW-2S-75') ?>">
+					<picture>
+					<!-- Small image for screens with a max-width of 768px -->
+					<source srcset="<?= base_url('png/Slider/Slider-ND-TXCW-2S-BK-mobile.png') ?>" media="(max-width: 768px)" >
+					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
+					<!-- <source srcset="<?= base_url('png/Slider/Slider-ND-TXCW-2S-BK-mobile.png') ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
+					<!-- Large image for screens with a min-width of 1201px -->
+					<source srcset="<?= base_url('png/Slider/Slider-ND-TXCW-2S-BK.png') ?>" media="(min-width: 1201px)">
+
+					<!-- Fallback image for browsers that don't support srcset -->
+					<img src="<?= base_url('png/Slider/Slider-ND-TXCW-2S-BK.png') ?>" alt="Fifth slide" width="100%">
+					</picture>
+				</a>
+			</div>
 		</div>
 
 		<!-- Controls -->
@@ -102,9 +136,7 @@
 		<?=lang_safe('home_headline_text')?>
 		</p>
 	</div>
-	<div class="w3-center" style="margin-bottom:25px;">
-		<img src="./png/NODEMATIC_SMALL_TR.png" style="width:50%" onClick="Javascript:window.location.href = 'login.php'">
-	</div>
+
 	<div class="arrivals-container" style="background-color: #707070; padding: 20px;">
         <h1 class="title" style="margin-bottom: 20px;"><?=lang_safe('home_arrivals_title')?></h1>
         <p class="text" style="word-wrap: break-word;"><?=lang_safe('home_arrivals_text')?></p>

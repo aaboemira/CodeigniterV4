@@ -1,3 +1,4 @@
+
 <?php
 if (!isset($cartItems['array'])) { ?>
 
@@ -24,6 +25,7 @@ if (!isset($cartItems['array'])) { ?>
     <?php
 } else {
     ?>
+   
         <div class="container mt-15" id="shopping-cart">
             <div class="title alone">
                 <span>
@@ -178,14 +180,16 @@ if (!isset($cartItems['array'])) { ?>
         <a class="custom-btn text-light bg-black p-2 w-15 max-675-w-100 go-checkout go-checkout" href="<?= LANG_URL . '/checkout1' ?>"><?= lang_safe('go_to_checkout') ?></a>
     </div> -->
 
+
+
             <div class="container checkout-container">
                 <div class="row">
                     <div class="col-sm-12 checkout-buttons">
-                        <a class="btn btn-primary go-checkout" class="pull-left" href="<?= LANG_URL . '/checkout1' ?>">
+                        <a class="btn btn-primary btn-new go-checkout" class="pull-left" href="<?= LANG_URL . '/checkout1' ?>">
                         <?= lang_safe('go_to_checkout') ?>
                             <span class="glyphicon glyphicon-circle-arrow-right"></span>
                         </a>
-                        <a href="<?= LANG_URL . '/shop' ?>" class="btn btn-primary go-shop">
+                        <a href="<?= LANG_URL . '/shop' ?>" class="btn btn-primary btn-new go-shop">
                             <span class="glyphicon glyphicon-circle-arrow-left"></span>
                         <?= lang_safe('back_to_shop') ?>
                         </a>

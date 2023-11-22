@@ -100,18 +100,17 @@ function generateEmailHTML($orderData) {
         </head>
         <body>
             <div class="container">
-            <img class="nav_logo" alt="Brand" src="http://www.nodematic.store/png/NODEMATIC_SMALL_TR.png">
+            <img class="nav_logo" alt="Brand" src="https://www.nodedevices.de/png/NODEMATIC_SMALL_TR.png">
             <hr style="margin-top: 5px;">
             <h1>VIELEN DANK FÜR IHRE BESTELLUNG!</h1>
 
             <h2>Eingangsbestätigung Ihrer Bestellung</h2>
             <h3>
-                Hallo '.$orderData['full_name'].',
+                Hallo '.$orderData['billing_full_name'].',
             </h3>
             <p>
                 hiermit bestätigen wir Ihre Bestellung, Ihre Bestellnummer: SHND'.$orderData['order_id'].'.
                 <br>
-                Ihre Rechnung finden Sie im Anhang dieser Email.
             </p>
             <p>Wir prüfen Ihre Bestellung und melden uns in Kürze per Email bei Ihnen.</p>
             <p>Informationen zu Ihrer Bestellung:</p>
@@ -147,7 +146,7 @@ function generateEmailHTML($orderData) {
                                 '.$i.'
                                 </td>
                                 <td>
-                                    <img width="30" src="http://nodematic.store/attachments/shop_images/' . $product["product_info"]['image'] . '" alt="Product Image Placeholder">
+                                    <img width="30" src="https://nodedevices.de/attachments/shop_images/' . $product["product_info"]['image'] . '" alt="Product Image Placeholder">
                                 </td>
                                 <td>' . $product["product_info"]['title'] . '</td>
                                 <td>' . $product['product_quantity'] . '</td>
@@ -191,18 +190,19 @@ function generateEmailHTML($orderData) {
                 
                    
                     <h3>Lieferadresse:</h3>
-                    <p> '.$orderData['full_name'].'<br>
+                    <p> '.$orderData['shipping_full_name'].'<br>
                     '.(!empty($orderData['address']['company']) ? $orderData['address']['company'].'<br>' : '').'
-                    '.$orderData['address']['street'].' ' .$orderData['address']['housenr'].'<br>
-                    '.$orderData['address']['post_code'].' '.$orderData['address']['city'].'<br>
-                    '.$orderData['address']['country'].'</p>
+                    '.$orderData['address']['shipping_address']['street'].' ' .$orderData['address']['shipping_address']['housenr'].'<br>
+                    '.$orderData['address']['shipping_address']['post_code'].' '.$orderData['address']['shipping_address']['city'].'<br>
+                    '.$orderData['address']['shipping_address']['country'].'</p>
+
                 
                     <h3>Rechnungsadresse:</h3>
-                    <p> '.$orderData['full_name'].'<br>
+                    <p> '.$orderData['billing_full_name'].'<br>
                     '.(!empty($orderData['address']['company']) ? $orderData['address']['company'].'<br>' : '').'
-                    '.$orderData['address']['street'].' ' .$orderData['address']['housenr'].'<br>
-                    '.$orderData['address']['post_code'].' '.$orderData['address']['city'].'<br>
-                    '.$orderData['address']['country'].'</p>
+                    '.$orderData['address']['billing_address']['street'].' ' .$orderData['address']['billing_address']['housenr'].'<br>
+                    '.$orderData['address']['billing_address']['post_code'].' '.$orderData['address']['billing_address']['city'].'<br>
+                    '.$orderData['address']['billing_address']['country'].'</p>
 
                     <p><span style="font-weight:bold;">Gewählte Zahlungsart: </span>'.$orderData['payment_type'].'</p>
                                 
@@ -324,13 +324,20 @@ function generateEmailHTML_en($orderData) {
                 table tfoot tr td{
                     text-align:right;
                     padding:4px !important;
+                    padding-right:0 !important;
+                    padding-left:0 !important;
+                }
+                @media (max-width: 768px) {
+                    .container table th,.container table td {
+                        font-size:10px !important;
+                    }
                 }
 
             </style>
         </head>
         <body>
             <div class="container">
-            <img class="nav_logo" alt="Brand" src="http://www.nodematic.store/png/NODEMATIC_SMALL_TR.png">
+            <img class="nav_logo" alt="Brand" src="https://www.nodedevices.de/png/NODEMATIC_SMALL_TR.png">
             <hr style="margin-top: 5px;">
             <h1>THANK YOU FOR YOUR ORDER!</h1>
 
@@ -376,7 +383,7 @@ function generateEmailHTML_en($orderData) {
                                 '.$i.'
                                 </td>
                                 <td>
-                                    <img width="50" src="http://nodematic.store/attachments/shop_images/' . $product["product_info"]['image'] . '" alt="Product Image Placeholder">
+                                    <img width="50" src="https://nodedevices.de/attachments/shop_images/' . $product["product_info"]['image'] . '" alt="Product Image Placeholder">
                                 </td>
                                 <td>' . $product["product_info"]['title'] . '</td>
                                 <td>' . $product['product_quantity'] . '</td>
@@ -418,19 +425,21 @@ function generateEmailHTML_en($orderData) {
                         </tfoot>
                         </table>
 
-                    <h3>Delivery Address:</h3>
+                    <h3>Shipping Address:</h3>
                     <p> '.$orderData['full_name'].'<br>
                     '.(!empty($orderData['address']['company']) ? $orderData['address']['company'].'<br>' : '').'
-                    '.$orderData['address']['street'].' '. $orderData['address']['housenr'].'<br>
-                    '.$orderData['address']['post_code'].' '.$orderData['address']['city'].'<br>
-                    '.$orderData['address']['country'].'</p>
-
+                    '.$orderData['address']['shipping_address']['street'].' ' .$orderData['address']['shipping_address']['housenr'].'<br>
+                    '.$orderData['address']['shipping_address']['post_code'].' '.$orderData['address']['shipping_address']['city'].'<br>
+                    '.$orderData['address']['shipping_address']['country'].'</p>
+                    
                     <h3>Billing Address:</h3>
                     <p> '.$orderData['full_name'].'<br>
                     '.(!empty($orderData['address']['company']) ? $orderData['address']['company'].'<br>' : '').'
-                    '.$orderData['address']['street'].' ' .$orderData['address']['housenr'].'<br>
-                    '.$orderData['address']['post_code'].' '.$orderData['address']['city'].'<br>
-                    '.$orderData['address']['country'].'</p>
+                    '.$orderData['address']['billing_address']['street'].' ' .$orderData['address']['billing_address']['housenr'].'<br>
+                    '.$orderData['address']['billing_address']['post_code'].' '.$orderData['address']['billing_address']['city'].'<br>
+                    '.$orderData['address']['billing_address']['country'].'</p>
+                
+
 
                     <p><span style="font-weight:bold;">Selected Payment Method: </span>'.$orderData['payment_type'].'</p>
 

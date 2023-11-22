@@ -277,7 +277,7 @@ if (count($sliderProducts) > 0) {
             </div>
             <?php } ?>
         </div> 
-        <div class="col-md-9 eqHeight" id="products-side">
+        <div class="col-md-10 eqHeight" id="products-side">
             <div class="alone title">
                 <span><?= lang_safe('products') ?></span>
             </div>

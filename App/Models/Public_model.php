@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 use Config\Database;
-
+use App\Models\admin\Home_admin_model;
 
 class Public_model extends Model
 {
@@ -18,9 +18,9 @@ class Public_model extends Model
 	public function __construct()
 	{
 		$this->db = Database::connect();
-        // $this->showOutOfStock = $this->Home_admin_model->getValueStore('outOfStock');
-        // $this->showInSliderProducts = $this->Home_admin_model->getValueStore('showInSlider');
-        // $this->multiVendor = $this->Home_admin_model->getValueStore('multiVendor');
+        $this->showOutOfStock = (new Home_admin_model())->getValueStore('outOfStock');
+        $this->showInSliderProducts = (new Home_admin_model())->getValueStore('showInSlider');
+        $this->multiVendor = (new Home_admin_model())->getValueStore('multiVendor');
 	}
 
     public function productsCount($big_get)
@@ -187,7 +187,7 @@ class Public_model extends Model
             $findInIds[] = $big_get['category'];
             $query = $this->db->query('SELECT id FROM shop_categories WHERE sub_for = ' . $big_get['category']);
             foreach ($query->getResultArray() as $row) {
-                $findInIds[] = $row->id;
+                $findInIds[] = $row['id'];
             }
             $builder->whereIn('products.shop_categorie', $findInIds);
         }
@@ -392,19 +392,33 @@ class Public_model extends Model
         $builder = $this->db->table('orders_clients');
         if (!$builder->insert(array(
                     'for_id' => $lastId,
-                    'first_name' => $post['first_name'],
-                    'last_name' => $post['last_name'],
-                    'company' => $post['company'],
+                    'first_name' => $post['billing_address']['first_name'],
+                    'last_name' => $post['billing_address']['last_name'],
+                    'company' => $post['billing_address']['company'],
                     'email' => $post['email'],
                     'phone' => $post['phone'],
-                    'city' => $post['city'],
-                    'street' => $post['street'],
-                    'housenr' => $post['housenr'],
-                    'country' => $post['country'],
-                    'post_code' => $post['post_code'],
+                    'city' => $post['billing_address']['city'],
+                    'street' => $post['billing_address']['street'],
+                    'housenr' => $post['billing_address']['housenr'],
+                    'country' => $post['billing_address']['country'],
+                    'post_code' => $post['billing_address']['post_code'],
                     'notes' => $post['notes']
                 ))) {
            // ///log_message('error', print_r($builder->error(), true));
+        }
+        $builder = $this->db->table('orders_shipping');
+        if (!$builder->insert(array(
+            'for_id' => $lastId,
+            'first_name' => $post['shipping_address']['first_name'],
+            'last_name' => $post['shipping_address']['last_name'],
+            'company' => $post['shipping_address']['company'],
+            'city' => $post['shipping_address']['city'],
+            'street' => $post['shipping_address']['street'],
+            'housenr' => $post['shipping_address']['housenr'],
+            'country' => $post['shipping_address']['country'],
+            'post_code' => $post['shipping_address']['post_code'],
+        ))) {
+            // ///log_message('error', print_r($builder->error(), true));
         }
         if ($this->db->transStatus() === FALSE) {
             $this->db->transRollback();
@@ -729,14 +743,54 @@ class Public_model extends Model
 
     public function registerUser($post)
     {
+
+        $hashedPassword = hash('sha256', $post['pass']);
+
         $builder = $this->db->table('users_public');
         $builder->insert(array(
-            'name' => $post['name'],
+            'first_name' => $post['first_name'],
+            'last_name' => $post['last_name'],
+            'country' => $post['country'],
+            'post_code' => $post['post_code'],
+            'housenr' => $post['housenr'],
+            'street' => $post['street'],
             'phone' => $post['phone'],
+            'mobile' => $post['mobile'],
+            'lang'=>$post['language'],
             'email' => $post['email'],
-            'password' => md5($post['pass'])
+            'account_type' => $post['account_type'],
+            'verify_token' => $post['verify_token'],
+            'password' => $hashedPassword,
         ));
         return $this->db->insertID();
+    }
+    public function setResetToken($email, $resetToken, $expirationTime)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->where('email', $email);
+
+        $data = [
+            'reset_token' => $resetToken,
+            'reset_token_expiration' => $expirationTime,
+        ];
+
+        $builder->update($data);
+
+        return $this->db->affectedRows();
+    }
+    public function getUserByResetToken($token)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->select('*');
+        $builder->where('reset_token', $token);
+        $query = $builder->get();
+        $row = $query->getRow();
+
+        if ($row) {
+            return $row;
+        } else {
+            return null; // Token not found
+        }
     }
 
     public function updateProfile($post)
@@ -746,9 +800,18 @@ class Public_model extends Model
             'phone' => $post['phone'],
             'email' => $post['email']
         );
-        if (trim($post['pass']) != '') {
-            $array['password'] = md5($post['pass']);
-        }
+        $builder = $this->db->table('users_public');
+        $builder->where('id', $post['id']);
+        $builder->update($array);
+    }
+
+    public function updatePassword($post)
+    {
+
+        $hashedPassword = hash('sha256', $post['pass']);
+        $array = array(
+            'password' => $hashedPassword
+        );
         $builder = $this->db->table('users_public');
         $builder->where('id', $post['id']);
         $builder->update($array);
@@ -756,16 +819,45 @@ class Public_model extends Model
 
     public function checkPublicUserIsValid($post)
     {
+        $hashedPassword = hash('sha256', $post['pass']);
+
         $builder = $this->db->table('users_public');
         $builder->where('email', $post['email']);
-        $builder->where('password', md5($post['pass']));
+        $builder->where('password', $hashedPassword);
         $query = $builder->get();
         $result = $query->getRowArray();
         if (empty($result)) {
             return false;
         } else {
-            return $result['id'];
+            return $result;
         }
+    }
+
+   
+    public function getUserProfileInfoByEmail($email)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->where('email', $email);
+        $query = $builder->get();
+        return $query->getRow();
+    }
+
+    public function findUserByToken($verificationToken)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->where('verify_token', $verificationToken);
+        $query = $builder->get();
+        return $query->getRow();
+    }
+
+    public function markEmailAsVerified($id)
+    {
+        $array = array(
+            'verified' => 1
+        );
+        $builder = $this->db->table('users_public');
+        $builder->where('id', $id);
+        $builder->update($array);
     }
 
     public function getUserProfileInfo($id)

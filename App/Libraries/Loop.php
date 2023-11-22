@@ -129,7 +129,7 @@ class Loop
                                 <h2>
                                     <a
                                         href="<?= $article['vendor_url'] == null ? LANG_URL . '/' . $article['url'] : LANG_URL . '/' . $article['vendor_url'] . '/' . $article['url'] ?>">
-                                        <?= character_limiter($article['title'], 70) ?></a>
+                                        <?= character_limiter($article['title'], 60) ?></a>
                                 </h2>
 
                                 <!-- <h3>
@@ -151,7 +151,27 @@ class Loop
                                 <?php
                                 if ($article['is_main_view_from_variant'] != 0) {
                                     ?>
+									<div class="price-discount">
 
+									<?php
+									if (
+										$article['old_price'] != '' && $article['old_price'] != 0 && $article['price'] != '' &&
+										$article['price'] != 0 && $article['price'] != $article['old_price']
+									) {
+
+										$percent_friendly = number_format((($article['old_price'] - $article['price']) /
+											$article['old_price']) * 100) . '%';
+										?>
+
+										<span class="price-discount">
+											<?= $article['old_price'] != '' ? number_format($article['old_price'], 2) . ' ' . CURRENCY : '' ?>
+										</span>
+
+										<span class="price-down">
+											<?= lang_safe('Save_discount') . '  ' . $percent_friendly ?>
+										</span>
+									<?php } ?>
+                                    </div>
                                     <div class="price">
                                         <span>
                                             ab
@@ -164,34 +184,34 @@ class Loop
                                 } else {
                                     ?>
 
-                                    <div class="price">
+                                   
+									<div class="price-discount">
+
+									<?php
+									if (
+										$article['old_price'] != '' && $article['old_price'] != 0 && $article['price'] != '' &&
+										$article['price'] != 0 && $article['price'] != $article['old_price']
+									) {
+
+										$percent_friendly = number_format((($article['old_price'] - $article['price']) /
+											$article['old_price']) * 100) . '%';
+										?>
+
+										<span class="price-discount">
+											<?= $article['old_price'] != '' ? number_format($article['old_price'], 2) . ' ' . CURRENCY : '' ?>
+										</span>
+
+										<span class="price-down">
+											<?= lang_safe('Save_discount') . '  ' . $percent_friendly ?>
+										</span>
+									<?php } ?>
+                                    </div>
+									<div class="price">
                                         <span>
                                             <?= $article['price'] != '' ? number_format($article['price'], 2) : 0 ?>
                                             <?= CURRENCY ?>
                                         </span>
                                     </div>
-                                    <div class="price-discount">
-
-                                        <?php
-                                        if (
-                                            $article['old_price'] != '' && $article['old_price'] != 0 && $article['price'] != '' &&
-                                            $article['price'] != 0 && $article['price'] != $article['old_price']
-                                        ) {
-
-                                            $percent_friendly = number_format((($article['old_price'] - $article['price']) /
-                                                $article['old_price']) * 100) . '%';
-                                            ?>
-
-                                            <span class="price-discount">
-                                                <?= $article['old_price'] != '' ? number_format($article['old_price'], 2) . ' ' . CURRENCY : '' ?>
-                                            </span>
-
-                                            <span class="price-down">
-                                                <?= lang_safe('Save_discount') . '  ' . $percent_friendly ?>
-                                            </span>
-                                        <?php } ?>
-                                    </div>
-
 
                                 <?php
 

@@ -14,6 +14,7 @@ $routes->setDefaultNamespace('App\Controllers');
 $routes->setDefaultController('Home');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
+$routes->useSupportedLocalesOnly(true);
 $routes->set404Override();
 // The Auto Routing (Legacy) is very dangerous. It is easy to create vulnerable apps
 // where controller filters or CSRF protection are bypassed.
@@ -29,15 +30,18 @@ $routes->set404Override();
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/', 'Home::index');
+$routes->add('/', 'Home::index');
 // Load default conrtoller when have only currency from multilanguage
 $routes->get('^(\w{2})$', 'Home::index');
 
+//Home for test
+$routes->add('(\w{2})?/?home', 'Home');
+
 //Checkout
-$routes->get('(\w{2})?/?checkout/successcash', 'Checkout::successPaymentCashOnD');
-$routes->get('(\w{2})?/?checkout/successbank', 'Checkout::successPaymentBank');
-$routes->get('(\w{2})?/?checkout/paypalpayment', 'Checkout::paypalPayment');
-$routes->get('(\w{2})?/?checkout/order-error', 'Checkout::orderError');
+$routes->add('(\w{2})?/?checkout/successcash', 'Checkout::successPaymentCashOnD');
+$routes->add('(\w{2})?/?checkout/successbank', 'Checkout::successPaymentBank');
+$routes->add('(\w{2})?/?checkout/paypalpayment', 'Checkout::paypalPayment');
+$routes->add('(\w{2})?/?checkout/order-error', 'Checkout::orderError');
 
 $routes->add('(\w{2})?/?checkout1', 'Checkout1');
 $routes->add('(\w{2})?/?checkout2', 'Checkout2');
@@ -45,113 +49,138 @@ $routes->add('(\w{2})?/?checkout3', 'Checkout3');
 
 // Ajax called. Functions for managing shopping cart
 $routes->post('(\w{2})?/?manageShoppingCart', 'Home::manageShoppingCart');
-$routes->get('(\w{2})?/?clearShoppingCart', 'Home::clearShoppingCart');
-$routes->get('(\w{2})?/?removeFromCart', 'Home::removeFromCart');
+$routes->add('(\w{2})?/?clearShoppingCart', 'Home::clearShoppingCart');
+$routes->add('(\w{2})?/?removeFromCart', 'Home::removeFromCart');
 $routes->post('(\w{2})?/?discountCodeChecker', 'Home::discountCodeChecker');
 
 // home page pagination
-$routes->get(rawurlencode('home') . '/(:num)', "Home::index/$1");
+$routes->add(rawurlencode('home') . '/(:num)', "Home::index/$1");
 // load javascript language file
-$routes->get('loadlanguage/(:segment)', "Loader::jsFile/$1");
+$routes->add('loadlanguage/(:segment)', "Loader::jsFile/$1");
 // load default-gradient css
-$routes->get('cssloader/(:segment)', "Loader::cssStyle");
+$routes->add('cssloader/(:segment)', "Loader::cssStyle");
 
 // Template Routes
-$routes->get('template/imgs/(:segment)', "Loader::templateCssImage/$1");
-$routes->get('templatecss/imgs/(:segment)', "Loader::templateCssImage/$1");
-$routes->get('templatecss/(:segment)', "Loader::templateCss/$1");
-$routes->get('templatejs/(:segment)', "Loader::templateJs/$1");
+$routes->add('template/imgs/(:segment)', "Loader::templateCssImage/$1");
+$routes->add('templatecss/imgs/(:segment)', "Loader::templateCssImage/$1");
+$routes->add('templatecss/(:segment)', "Loader::templateCss/$1");
+$routes->add('templatejs/(:segment)', "Loader::templateJs/$1");
 
 // Products urls style
-$routes->get('(:segment)_(:num)', "Home::viewProduct/$2");
-$routes->get('(\w{2})/(:segment)_(:num)', "Home::viewProduct/$3");
-$routes->get('shop-product_(:num)', "Home::viewProduct/$3");
+$routes->add('(:segment)-(:num)', "Home::viewProduct/$2");
+$routes->add('(\w{2})/(:segment)-(:num)', "Home::viewProduct/$3");
+$routes->add('shop-product-(:num)', "Home::viewProduct/$3");
 
 // blog urls style and pagination
-$routes->get('blog/(:num)', "Blog::index/$1");
-$routes->get('blog/(:segment)_(:num)', "Blog::viewPost/$2");
-$routes->get('(\w{2})/blog/(:segment)_(:num)', "Blog::viewPost/$3");
+$routes->add('blog/(:num)', "Blog::index/$1");
+$routes->add('blog/(:segment)_(:num)', "Blog::viewPost/$2");
+$routes->add('(\w{2})/blog/(:segment)_(:num)', "Blog::viewPost/$3");
 
 // Shopping cart page
-$routes->get('shopping-cart', "ShoppingCartPage");
-$routes->get('(\w{2})/shopping-cart', "ShoppingCartPage");
+$routes->add('shopping-cart', "ShoppingCartPage");
+$routes->add('(\w{2})/shopping-cart', "ShoppingCartPage");
 
 // Shop page (greenlabel template)
-$routes->get('shop', "Shop");
-$routes->get('(\w{2})/shop', "Shop");
+$routes->add('shop', "Shop");
+$routes->add('(\w{2})/shop', "Shop");
 
 // Shop page (greenlabel template)
-$routes->get('contacts', "Contacts");
-$routes->get('(\w{2})/contacts', "Contacts");
+$routes->add('contacts', "Contacts");
+$routes->add('(\w{2})/contacts', "Contacts");
 $routes->post('contacts', "Contacts");
 $routes->post('(\w{2})/contacts', "Contacts");
 
 // Textual Pages links
-$routes->get('page/(:segment)', "Page::index/$1");
-$routes->get('(\w{2})/page/(:segment)', "Page::index/$2");
+$routes->add('page/(:segment)', "Page::index/$1");
+$routes->add('(\w{2})/page/(:segment)', "Page::index/$2");
 
 
 // Login Public Users Page
-$routes->get('login', "Users::login");
-$routes->get('(\w{2})/login', "Users::login");
+$routes->add('login', "Users::login");
+$routes->add('(\w{2})/login', "Users::login");
+
+// Get Captcha
+$routes->get('captcha', "Users::captcha");
 
 // Register Public Users Page
-$routes->get('register', "Users::register");
-$routes->get('(\w{2})/register', "Users::register");
+$routes->add('register', "Users::register");
+$routes->add('(\w{2})/register', "Users::register");
+
+$routes->add('auth/verify/(:segment)', "Users::verify/$1");
+$routes->add('(\w{2})/auth/verify/(:segment)', "Users::verify/$1");
 
 // Users Profiles Public Users Page
-$routes->get('myaccount', "Users::myaccount");
-$routes->get('myaccount/(:num)', "Users::myaccount/$1");
-$routes->get('(\w{2})/myaccount', "Users::myaccount");
-$routes->get('(\w{2})/myaccount/(:num)', "Users::myaccount/$2");
+$routes->add('myaccount', "Users::myaccount");
+$routes->add('myaccount/(:num)', "Users::myaccount/$1");
+$routes->add('(\w{2})/myaccount', "Users::myaccount");
+$routes->add('(\w{2})/myaccount/(:num)', "Users::myaccount/$2");
+
+$routes->add('address', "Users::address");
+$routes->add('(\w{2})/address', "Users::address");
+
+$routes->add('smart-home', "Users::smartHome");
+$routes->add('(\w{2})/smart-home', "Users::smartHome");
+
+$routes->add('newsletter', "Users::newsletter");
+$routes->add('(\w{2})/newsletter', "Users::newsletter");
+
+$routes->add('orders', "Users::orders");
+$routes->add('(\w{2})/orders', "Users::orders");
+$routes->add('account', "Users::account");
+$routes->add('(\w{2})/account', "Users::account");
+$routes->add('password', "Users::password");
+$routes->add('(\w{2})/password', "Users::password");
+$routes->add('password/recover', 'Users::forgotPassword');
+$routes->add('password/recover/reset-password', 'Users::resetPassword');
+
 
 // Logout Profiles Public Users Page
-$routes->get('logout', "Users::logout");
-$routes->get('(\w{2})/logout', "Users::logout");
+$routes->add('logout', "Users::logout");
+$routes->add('(\w{2})/logout', "Users::logout");
 
-$routes->get('sitemap.xml', "Home::sitemap");
+$routes->add('sitemap.xml', "Home::sitemap");
 
 // Confirm link
-$routes->get('confirm/(:segment)', "Home::confirmLink/$1");
+$routes->add('confirm/(:segment)', "Home::confirmLink/$1");
 
 /*
  * Vendor Controllers Routes
  */
-$routes->get('vendor/login', "vendor\auth::login");
-$routes->get('(\w{2})/vendor/login', "vendor\auth::login");
-$routes->get('vendor/register', "vendor\auth::register");
-$routes->get('(\w{2})/vendor/register', "vendor\auth::register");
-$routes->get('vendor/forgotten-password', "vendor\auth::forgotten");
-$routes->get('(\w{2})/vendor/forgotten-password', "vendor\auth::forgotten");
-$routes->get('vendor/me', "vendor\VendorProfile");
-$routes->get('(\w{2})/vendor/me', "vendor\VendorProfile");
-$routes->get('vendor/logout', "vendor\VendorProfile::logout");
-$routes->get('(\w{2})/vendor/logout', "vendor\VendorProfile::logout");
-$routes->get('vendor/products', "vendor\Products");
-$routes->get('(\w{2})/vendor/products', "vendor\Products");
-$routes->get('vendor/products/(:num)', "vendor\Products::index/$1");
-$routes->get('(\w{2})/vendor/products/(:num)', "vendor\Products::index/$2");
-$routes->get('vendor/add/product', "vendor\AddProduct");
-$routes->get('(\w{2})/vendor/add/product', "vendor\AddProduct");
-$routes->get('vendor/edit/product/(:num)', "vendor\AddProduct::index/$1");
-$routes->get('(\w{2})/vendor/edit/product/(:num)', "vendor\AddProduct::index/$1");
-$routes->get('vendor/orders', "vendor\Orders");
-$routes->get('(\w{2})/vendor/orders', "vendor\Orders");
-$routes->get('vendor/uploadOthersImages', "vendor\AddProduct::do_upload_others_images");
-$routes->get('vendor/loadOthersImages', "vendor\AddProduct::loadOthersImages");
-$routes->get('vendor/removeSecondaryImage', "vendor\AddProduct::removeSecondaryImage");
-$routes->get('vendor/delete/product/(:num)', "vendor\products::deleteProduct/$1");
-$routes->get('(\w{2})/vendor/delete/product/(:num)', "vendor\products::deleteProduct/$1");
-$routes->get('vendor/view/(:segment)', "Vendor\index/0/$1");
-$routes->get('(\w{2})/vendor/view/(:segment)', "Vendor\index/0/$2");
-$routes->get('vendor/view/(:segment)/(:num)', "Vendor\index/$2/$1");
-$routes->get('(\w{2})/vendor/view/(:segment)/(:num)', "Vendor\index/$3/$2");
-$routes->get('(:segment)/(:segment)_(:num)', "Vendor\viewProduct/$1/$3");
-$routes->get('(\w{2})/(:segment)/(:segment)_(:num)', "Vendor\viewProduct/$2/$4");
-$routes->get('vendor/changeOrderStatus', "vendor\orders::changeOrdersOrderStatus");
+$routes->add('vendor/login', "vendor\auth::login");
+$routes->add('(\w{2})/vendor/login', "vendor\auth::login");
+$routes->add('vendor/register', "vendor\auth::register");
+$routes->add('(\w{2})/vendor/register', "vendor\auth::register");
+$routes->add('vendor/forgotten-password', "vendor\auth::forgotten");
+$routes->add('(\w{2})/vendor/forgotten-password', "vendor\auth::forgotten");
+$routes->add('vendor/me', "vendor\VendorProfile");
+$routes->add('(\w{2})/vendor/me', "vendor\VendorProfile");
+$routes->add('vendor/logout', "vendor\VendorProfile::logout");
+$routes->add('(\w{2})/vendor/logout', "vendor\VendorProfile::logout");
+$routes->add('vendor/products', "vendor\Products");
+$routes->add('(\w{2})/vendor/products', "vendor\Products");
+$routes->add('vendor/products/(:num)', "vendor\Products::index/$1");
+$routes->add('(\w{2})/vendor/products/(:num)', "vendor\Products::index/$2");
+$routes->add('vendor/add/product', "vendor\AddProduct");
+$routes->add('(\w{2})/vendor/add/product', "vendor\AddProduct");
+$routes->add('vendor/edit/product/(:num)', "vendor\AddProduct::index/$1");
+$routes->add('(\w{2})/vendor/edit/product/(:num)', "vendor\AddProduct::index/$1");
+$routes->add('vendor/orders', "vendor\Orders");
+$routes->add('(\w{2})/vendor/orders', "vendor\Orders");
+$routes->add('vendor/uploadOthersImages', "vendor\AddProduct::do_upload_others_images");
+$routes->add('vendor/loadOthersImages', "vendor\AddProduct::loadOthersImages");
+$routes->add('vendor/removeSecondaryImage', "vendor\AddProduct::removeSecondaryImage");
+$routes->add('vendor/delete/product/(:num)', "vendor\products::deleteProduct/$1");
+$routes->add('(\w{2})/vendor/delete/product/(:num)', "vendor\products::deleteProduct/$1");
+$routes->add('vendor/view/(:segment)', "Vendor\index/0/$1");
+$routes->add('(\w{2})/vendor/view/(:segment)', "Vendor\index/0/$2");
+$routes->add('vendor/view/(:segment)/(:num)', "Vendor\index/$2/$1");
+$routes->add('(\w{2})/vendor/view/(:segment)/(:num)', "Vendor\index/$3/$2");
+$routes->add('(:segment)/(:segment)_(:num)', "Vendor\viewProduct/$1/$3");
+$routes->add('(\w{2})/(:segment)/(:segment)_(:num)', "Vendor\viewProduct/$2/$4");
+$routes->add('vendor/changeOrderStatus', "vendor\orders::changeOrdersOrderStatus");
 
 // Site Multilanguage
-$routes->get('^(\w{2})/(.*)$', '$2');
+$routes->add('^(\w{2})/(.*)$', '$2');
 
 /*
  * Admin Controllers Routes

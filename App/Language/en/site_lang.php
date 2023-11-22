@@ -135,6 +135,20 @@ $lang['invalid_phone'] = 'Invalid phone';
 $lang['address_empty'] = 'You have not entered address';
 $lang['invalid_city'] = 'You have not entered city';
 $lang['invalid_post_code'] = 'You have not entered post code';
+$lang['passwords_dont_match'] = '- The passwords dont match';
+$lang['invalid_password'] = '- The password must contain at least one special character, one number, and one letter';
+$lang['captcha_didnt_match'] = '- The security code didnt match';
+$lang['user_email_is_taken'] = '- This email address is already in use';
+$lang['invalid_street'] = '- Street';
+$lang['invalid_housenr'] = '- House number';
+$lang['invalid_city'] = '- City';
+$lang['invalid_post_code'] = '- Postal code';
+$lang['invalid_country'] = '- Country';
+$lang['invalid_account_type'] = '- Account type';
+$lang['invalid_ort'] = '- Place';
+$lang['data_process_agreement'] = 'I hereby consent to the processing of my data, taking into account the privacy policy. I am also aware that I can revoke my consent to the use of my data at any time in the future.';
+$lang['newsletter_agreement'] = 'I want to receive the newsletter';
+
 $lang['finded_errors'] = 'I found the following errors';
 $lang['out_of_stock_product'] = 'Product is out of stock';
 $lang['there_is_payment_error'] = 'There are problem with order. Please contact us by phone!';
@@ -148,6 +162,14 @@ $lang['final_amount_for_pay'] = 'Payment amount';
 $lang['database_error'] = 'A problem occured! Please contact support!';
 $lang['email'] = 'Email';
 $lang['password'] = 'Password';
+$lang['forget_password']='Forget Password?';
+$lang['password_recover']='Password Recovery';
+$lang['password_email_msg']='Überprüfen Sie Ihren Posteingang';
+$lang['my_account']='mein Benutzerkonto';
+$lang['ort'] = 'Ort';
+$lang['account_type'] = 'Account Type';
+
+
 $lang['remember_me'] = 'Remember me';
 $lang['u_login'] = 'Login';
 $lang['register_me'] = 'Register';
@@ -161,6 +183,11 @@ $lang['user_forgotten_page'] = 'Password Recovery';
 $lang['recover_password'] = 'Restore your password';
 $lang['password_repeat'] = 'Repeat password';
 $lang['send_me_new_pass'] = 'Send me new password';
+$lang['send_email'] = 'E-Mail senden';
+$lang['password_recover_info'] = 'Wir senden Ihnen eine Bestätigungs-E-Mail. Klicken Sie auf den darin enthaltenen Link, um Ihr Passwort zu ändern.';
+$lang['reset']='Reset ';
+$lang['captcha_wrong']='Captcha Didnt match';
+
 $lang['passwords_dont_match'] = 'Passwords dont match';
 $lang['vendor_invalid_email'] = 'Invalid email address';
 $lang['please_enter_password'] = 'Please enter a password';
@@ -257,6 +284,8 @@ $lang['enter_message'] = 'Nachricht eingeben';
 $lang['shipping_price']='Shipping price';
 $lang['sub_total']='Sub Total';
 $lang['welcome_message']='Sub Total';
-$lang['contact_check']='Bitte akzeptieren Sie die Richtlinie, um diese Kontaktmöglichkeit zu verwenden';
-
+$lang['shippingIsBilling']='Shipping address is the same as billing address';
+$lang['billing_address'] = 'Rechnungsadresse';
+$lang['shipping_address'] = 'Lieferadresse';
+$lang['contact_check']='Bitte accept Sie die Richtlinie, um diese Kontaktmöglichkeit zu verwenden';
 return $lang;

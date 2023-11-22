@@ -1,6 +1,8 @@
 <?php
 namespace App\Libraries;
 
+use App\Helpers\PasswordResetEmailHelper;
+use App\Helpers\VerifcationEmailHelper;
 use PHPMailer;
 use App\Helpers\EmailHelper;
 
@@ -10,27 +12,36 @@ class SendMail
 
     public $mail;
     protected $emailHelper;
+    protected $passwordEmailHelper;
+    protected $verifcationEmailHelper;
     public function __construct()
     {
-		$this->mail = new PHPMailer; 
-		$this->mail->isSMTP(); 
-		//$this->mail->SMTPDebug = 2; 
-		$this->mail->Debugoutput = 'html'; 
-		$this->mail->Host = 'mx.freenet.de'; 
-		$this->mail->Port = 465; 
-		$this->mail->SMTPSecure = 'ssl'; 
-		$this->mail->SMTPAuth = true; 
-		$this->mail->Username = "Kontaktformular_ND@freenet.de"; 
-		$this->mail->Password = "gQQK5Q5wuxUDJJP";
-		$this->mail->CharSet = 'UTF-8';
+        $this->mail = new PHPMailer;
+        $this->mail->isSMTP();
+        //$this->mail->SMTPDebug = 2;
+        $this->mail->Debugoutput = 'html';
+        $this->mail->Host = 'mx.freenet.de';
+        $this->mail->Port = 465;
+        $this->mail->SMTPSecure = 'ssl';
+        $this->mail->SMTPAuth = true;
+        $this->mail->Username = "Kontaktformular_ND@freenet.de";
+        $this->mail->Password = "gQQK5Q5wuxUDJJP";
+        $this->mail->CharSet = 'UTF-8';
 		$this->emailHelper=new EmailHelper();
+        $this->passwordEmailHelper=new PasswordResetEmailHelper();
+        $this->verifcationEmailHelper=new VerifcationEmailHelper();
     }
+
 
     public function sendTo($toEmail, $recipientName, $subject, $msg)
     {
 		$this->mail->clearAddresses();
-        $this->mail->setFrom('Kontaktformular_ND@freenet.de', 'Node Devices GmbH');
+        //$this->mail->setFrom('kontakt@nodedevices.de', 'Node Devices');
+        $this->mail->setFrom('kontakt@nodedevices.de', 'Node Devices');
+
+        //$this->mail->addReplyTo('kontakt@nodedevices.de', 'Node Devices');
         $this->mail->addAddress($toEmail, $recipientName);
+		
 		//$this->mail->addBCC('kontakt@nodedevices.de');
         //$this->mail->isHTML(true); 
         $this->mail->Subject = $subject;
@@ -44,8 +55,8 @@ class SendMail
     }
 	public function sendToBestellbestaetigung($toEmail, $recipientName, $subject, $msg,$data,$attachmentData,$attachmentName,$german)
     {
-        $this->mail->setFrom('Kontaktformular_ND@freenet.de', 'Node Devices GmbH');
-		
+        $this->mail->setFrom('Kontaktformular_ND@freenet.de', 'Node Devices');
+
         $this->mail->addAddress($toEmail, $recipientName);
 		$this->mail->addBCC('kontakt@nodedevices.de');
 
@@ -77,19 +88,19 @@ class SendMail
 		}
         if (!$this->mail->send()) {
             log_message('error', 'Mailer Error: ' . $this->mail->ErrorInfo);
-			var_dump($this->mail->ErrorInfo);
             return false;
         }
 
         return true;
     }
 	
-	public function orderConfirmation($toEmail, $recipientName, $subject, $msg,$data,$german)
+	public function orderConfirmation($toEmail, $recipientName, $subject,$data,$german)
     {
-        $this->mail->setFrom('Kontaktformular_ND@freenet.de', 'Node Devices GmbH');
+		$this->mail->clearAddresses();
+        $this->mail->setFrom('kontakt@nodedevices.de', 'Node Devices');
 		
-        $this->mail->addAddress($toEmail, $recipientName);
-		$this->mail->addBCC('kontakt@nodedevices.de');
+        $this->mail->addAddress($toEmail);
+
 		if($german){
 			$html=$this->emailHelper->generateEmailHTML($data);
 		}else{
@@ -103,49 +114,73 @@ class SendMail
 
         if (!$this->mail->send()) {
             log_message('error', 'Mailer Error: ' . $this->mail->ErrorInfo);
-			var_dump($this->mail->ErrorInfo);
-
             return false;
         }
 
         return true;
     }
-    public function sendContactMail($fromEmail, $fromName,  $toEmail, $recipientName, $subject, $msg)
+
+    public function sendPasswordRecoveryEmail($toEmail, $data,$resetLink)
     {
-		if (filter_var($fromEmail, FILTER_VALIDATE_EMAIL) && filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
-	
-			$this->mail->setFrom($fromEmail, $fromName);			
-			$this->mail->addAddress($toEmail, $recipientName);
-			//$this->mail->isHTML(true); 
-			$this->mail->Subject = $subject;
-			$this->mail->Body = $msg;
-			
-			if (array_key_exists('attachment', $_FILES)) {
-				//Don't trust providerrrrRRd filename - same goes for MIME types
-				//See http://php.net/manual/en/features.file-upload.php#114004 for more thorough upload validation
-				//Extract an extension from the provided filename
-				$ext = PHPMailer::mb_pathinfo($_FILES['attachment']['name'], PATHINFO_EXTENSION);
-				//Define a safe location to move the uploaded file to, preserving the extension
+        $german=false;
 
-				//sleep(20);
-				//move_uploaded_file($_FILES['attachment']['tmp_name'] , '/var/www/nodedevices.de/tmp/'. $_FILES['attachment']['name']);
-				$uploadfile = tempnam('/var/www/nodedevices.de/tmp/', $_FILES['attachment']['tmp_name'] );
-				  if (move_uploaded_file($_FILES['attachment']['tmp_name'], $uploadfile)) {
-        // Upload handled successfully
-        // Now create a message
-	           if ($this->mail->addAttachment($uploadfile, $_FILES['attachment']['name'])) {
-					
-							if ($this->mail->send()) {
-				        return true;
-			        }
-		      }
-				}	
-			}
-			}
-				return false;		
-			}
+        //$this->mail->setFrom('kontakt@nodedevices.de', 'Node Devices');
+        $this->mail->setFrom('kontakt@nodedevices.de', 'Node Devices');
+        $this->mail->addAddress($toEmail);
+        if ($data->country=='Deutschland')$german=true;
+        // Email subject
+        if($german){
+            $html=$this->passwordEmailHelper->generateEmailHTML($data,$resetLink);
+            $subject='Passwortanderung fur die Nodematic Website';
+        }else{
+            $html=$this->passwordEmailHelper->generateEmailHTML_en($data,$resetLink);
+            $subject='Password Recovery for Nodematic Website ';
+        }
+        $this->mail->Body = $html;
+
+        $this->mail->isHTML(true);
+
+        $this->mail->Subject = $subject;
+
+        if (!$this->mail->send()) {
+            log_message('error', 'Mailer Error: ' . $this->mail->ErrorInfo);
+            return false;
+        }
+
+        return true;
+
+    }
+
+    public function sendVerficationEmail($toEmail, $country,$name,$verifyLink)
+    {
+        $german=false;
+
+        $this->mail->setFrom('kontakt@nodedevices.de', 'Node Devices');
+        $this->mail->addAddress($toEmail);
+        if ($country=='Deutschland')$german=true;
+        // Email subject
+        if($german){
+            $html=$this->verifcationEmailHelper->generateEmailHTML($verifyLink,$name);
+            $subject='E-Mail-Verifizierung die Nodematic Website';
+        }else{
+            $html=$this->verifcationEmailHelper->generateEmailHTML_en($verifyLink,$name);
+            $subject='Email Verfication for Nodematic website';
+        }
+        $this->mail->Body = $html;
+
+        $this->mail->isHTML(true);
+
+        $this->mail->Subject = $subject;
+
+        if (!$this->mail->send()) {
+            log_message('error', 'Mailer Error: ' . $this->mail->ErrorInfo);
+            return false;
+        }
+
+        return true;
+
+    }
 }
-
 
 
 

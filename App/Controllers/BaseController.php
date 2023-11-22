@@ -94,7 +94,6 @@ abstract class BaseController extends Controller
 
      public function render($view, $head, $data = [], $footer = [])
      {
-
          $head['cartItems'] = $this->shoppingcart->getCartItems();
          $head['sumOfItems'] = $this->shoppingcart->sumValues;
          $vars = $this->loadVars();
@@ -103,6 +102,7 @@ abstract class BaseController extends Controller
          $footer = array_merge($footer,$vars);
          //$this->load->vars($vars);
          $all_categories = $this->Public_model->getShopCategories();
+ 
 
          $head['nav_categories'] = $tree = $this->buildTree1($all_categories);
 

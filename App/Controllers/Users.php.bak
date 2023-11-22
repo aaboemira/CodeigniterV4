@@ -1,0 +1,349 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\Public_model;
+use Mobicms\Captcha\Code;
+use Mobicms\Captcha\Image;
+use App\Libraries\SendMail;
+
+class Users extends BaseController
+{
+
+    private $registerErrors = array();
+    private $user_id;
+    private $num_rows = 5;
+
+    protected $Public_model;
+    protected $sendmail;
+
+    public function __construct()
+    {
+        $this->Public_model = new Public_model();
+        $this->sendmail = new SendMail();
+    }
+
+    public function login()
+    {
+        if (isset($_POST['login'])) {
+            $result = $this->Public_model->checkPublicUserIsValid($_POST);
+            if ($result !== false) {
+                $_SESSION['logged_user'] = $result; //id of user
+                return redirect()->to(LANG_URL . '/myaccount');
+            } else {
+                session()->setFlashdata('error', lang_safe('wrong_user'));
+            }
+        }
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('user_login');
+        $head['description'] = lang_safe('user_login');
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        return $this->render('login', $head, $data);
+    }
+
+    public function register()
+    {
+        if (isset($_POST['signup'])) {
+            $result = $this->registerValidate();
+            if ($result == false) {
+                session()->setFlashdata('registerError', $this->registerErrors[0]);
+            } else {
+                return redirect()->to(LANG_URL . '/register');
+            }
+            
+        }
+        if (isset($_POST['login'])) {
+            $validation = \Config\Services::validation();
+            $validation->setRule('email', 'required|valid_email', lang_safe('invalid_email'));
+            $validation->setRule('pass', 'required', lang_safe('enter_password'));
+            $result = $this->Public_model->checkPublicUserIsValid($_POST);
+            if ($result !== false) {
+                if($result['verified'] == 0) {
+                    $email = $result['email'];
+                    $verificationToken = $result['verify_token'];
+                    $email = $this->sendVerificationEmail($email, $verificationToken);
+                    session()->setFlashdata('loginError', lang_safe('verify_first', 'Please verify your email first'));
+                } else {
+                    session()->set([
+                        'logged_user' => $result['id'],
+                        'user_name' => $result['name'], // Store the user's name
+                        'email' => $result['email'], // Store the user's email
+                    ]);
+                
+                    return redirect()->to(LANG_URL . '/myaccount');
+                }
+                
+            } else {
+                session()->setFlashdata('loginError', lang_safe('wrong_user'));
+            }
+        }
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('user_register');
+        $head['description'] = lang_safe('user_register');
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        return $this->render('signup', $head, $data);
+    }
+
+    public function sendVerificationEmail($email, $verificationToken)
+    {
+        // $emailConfig = \Config\Services::email();
+        // //$emailConfig->initialize();
+
+        // $emailConfig->setFrom('goldroger9888@gamil.com', 'nodematic');
+        // $emailConfig->setTo($email);
+
+        // $emailConfig->setSubject('Email Verification');
+        // $emailConfig->setMessage('Click the link below to verify your email:\n\n <a href="'. LANG_URL.'/auth/verify/'.$verificationToken.'">'. LANG_URL.'auth/verify/'.$verificationToken.'</a>');
+
+        // if($emailConfig->send()) {
+        //     // Email sent successfully
+        //     return true;
+        // }
+
+        $msg = 'Click the link below to verify your email:<br> <a href="'. LANG_URL.'/auth/verify/'.$verificationToken.'">'. LANG_URL.'auth/verify/'.$verificationToken.'</a>';
+        return $this->sendmail->sendTo($email, 'nodematic', 'Email Verification', $msg);
+
+        return false;
+    }
+
+    public function verify($verificationToken)
+    {
+        // Find the user with the provided token
+        $user = $this->Public_model->findUserByToken($verificationToken);
+        if ($user) {
+            // Mark the email as verified
+            $this->Public_model->markEmailAsVerified($user->id);
+            session()->setFlashdata('success', lang_safe('verify_confirm', 'Email confirmed successfully. Please login now'));
+            // Redirect to a success page or show a success message
+            return redirect()->to(LANG_URL . '/register');
+        } else {
+            session()->setFlashdata('registerError', lang_safe('verify_failed', 'Email is not confirmed'));
+            // Invalid or expired token; show an error message
+            return redirect()->to(LANG_URL . '/register');
+        }
+    }
+
+    public function myaccount($page = 0)
+    {
+        if (!session()->has('logged_user')) {
+            return redirect()->to(LANG_URL . '/register');
+        }
+        if (isset($_POST['update'])) {
+            $_POST['id'] = $_SESSION['logged_user'];
+            $count_emails = $this->Public_model->countPublicUsersWithEmail($_POST['email'], $_POST['id']);
+            if ($count_emails == 0) {
+                $this->Public_model->updateProfile($_POST);
+            }
+            return redirect()->to(LANG_URL . '/myaccount');
+        }
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('my_acc');
+        $head['description'] = lang_safe('my_acc');
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        $data['userInfo'] = $this->Public_model->getUserProfileInfo($_SESSION['logged_user']);
+        $rowscount = $this->Public_model->getUserOrdersHistoryCount($_SESSION['logged_user']);
+        $data['orders_history'] = $this->Public_model->getUserOrdersHistory($_SESSION['logged_user'], $this->num_rows, $page);
+        $data['links_pagination'] = pagination('myaccount', $rowscount, $this->num_rows, 2);
+        return $this->render('user', $head, $data);
+    }
+
+    public function account($page = 0)
+    {
+        if (!session()->has('logged_user')) {
+            return redirect()->to(LANG_URL . '/register');
+        }
+        if (isset($_POST['update'])) {
+            $_POST['id'] = $_SESSION['logged_user'];
+            $count_emails = $this->Public_model->countPublicUsersWithEmail($_POST['email'], $_POST['id']);
+            if ($count_emails == 0) {
+                $this->Public_model->updateProfile($_POST);
+            }
+            session()->setFlashdata('success', 'Success');
+            return redirect()->to(current_url());
+        }
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('my_acc');
+        $head['description'] = lang_safe('my_acc');
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        $data['userInfo'] = $this->Public_model->getUserProfileInfo($_SESSION['logged_user']);
+        $rowscount = $this->Public_model->getUserOrdersHistoryCount($_SESSION['logged_user']);
+        $data['orders_history'] = $this->Public_model->getUserOrdersHistory($_SESSION['logged_user'], $this->num_rows, $page);
+        $data['links_pagination'] = pagination('myaccount', $rowscount, $this->num_rows, 2);
+        return $this->render('account', $head, $data);
+    }
+
+    public function password()
+    {
+        if (!session()->has('logged_user')) {
+            return redirect()->to(LANG_URL . '/register');
+        }
+        if (isset($_POST['update'])) {
+            $validation = \Config\Services::validation();
+            $validation->setRule('current_password', lang_safe('enter_password'), 'required');
+            $validation->setRule('pass',lang_safe('enter_password'), 'required|min_length[6]');
+            $validation->setRule('pass_repeat',lang_safe('pass_repeat_error', 'Repeat password did not match'), 'matches[pass]');
+            
+            if ($validation->run($this->request->getPost()))
+            {
+                $_POST['email'] = $_SESSION['email'];
+                $_POST['pass'] = $_POST['current_password'];
+                $result = $this->Public_model->checkPublicUserIsValid($_POST);
+                if ($result == false) {
+                    session()->setFlashdata('error', lang_safe('wrong_pass', 'Current password is wrong'));
+                } else {
+                    $_POST['id'] = $_SESSION['logged_user'];
+                    $_POST['pass'] = $_POST['pass_repeat'];
+                    $this->Public_model->updatePassword($_POST);
+                    session()->setFlashdata('success', 'Success');
+                    return redirect()->to(current_url());
+                }
+                
+                
+            }
+            
+        }
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('my_acc');
+        $head['description'] = lang_safe('my_acc');
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        $data['userInfo'] = $this->Public_model->getUserProfileInfo($_SESSION['logged_user']);
+        $rowscount = $this->Public_model->getUserOrdersHistoryCount($_SESSION['logged_user']);
+        $data['links_pagination'] = pagination('myaccount', $rowscount, $this->num_rows, 2);
+        return $this->render('password', $head, $data);
+    }
+
+    public function address()
+    {
+        if (!session()->has('logged_user')) {
+            return redirect()->to(LANG_URL . '/register');
+        }
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('my_acc');
+        $head['description'] = lang_safe('my_acc');
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        return $this->render('address', $head, $data);
+    }
+
+    public function smartHome()
+    {
+        if (!session()->has('logged_user')) {
+            return redirect()->to(LANG_URL . '/register');
+        }
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('my_acc');
+        $head['description'] = lang_safe('my_acc');
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        return $this->render('address', $head, $data);
+    }
+
+    public function newsletter()
+    {
+        if (!session()->has('logged_user')) {
+            return redirect()->to(LANG_URL . '/register');
+        }
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('my_acc');
+        $head['description'] = lang_safe('my_acc');
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        return $this->render('address', $head, $data);
+    }
+
+    public function orders($page = 0)
+    {
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('my_acc');
+        $head['description'] = lang_safe('my_acc');
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        $data['userInfo'] = $this->Public_model->getUserProfileInfo($_SESSION['logged_user']);
+        $rowscount = $this->Public_model->getUserOrdersHistoryCount($_SESSION['logged_user']);
+        $data['orders_history'] = $this->Public_model->getUserOrdersHistory($_SESSION['logged_user'], $this->num_rows, $page);
+        //echo '<pre>'; print_r($data['orders_history']); die;
+        $data['links_pagination'] = pagination('myaccount', $rowscount, $this->num_rows, 2);
+        return $this->render('orders', $head, $data);
+    }
+
+    public function logout()
+    {
+        // Destroy user session
+        session()->destroy();
+        return redirect()->to(LANG_URL);
+    }
+
+    private function registerValidate()
+    {
+        $errors = array();
+        if (mb_strlen(trim($_POST['name'])) == 0) {
+            $errors[] = lang_safe('please_enter_name');
+        }
+        if (mb_strlen(trim($_POST['phone'])) == 0) {
+            $errors[] = lang_safe('please_enter_phone');
+        }
+        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = lang_safe('invalid_email');
+        }
+        if (mb_strlen(trim($_POST['pass'])) == 0) {
+            $errors[] = lang_safe('enter_password');
+        }
+        if (mb_strlen(trim($_POST['pass_repeat'])) == 0) {
+            $errors[] = lang_safe('repeat_password');
+        }
+        if ($_POST['pass'] != $_POST['pass_repeat']) {
+            $errors[] = lang_safe('passwords_dont_match');
+        }
+        $result = $_POST['code'];
+        $session = $_SESSION['code'];
+
+        // if ($result !== null && $session !== null) {
+        //     if (strtolower($result) != strtolower($session)) {
+        //         $errors[] = lang_safe('captcha_wrong', 'Captcha did not match');
+        //         $this->registerErrors = $errors;
+        //         return false;
+        //     }
+        // }
+
+        $user = $this->Public_model->getUserProfileInfoByEmail($_POST['email']);
+        if($user) {
+            $errors[] = lang_safe('user_email_is_taken');
+        } else {
+            helper('text');
+            $email = $_POST['email'];
+            $verificationToken = random_string('alnum', 32);
+            $email = $this->sendVerificationEmail($email, $verificationToken);
+            if($email) {
+                $_POST['verify_token'] = $verificationToken;
+                $this->user_id = $this->Public_model->registerUser($_POST);
+                session()->setFlashdata('resultSend', lang_safe('verify_mail', 'Verificaiton link sent to your email. Please verify.'));
+                return true;
+            } else {
+                session()->setFlashdata('registerError', lang_safe('verify_mail_error', 'Something went wrong.'));
+                return true;
+            }
+        }
+        
+        if (!empty($errors)) {
+            $this->registerErrors = $errors;
+            return false;
+        }
+        
+        return true;
+    }
+
+    public function captcha() {
+        $code = (string) new Code;
+        session()->set('code', $code);
+        $image = new Image($code);
+        $response['image'] = (string)$image;
+        echo json_encode($response); die;
+        echo new Image($code);
+    }
+
+}

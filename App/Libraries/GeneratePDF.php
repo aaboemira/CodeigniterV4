@@ -16,11 +16,11 @@ class GeneratePDF
 
     public function generatePdf($html, $paper = 'A4', $orientation = 'portrait')
     {
-        //$this->dompdf->set_option('isPhpEnabled', true); // Enable PHP for dynamic content
+        $this->dompdf->set_option('isPhpEnabled', true); // Enable PHP for dynamic content
         $this->dompdf->set_option('isHtml5ParserEnabled', true); // Enable HTML5 parsing
         //$this->dompdf->set_option('isRemoteEnabled', true); // Allow loading remote content (including images)
         $this->dompdf->setPaper($paper, $orientation);
-        $this->dompdf->loadHtml("<p>Hello world</p>");
+        $this->dompdf->loadHtml($html);
         $this->dompdf->render();
         return $this->dompdf->output();
     }
@@ -258,16 +258,16 @@ class GeneratePDF
                 </div>
             </div>
             <h3 style="text-allign:left">
-                Rechung
+                Rechnung
             </h3>
             <table class="order-table">
                 <thead>
                 <tr>
-                    <th>Pos</th>
-                    <th>Artikelnr</th>
+                    <th>Pos.</th>
+                    <th>Artikelnr.</th>
                     <th>Bezeichnung</th>
                     <th>Menge</th>
-                    <th>MwSt</th>
+                    <th>MwSt.</th>
                     <th>Stück </th>
                     <th>Gesamt</th>
                 </tr>

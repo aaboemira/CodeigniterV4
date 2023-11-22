@@ -14,8 +14,6 @@ class Checkout extends BaseController
     public function __construct()
     {
         $this->Orders_model = new Orders_model();
-        helper('cookie');
-
     }
 
     public function index()
@@ -192,6 +190,8 @@ class Checkout extends BaseController
     {
         if (session('success_order')) {
             unset($_SESSION['discountCodeResult']);
+            unset($_SESSION['shopping_cart']);
+            $this->shoppingcart->clearShoppingCart();
             $data = array();
             $head = array();
             $arrSeo = $this->Public_model->getSeo('checkout');
@@ -200,7 +200,7 @@ class Checkout extends BaseController
             $head['keywords'] = str_replace(" ", ",", $head['title']);
             return $this->render('checkout_parts/payment_success_cash', $head, $data);
         } else {
-            return redirect()->to(LANG_URL . '/checkout1');
+            return redirect()->to(LANG_URL . '/checkout');
         }
     }
 
@@ -208,7 +208,7 @@ class Checkout extends BaseController
     {
         if (session('success_order')) {
             unset($_SESSION['discountCodeResult']);
-
+            unset($_SESSION['shopping_cart']);
             $data = array();
             $head = array();
             $arrSeo = $this->Public_model->getSeo('checkout');
@@ -216,10 +216,10 @@ class Checkout extends BaseController
             $head['description'] = @$arrSeo['description'];
             $head['keywords'] = str_replace(" ", ",", $head['title']);
             $data['bank_account'] = $this->Orders_model->getBankAccountSettings();
-
+            $this->shoppingcart->clearShoppingCart();
             return $this->render('checkout_parts/payment_success_bank', $head, $data);
         } else {
-            return redirect()->to(LANG_URL . '/checkout1');
+            return redirect()->to(LANG_URL . '/checkout');
         }
     }
 

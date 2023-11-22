@@ -11,7 +11,7 @@ $('.other-img-preview').click(function () {
     var modalImga = $(this).attr('src');
     selectedIndicator = $(this).data('num');
     var cc = selectedIndicator + 1;
-    $('.img-series').text(cc + ' of ' + allNum);
+    $('.img-series').text(cc + ' / ' + allNum);
     modalImg.src = modalImga;
 });
 $('.close').click(function () {
@@ -24,7 +24,7 @@ $('.inner-next').click(function () {
     }
     selectedIndicator = next;
     var cc = next + 1;
-    $('.img-series').text(cc + ' of ' + allNum);
+    $('.img-series').text(cc + ' / ' + allNum);
     var newSrc = $('[data-num="' + next + '"]').attr('src');
     modalImg.src = newSrc;
 });
@@ -35,7 +35,7 @@ $('.inner-prev').click(function () {
     }
     selectedIndicator = prev;
     var cc = prev + 1;
-    $('.img-series').text(cc + ' of ' + allNum);
+    $('.img-series').text(cc + ' /' + allNum);
     var newSrc = $('[data-num="' + prev + '"]').attr('src');
     modalImg.src = newSrc;
 });

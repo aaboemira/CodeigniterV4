@@ -24,15 +24,15 @@ $lang['price_low'] = 'niedrigster Preis';
 $lang['price_high'] = 'höchster Preis';
 $lang['add_to_cart'] = 'Zum Warenkorb hinzufügen';
 $lang['del_from_cart'] = 'aus dem Warenkorb nehmen';
-$lang['checkout1'] = 'Warenkorb';
-$lang['checkout2'] = 'Adresseingabe';
-$lang['checkout3'] = 'Versandart & Zahlungsmethode';
+$lang['checkout1'] = 'Adresseingabe';
+$lang['checkout2'] = 'Versandart & Zahlungsmethode';
+$lang['checkout3'] = 'Bestellübersicht';
 $lang['checkout4'] = 'Bestellung';
 $lang['checkout_overview'] = 'Zusammenfassung';
 $lang['back_to_basket'] = 'Zurück zum Warenkorb';
 $lang['back_to_adressinput'] = 'Zurück zur Adresseingabe';
-$lang['back_to_checkout2'] = 'Zurück zum Versand und Zahlungsmethode';
-$lang['to_checkout1'] = 'Weiter zur Adresseingabe';
+$lang['back_to_checkout2'] = 'Zurück zum Versand & Zahlungsmethode';
+// $lang['to_checkout1'] = 'Weiter zur Adresseingabe';
 $lang['to_checkout2'] = 'Weiter zum Versand und Zahlungsmethode';
 $lang['to_checkout3'] = 'Zur Bestellübersicht';
 $lang['checkout_payment'] = 'Zahlungsmethode';
@@ -60,6 +60,10 @@ $lang['checkout_adress'] = 'Rechnungsadresse';
 $lang['checkout_shipping'] = 'Versandart';
 $lang['city'] = 'Stadt';
 $lang['post_code'] = 'PLZ';
+$lang['ort'] = 'Ort';
+$lang['account_type'] = 'Sie send ein';
+
+$lang['reset']='zurücksetzen';
 $lang['notes'] = 'Sonstige Bemerkungen';
 $lang['required'] = '*';
 $lang['product'] = 'Produkt';
@@ -68,7 +72,7 @@ $lang['quantity'] = 'Anzahl';
 $lang['back_to_shop'] = 'Zurück zum Store';
 $lang['custom_order'] = 'Zahlungspflichtig bestellen';
 $lang['c_o_d_order_completed'] = ' Vielen Dank für Ihre Bestellung! Wir setzen uns umgehend mit Ihnen in Verbindung.';
-$lang['no_products_in_cart'] = 'Keine Produkte im Einkaufwagen';
+$lang['no_products_in_cart'] = 'Es befinden sich noch keine Produkte in Ihrem Einkaufwagen';
 $lang['go_back'] = 'Zurück';
 $lang['procurement_desc'] = 'Meistverkauft';
 $lang['procurement_asc'] = 'Wenigverkauft';
@@ -119,7 +123,7 @@ $lang['hideXsNav'] = 'Kategorien ausblenden';
 $lang['choose_payment'] = 'Zahlungsmethode auswählen';
 $lang['cancel_payment'] = 'Zahlung abbrechen';
 $lang['go_to_paypal'] = 'zu Paypal';
-$lang['you_choose_paypal'] = 'Die von Ihnen gewählte Zahlungsmethode: Paypal';
+$lang['you_choose_paypal'] = 'Vielen Dank für Ihre Bestellung! <br/> <br/>Wir haben Ihre Bestellung erhalten - Sie erhalten in Kürze eine Bestelleingangsbestätigung. <br /><br/> Klicken Sie auf "zu Paypal" um die Bezahlung jetzt abzuschließen.';
 $lang['paypal_cancel_msg'] = 'Die Paypal Bezahlung wurde abgebrochen ';
 $lang['paypal_success_msg'] = 'Sie erhalten in Kürze eine Bestätigung an die von Ihnen angegebene E-Mail Adresse. In dieser E-Mail ist Ihre Bestellung nochmals zusammengefasst.';
 $lang['not_selected'] = 'Nichts ausgewählt';
@@ -140,7 +144,7 @@ $lang['others'] = 'Sonstiges';
 $lang['welcome'] = 'Online store for clothes';
 $lang['social'] = 'Social media';
 $lang['no_sub_categories'] = 'Keine Unterkategorien';
-$lang['bank_success_msg'] = 'Vielen Dank für Ihre Bestellung! <br />Wir haben Ihre Bestellung erhalten - Sie erhalten in Kürze eine Bestellbestätigung an die von Ihnen angegebene E-Mail Adresse. <br />Nachfolgend finden Sie unsere Bankdaten.';
+$lang['bank_success_msg'] = 'Vielen Dank für Ihre Bestellung! <br /> <br/>Wir haben Ihre Bestellung erhalten - Sie erhalten in Kürze eine automatische Bestelleingangsbestätigung und nach Prüfung Ihrer Bestellung eine Bestellbestätigung an die von Ihnen angegebene E-Mail Adresse. <br /><br/> Sie haben die Zahlungsart "Überweisung / Vorkasse" gewählt, nachfolgend finden Sie unsere Bankdaten für die Überweisung auf unser Bankkonto. ';
 $lang['bank_payment'] = 'Überweisung / Vorkasse';
 $lang['bank_recipient_name'] = 'Empfänger';
 $lang['bank_iban'] = 'IBAN';
@@ -151,13 +155,35 @@ $lang['the_reason'] = 'Bestellnummer NDSH';
 $lang['brands'] = 'Marken';
 $lang['first_name_empty'] = '- Vorname';
 $lang['last_name_empty'] = '- Nachname';
-$lang['invalid_email'] = '- E-Mail Adresse';
+$lang['password_empty'] = '- Passwort ';
+$lang['phone_empty'] = '- Telefonnummer ';
+$lang['email_empty'] = '- E-Mail-Adresse ';
+$lang['lang_empty']='- Sprache';
+$lang['password_confirm_empty'] = '- Passwortbestätigung ';
+$lang['phone_empty'] = '- Telefonnummer ';
+$lang['mobile_empty'] = '- Mobiltelefonnummer ';
+$lang['mobile'] = 'Mobiltelefonnummer ';
+$lang['private'] = 'Privat ';
+$lang['business'] = 'Geschäft ';
+
+$lang['passwords_dont_match'] = '- Die Passwörter stimmen nicht überein';
+$lang['invalid_password'] = '- Das Passwort muss mindestens ein Sonderzeichen, eine Zahl und einen Buchstaben enthalten';
+$lang['captcha_didnt_match'] = '- Der Sicherheitscode stimmt nicht überein';
+$lang['user_email_is_taken'] = '- Diese E-Mail-Adresse wird bereits verwendet';
 $lang['invalid_street'] = '- Straße';
 $lang['invalid_housenr'] = '- Hausnummer';
 $lang['invalid_city'] = '- Stadt';
 $lang['invalid_post_code'] = '- PLZ ';
 $lang['invalid_country'] = '- Land';
-$lang['invalid_dataprotection'] = '- Datenschutzerklärung';
+$lang['invalid_account_type'] = '- Kontotyp';
+$lang['invalid_ort'] = '- Ort';
+$lang['invalid_data_processing'] = '- Data_processing';
+
+$lang['data_process_agreement'] = 'Hiermit stimme ich der Verarbeitung meiner Daten unter Berücksichtigung der Datenschutzerklärung zu. Ich habe auch zur Kenntnis genommen, dass ich meine Einwilligung zur Nutzung meiner Daten mit Wirkung in die Zukunft jederzeit widerrufen kann.';
+$lang['newsletter_agreement'] = 'Ich möchte den Newsletter erhalten';
+
+$lang['invalid_dataprotection'] = '- Datenschutzbestimmungen nicht zugestimmt';
+
 $lang['finded_errors'] = 'Fehlerhafte Eingaben';
 $lang['out_of_stock_product'] = 'Das Produkt ist aktuell ausverkauft';
 $lang['there_is_payment_error'] = 'Es gibt aktuell Probleme mit der Bestellung. Bitte kontaktieren Sie uns..';
@@ -173,23 +199,35 @@ $lang['Zwischensumme'] = 'Zwischensumme';
 $lang['database_error'] = 'A problem occured! Please contact support!';
 $lang['email'] = 'Email';
 $lang['password'] = 'Password';
+$lang['forget_password']='Passwort vergessen?';
+$lang['password_recover']='Passwort Wiederherstellung';
+$lang['password_email_msg']='Überprüfen Sie Ihren Posteingang';
+$lang['my_account']='mein Benutzerkonto';
 $lang['remember_me'] = 'Merken';
 $lang['u_login'] = 'Einloggen';
 $lang['register_me'] = 'Registrieren ';
 $lang['user_login_page'] = 'Login';
+$lang['nodematic_login'] = 'Nodematic Login';
+$lang['register'] = 'Registrierung';
+
 $lang['open_your_account'] = 'Add your products and sell directly through us';
 $lang['login_to_your_acc'] = 'Login to Your Account';
 $lang['forgot_pass'] = 'Forgot password';
 $lang['user_register_page'] = 'Register new user';
 $lang['create_account'] = 'Create a sales account';
-$lang['user_forgotten_page'] = 'Password Recovery';
-$lang['recover_password'] = 'Restore your password';
-$lang['password_repeat'] = 'Repeat password';
-$lang['send_me_new_pass'] = 'Send me new password';
-$lang['passwords_dont_match'] = 'Passwords dont match';
+$lang['user_forgotten_page'] = 'Passwortwiederherstellung';
+$lang['recover_password'] = 'Ihr Passwort wiederherstellen';
+$lang['password_repeat'] = 'Passwort wiederholen';
+$lang['send_me_new_pass'] = 'Schicken Sie mir ein neues Passwort';
+$lang['send_email'] = 'E-Mail senden';
+$lang['password_recover_info'] = 'Wir senden Ihnen eine Bestätigungs-E-Mail. Klicken Sie auf den darin enthaltenen Link, um Ihr Passwort zu ändern.';
+$lang['captcha_wrong']='Captcha Didnt match';
 $lang['vendor_invalid_email'] = 'Invalid email address';
 $lang['please_enter_password'] = 'Please enter a password';
 $lang['please_repeat_password'] = 'Please repeat the password';
+$lang['please_enter_mobile'] = 'Please enter a mobile number';
+$lang['please_enter_phone'] = 'Please enter a phone number';
+$lang['lang']='Sparche';
 $lang['vendor_email_is_taken'] = 'Email address already registered';
 $lang['login_vendor_error'] = 'Wrong email or password';
 $lang['vendor_add_product'] = 'Produkt hinzufügen ';
@@ -239,6 +277,8 @@ $lang['menu'] = 'Menu';
 $lang['go_to_checkout'] = 'Zur Kasse gehen';
 $lang['shop'] = 'Store';
 $lang['billing_details'] = 'Zahlungsdetails';
+$lang['billing_address'] = 'Rechnungsadresse';
+$lang['shipping_address'] = 'Lieferadresse';
 $lang['your_order'] = 'Artikelübersicht';
 $lang['contact_details'] = 'Kontakt';
 $lang['user_login'] = 'User login';
@@ -251,7 +291,6 @@ $lang['please_enter_name'] = 'Please enter name';
 $lang['please_enter_phone'] = 'Please enter phone';
 $lang['enter_password'] = 'Please enter password';
 $lang['pass_repeat'] = 'Please repeat password';
-$lang['user_email_is_taken'] = 'Email address is taken!';
 $lang['my_acc'] = 'My Profile';
 $lang['update'] = 'Update';
 $lang['logout'] = 'Logout';
@@ -286,7 +325,7 @@ $lang['get_angebot_text'] = 'Bitte füllen Sie das Formular aus - Sie erhalten n
 $lang['nav_printservice'] = '3D Printservice';
 $lang['product_description_highlights'] = 'Highlights';
 $lang['delivery_status_direct_available'] = 'Sofort lieferbar';
-$lang['delivery_status_available'] = 'in 3 - 5 Tagen lieferbar';
+$lang['delivery_status_available'] = 'Lieferzeit verz. bis 7 Tage';
 $lang['delivery_status_not_available'] = 'Ausverkauft - Aktuell nicht lieferbar';
 $lang['sold_out'] = 'Ausverkauft';
 $lang['Impressum'] = 'Impressum';
@@ -319,9 +358,9 @@ $lang['footer_submenu_return'] = '30 Tage Rückgaberecht';
 $lang['footer_submenu_save_pay'] = 'Sichere Bezahlmethoden';
 $lang['footer_submenu_save_data'] = 'Verbindung mit SSL- Verschlüsselung';
 
-$lang['footer_submenu_howto_order'] = 'Wie bestelle ich?';
+$lang['footer_submenu_howto_order'] = 'Bestellen bei Node Devices';
 $lang['footer_submenu_shipment'] = 'Versand & Lieferung';
-$lang['footer_submenu_revocation'] = 'Widderrufsrecht';
+$lang['footer_submenu_revocation'] = 'Widerrufsrecht';
 
 $lang['Kreditkarte-text'] = 'Kreditkarte';
 $lang['vork_bank-text'] = 'Vorkasse per Banküberweisung';
@@ -334,40 +373,38 @@ $lang['save_text'] = 'Sicher surfen und bezahlen mit SSL- Verschlüsselung';
 $lang['footer_ship_head'] = 'Versand';
 $lang['footer_ship_with'] = 'Schneller und sicherer Versand';
 $lang['footer_free_ship_germany'] = 'Versandkostenfrei innerhalb Deutschlands';
-$lang['footer_ship_EU'] = '13,90€ innerhalb EU';
+$lang['footer_ship_EU'] = '10,90€ innerhalb EU';
 
 
 
-
+$lang['contact_check']='Bitte akzeptieren Sie die Richtlinie, um diese Kontaktmöglichkeit zu verwenden';
 $lang['modal_product_added'] = 'Zu Ihrem Warenkorb hinzugefügt';
 $lang['modal_cart_total'] = 'Zwischensumme des Warenkorbs';
 $lang['modal_show_cart'] = 'Warenkorb anzeigen';
 $lang['shipping_price']='Versandpreis';
 $lang['sub_total']='Zwischensumme';
 $lang['partner_description']='
-Sie suchen qualifizierte Elektroinstallateur/innen in Ihrer Nähe? 
-Finden Sie geschulte Fachkräfte in Ihrer Umgebung, die Sie zu den
-JUNG Produkten und Systemen beraten.';
-$lang['partner_title']='Fachpartner finden';
+Sie suchen qualifizierte Fachleute für die Montage unserer NODEMATIC Produkte? 
+Finden Sie schnell die richtigen Spezialisten in Ihrer Umgebung, für eine sichere und fachgerechte Montage.';
+$lang['partner_title']='Monteur/innen finden';
 
-$lang['contact_text_whatsapp'] = 'WhatsApp: WhatsApp-Nachricht senden.';
-$lang['contact_text_phone'] = 'Telefon: Text auf Telefon senden';
-$lang['contact_text_email'] = 'E-Mail: Eine E-Mail senden';
-$lang['contact_policy']='Durch die Initiierung des Gesprächs stimme ich der Verarbeitung meiner persönlichen Daten'.
-                        '(z. B. E-Mail-Adresse) zur Kommunikation bezüglich der Vorbereitung und Durchführung'.
-                        'von Bestellungen über den jeweiligen Chat-Kanal zu.';
+$lang['Modal_contact_options_header'] = 'Kontaktmöglichkeiten';
+$lang['contact_text_whatsapp'] = 'Senden Sie uns eine WhatsApp-Nachricht';
+$lang['contact_text_phone'] = 'Rufen Sie uns an (Ortstarif | Mo. - Fr. | 9 - 17 Uhr)';
+$lang['contact_text_email'] = 'Schreiben Sie uns eine E-Mail';
+$lang['contact_policy']='Kontaktieren Sie uns gerne über einen der aufgelisteten Kanäle. Wir kümmern uns schnellstmöglich um Ihr Anliegen und melden uns umgehend bei Ihnen zurück.';
 
-$lang['home_panel_text']='Licht, Schatten, Temperatur: JUNG HOME besteht aus Systemeinsätzen, Aufsätzen und Steckdosen. Lokal vernetzt über Bluetooth Mesh. Die 230-Volt-Installation genügt!';
+$lang['home_panel_text']='  ';
 $lang['home_panel_button']='Mehr erfahren ';
-$lang['home_quote_title']='Oder gleich ein Angebot anfordern!';
-$lang['home_quote_head']='Unser Teckentrup-Service für Sie:';
-$lang['home_quote_text']='Einfach das Anfrageformular ausfüllen und wir suchen Ihnen einen Partner in Ihrer Nähe, der Ihnen
+$lang['home_quote_title']='Direkt ein Angebot anfordern!';
+$lang['home_quote_head']='Ganz bequem montieren lassen:';
+$lang['home_quote_text']='Einfach das Anfrageformular ausfüllen und wir suchen Ihnen einen passenden Montagepartner in Ihrer Nähe, der Ihnen
 umgehend ein konkretes Angebot macht.';
 $lang['home_arrivals_title']='Neuheiten 2023';
-$lang['home_arrivals_text']='Fortschritt als Tradition: JUNG Innovationen prägen seit über 100 Jahren die Branche. Diesen Trend setzen wir regelmäßig fort und präsentieren hier auch in 2023 unsere ersten neuen Entwicklungen und Produkte in diesem Jahr.';
-$lang['home_headline_title'] = 'Zukunftsorientierte Gebäudetechnik in zeitlosem Design';
-$lang['home_headline_text'] = 'Licht, Beschattung, Klima, Energie, Sicherheit, Türkommunikation und Multimedia – JUNG Systeme bieten die passende Lösung für jede Anforderung. Ästhetisches Design verschmilzt dabei mit intelligenter Smart-Home- und Smart-Building-Technologie. Alle Systeme folgen einem einfachen Konzept: smart und schön.';
+$lang['home_arrivals_text']='   .';
+$lang['home_headline_title'] = 'Zukunftsorientierte Geb';
+$lang['home_headline_text'] = 'Licht, Beschattung, Klima,  und Multimedia – . .';
 
-$lang['contact_check']='Bitte akzeptieren Sie die Richtlinie, um diese Kontaktmöglichkeit zu verwenden';
+$lang['product_select_variant']='Bitte auswählen';
+$lang['shippingIsBilling']='Die Lieferadresse entspricht der Rechnungsadresse';
 return $lang;
-

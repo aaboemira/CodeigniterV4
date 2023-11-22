@@ -65,9 +65,7 @@ class Autoload extends AutoloadConfig
      *
      * @var array<string, string>
      */
-    public $classmap = [
-        'EmailHelper' => APPPATH . 'Helpers/EmailHelper.php',
-    ];
+    public $classmap = [];
 
     /**
      * -------------------------------------------------------------------
@@ -100,6 +98,7 @@ class Autoload extends AutoloadConfig
      * @phpstan-var list<string>
      */
     public $helpers = [
+        'form',
         'url',
         'language',
         'text',

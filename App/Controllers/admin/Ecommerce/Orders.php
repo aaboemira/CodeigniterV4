@@ -121,7 +121,6 @@ class Orders extends ADMIN_Controller
             $this->saveHistory('Go to orders page');
         }
         $page = 'ecommerce/orders';
-        
         return view('templates/admin/_parts/template', ['page'=> $page, 'head' => $head ,'data' => $data, 'footer' => []]);
     }
 
@@ -187,8 +186,8 @@ class Orders extends ADMIN_Controller
                 $pdf = $this->generatePDF->generateInvoiceHtmlEnglish($orderData, $orderData['products']);
             }
             $title=$german?"Ihre Bestellung bei nodedevices.de":"Your order on nodedevices.de";
-            $attachmentName=$german?"Rechung_SHND".$orderData['order_id']:"Invoice_SHND".$orderData['order_id'];
-            $this->sendmail->sendToBestellbestaetigung($orderData['user_details']['email'], 'Admin', $title , 'Check it https://www.nodedevices.de/admin/orders',$orderData,$pdf,$attachmentName,$german);
+            $attachmentName=$german?"Rechnung_SHND".$orderData['order_id'].'.pdf':"Invoice_SHND".$orderData['order_id'].'.pdf';
+            $this->sendmail->sendToBestellbestaetigung($orderData['user_details']['email'], $orderData['user_details']['full_name'], $title , 'Check it https://www.nodedevices.de/admin/orders',$orderData,$pdf,$attachmentName,$german);
 
         }
         $this->Orders_model->changeOrderStatus($orderData['id'],'1');

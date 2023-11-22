@@ -90,7 +90,6 @@ class Session extends BaseConfig
      * will be later deleted by the garbage collector.
      */
     public bool $regenerateDestroy = false;
-    public $regenerateOnce = false; // Disable session ID regeneration after login
 
     /**
      * --------------------------------------------------------------------------

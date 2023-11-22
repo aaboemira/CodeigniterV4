@@ -17,6 +17,7 @@ class Shop extends BaseController
         $this->Brands_model = new Brands_model();
         $this->Public_model = new Public_model();
         $this->Home_admin_model = new Home_admin_model();
+
     }
 
     public function index($page = 0)
