@@ -141,18 +141,8 @@ body {
 }
 
 #top-part .shopping_cart_div {
-    position: absolute;
     background-color: black;
-    right: 15px;
-    bottom: 10px;
     display: inline-block;
-    /* border: 1px solid #FFF; */
-    max-height: 40px;
-    max-width: 40px;
-    min-height: 20px;
-    min-width: 20px;
-    width: 8vw;
-    height:8vw;
 }
 #top-part .dropdown-image {
     /* border: 1px solid #FFF; */
@@ -166,16 +156,15 @@ body {
     position: relative;
     width: 100%;
     height: auto;
-    /* border: 1px solid red;
-    */
+    max-height: 40px;
+    max-width: 40px;
+    min-height: 20px;
+    min-width: 20px;
+    width: 8vw;
+    height:8vw;
+
 }
-#top-part .shopping_cart_img {
-    position: relative;
-    width: 100%;
-    height: auto;
-    /* border: 1px solid red;
-    */
-}
+
 #top-part .login_div .login_img {
     position: relative;
     width: 100%;
@@ -204,6 +193,7 @@ body {
     */
     color: white;
     z-index: 999;
+    padding-top:2px;
 }
 
 #top-part .burger_div {
@@ -777,11 +767,11 @@ div.product-list {
     margin-bottom: 5px;
     padding-bottom: 15px;
     /* padding-top: 15px; */
-	text-align: center;
+    text-align: center;
 }
 /* #products-side{ */
-	/* width: 80%; */
-	/* border: 5px solid black; */
+/* width: 80%; */
+/* border: 5px solid black; */
 /* } */
 #products-side div.product-list,
 #small_carousel.carousel .carousel-inner {
@@ -961,7 +951,7 @@ div.product-sort .form-group {
 
 .paypal-image {
     margin: 20px 0;
-    
+
 }
 
 #checkout-page form .btm-10 {
@@ -1022,7 +1012,7 @@ div.product-sort .form-group {
 }
 
 #checkout-page .discount {
-    ;
+;
     margin-bottom: 20px;
 }
 
@@ -1311,7 +1301,7 @@ div.product-sort .form-group {
 }
 
 .product-list .price-discount {
-	height: 25px;
+    height: 25px;
     margin-top: 8px;
     margin-bottom: 0px;
     overflow: hidden;
@@ -1428,7 +1418,7 @@ div.product-sort .form-group {
     display: block;
     height: 150px;
     margin: auto;
-    max-width: 700px; 
+    max-width: 700px;
     padding: 10px 0;
     text-align: center;
     width: 80%;
@@ -3656,7 +3646,7 @@ a:hover {
 /* Carousel Indicators Styles */
 .home-container .carousel-indicators {
     z-index: 1;
-    
+
 }
 
 /* Arrivals Container Styles */
@@ -3671,8 +3661,8 @@ a:hover {
 
 
 .home-container .arrivals-container .panel-heading img {
-   width: 100%;
-   min-height: 200px;
+    width: 100%;
+    min-height: 200px;
 }
 .home-container .arrivals-container .panel-body {
     height: 250px;
@@ -3735,7 +3725,7 @@ a:hover {
     height: 1.2em;
     transition: all 0.2s ease-in-out;
     display: flex;
-    align-items: center; 
+    align-items: center;
 }
 
 /* Panel Button Hover Styles */
@@ -3829,8 +3819,86 @@ a:hover {
     display: flex;
     justify-content: center;
 }
-
+.shopping-cart-dropdown-wrapper {
+    position: absolute; /* Needed for absolute positioning of dropdown */
+    right:5px;
+}
+.flex-div {
+    display: flex;
+    justify-content: space-between; /* This will push the link to the right */
+}
+.flex-div .change_address{
+    color:#737373;
+    border:none;
+    background:none;
+}
+.flex-div .change_address:hover{
+    color:black;
+}
+.flex-div .change_address {
+    /* You can remove margin-left: 20%; */
+    cursor: pointer; /* Optional: Changes the cursor on hover */
+}
+/* Shopping Cart Dropdown Menu Styles */
+.shopping-cart-dropdown-wrapper .shopping-dropdown-menu {
+    display: none; /* Initially hidden */
+    position: absolute;
+    right: 0;
+    z-index: 1000;
+    /* Add more styles as needed */
+}
+.shopping-cart-dropdown-wrapper .custom-a{
+    padding:0 15px;
+}
 @media (min-width: 767px) {
+    .shopping-cart-dropdown-wrapper {
+        position: absolute; /* Needed for absolute positioning of dropdown */
+        right:5px;
+        bottom:10px !important;
+    }
+    .shopping-cart-dropdown-wrapper:hover .shopping-dropdown-menu {
+        display: block; /* Show dropdown on hover */
+        z-index: 999;
+        min-width: 28rem;
+        padding: 1.5rem 1.5rem;
+        margin: 0.125rem 0 0;
+        font-size: 1.5rem;
+        color: #212529;
+        text-align: left;
+        list-style: none;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: none;
+        border-radius: 0.5rem;
+        border-top-left-radius:0px;
+        border-top-right-radius:0px;
+
+        box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+    }
+
+    .shopping-cart-dropdown-wrapper:hover .custom-a {
+        background: #0399D4;
+        background: linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -moz-linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -ms-linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -webkit-gradient(linear, left top, left bottom, from(#EBEBEB), to(#A1A1A1));
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+        color: #3B3944;
+        moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+        text-shadow: 2px 2px 3px #FFFFFF;
+        webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+        border-radius: 10px;
+
+    }
+    .shopping-cart-dropdown-wrapper:hover .shopping_cart_counter{
+        background: #0399D4;
+        background: linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -moz-linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -ms-linear-gradient(top, #EBEBEB, #A1A1A1);
+        background: -webkit-gradient(linear, left top, left bottom, from(#EBEBEB), to(#A1A1A1)) !important;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+        color:black !important;
+    }
     .login-dropdown-li {
         position: absolute !important;
         bottom: -5px;
@@ -4010,6 +4078,11 @@ li.login-dropdown-li .login-icon:hover{
 /* Mobile view adjustments */
 
 @media (max-width: 767px) {
+    .shopping-cart-dropdown-wrapper {
+        position: absolute; /* Needed for absolute positioning of dropdown */
+        right:5px;
+        top:25px !important;
+    }
     #top-part .shopping_cart_div{
         top:30px !important;
     }
