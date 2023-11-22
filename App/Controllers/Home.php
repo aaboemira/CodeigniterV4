@@ -120,6 +120,10 @@ class Home extends BaseController
             exit('No direct script access allowed');
         }
         $this->shoppingcart->manageShoppingCart();
+        $shoppingCart=$this->shoppingcart->getCartItems();
+        return $this->response->setJSON([
+            'cart' => $shoppingCart['finalSum'],
+        ]);
     }
 
     /*

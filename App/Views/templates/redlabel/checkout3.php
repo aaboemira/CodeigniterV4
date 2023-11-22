@@ -2,6 +2,11 @@
 
 
     <?php
+    if (!isset($_SESSION['shipping_address']) || !isset($_SESSION['billing_address'])) {
+        // Redirect to checkout1
+        header('Location: ' . LANG_URL . '/checkout1');
+        exit; // Always call exit after a header redirect
+    }
     if (isset($cartItems['array']) && $cartItems['array'] != null) {
         ?>
 
@@ -33,7 +38,7 @@
         $totalAmount = number_format(round($totalAmount, 2), 2);
         $discountAmount = number_format($discountAmount, 2);
         ?>
-        <?= purchase_steps(1, 1, 1) ?>
+        <?= purchase_steps(1, 1, 1,1) ?>
         <div class="row">
             <div class="col-sm-9 left-side">
                 <form method="POST" id="goOrder">
@@ -43,17 +48,20 @@
                                 <div class="title alone" >
                                     <span><?= lang_safe('billing_address') ?></span>
                                 </div>
-                                <div>
-                                    <?= $billingAddress['first_name'] . $billingAddress['last_name'] ?>
+                                <div class="flex-div">
+                                    <?= $billingAddress['billing_first_name'] .' '. $billingAddress['billing_last_name'] ?>
+                                    <?php if (session()->has('logged_user')):  ?>
+                                    <a class="change_address" onclick="changeAddress()"><?=lang_safe('change_address')?></a>
+                                    <?php endif?>
                                 </div>
                                 <div>
-                                    <?= $billingAddress['street'] . ' ' . $billingAddress['housenr'] ?>
+                                    <?= $billingAddress['billing_street'] . ' ' . $billingAddress['billing_housenr'] ?>
                                 </div>
                                 <div>
-                                    <?= $billingAddress['post_code'] . ' ' . $billingAddress['city'] ?>
+                                    <?= $billingAddress['billing_post_code'] . ' ' . $billingAddress['billing_city'] ?>
                                 </div>
                                 <div>
-                                    <?= $billingAddress['country'] ?>
+                                    <?= $billingAddress['billing_country'] ?>
                                 </div>
                             </div>
                             <div class="col-md-3 col-xs-12" style="padding-left: 0 !important;margin-bottom: 1.2em; ">
@@ -61,17 +69,20 @@
                                 <div class="title alone" >
                                     <span><?= lang_safe('shipping_address') ?></span>
                                 </div>
-                                <div>
-                                    <?= $shippingAddress['first_name'] . $shippingAddress['last_name'] ?>
+                                <div class="flex-div">
+                                    <?= $shippingAddress['shipping_first_name'] .' '. $shippingAddress['shipping_last_name'] ?>
+                                        <?php if (session()->has('logged_user')):  ?>
+                                        <a class="change_address" onclick="changeAddress()"><?=lang_safe('change_address')?></a>
+                                        <?php endif?>
                                 </div>
                                 <div>
-                                    <?= $shippingAddress['street'] . ' ' . $shippingAddress['housenr'] ?>
+                                    <?= $shippingAddress['shipping_street'] . ' ' . $shippingAddress['shipping_housenr'] ?>
                                 </div>
                                 <div>
-                                    <?= $shippingAddress['post_code'] . ' ' . $shippingAddress['city'] ?>
+                                    <?= $shippingAddress['shipping_post_code'] . ' ' . $shippingAddress['shipping_city'] ?>
                                 </div>
                                 <div>
-                                    <?= $shippingAddress['country'] ?>
+                                    <?= $shippingAddress['shipping_country'] ?>
                                 </div>
                             </div>
                         </div>
@@ -335,6 +346,13 @@ if ($codeDiscounts == 1 && isset($_POST['discountCode'])) { ?>
         });
     </script>
 <?php } ?>
-
+<form id="changeAddress" action="" method="post" style="display: none;">
+    <input type="hidden" name="action" value="change_address">
+</form>
+<script type="text/javascript">
+    function changeAddress() {
+        document.getElementById('changeAddress').submit();
+    }
+</script>
 
 

@@ -1,10 +1,15 @@
 <div class="container" id="checkout-page">
 
 <?php
+    if (!isset($_SESSION['shipping_address']) || !isset($_SESSION['billing_address'])) {
+        // Redirect to checkout1
+        header('Location: ' . LANG_URL . '/checkout1');
+        exit; // Always call exit after a header redirect
+    }
     if (isset($cartItems['array']) && $cartItems['array'] != null) {
     ?>
 
-    <?= purchase_steps(1, 1) ?>
+    <?= purchase_steps(1, 1,1) ?>
     <div class="row">
         <div class="col-sm-9 left-side">
             <form method="POST" id="goOrder">

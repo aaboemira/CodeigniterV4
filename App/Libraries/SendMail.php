@@ -55,7 +55,7 @@ class SendMail
     }
 	public function sendToBestellbestaetigung($toEmail, $recipientName, $subject, $msg,$data,$attachmentData,$attachmentName,$german)
     {
-        $this->mail->setFrom('Kontaktformular_ND@freenet.de', 'Node Devices');
+        $this->mail->setFrom('kontakt@nodedevices.de', 'Node Devices');
 
         $this->mail->addAddress($toEmail, $recipientName);
 		$this->mail->addBCC('kontakt@nodedevices.de');

@@ -29,13 +29,31 @@ class Checkout3 extends BaseController
 
     public function index()
     {
+        $controller=new Checkout1();
+
         $data = array();
         $head = array();
         $arrSeo = $this->Public_model->getSeo('checkout3');
         $head['title'] = @$arrSeo['title'];
         $head['description'] = @$arrSeo['description'];
         $head['keywords'] = str_replace(" ", ",", $head['title']);
-
+        $data['countries'] = $controller->getCountries();
+        if ($this->request->getPost('action') == 'change_address') {
+            $userData = $this->Public_model->getUserWithAddressesByEmail(session()->get('email'));
+            $data['user_data'] = $userData;
+            $data['change_address'] = true;
+            return $this->render('checkout1', $head, $data);
+        }
+        if (isset($_POST['user_status'])) {
+            // Process the form data
+            $formDataValid = $controller->processFormData($this->request->getPost());
+            if ($formDataValid) {
+                return redirect()->to(LANG_URL . '/checkout3');
+            } else {
+                // If form data is not valid, re-render the form with errors
+                return $this->render('checkout1', $head, $data);
+            }
+        }
         if (isset($_POST['goOrder'])) {
 
             $_POST['payment_type'] =  session('payment_type');
@@ -74,13 +92,13 @@ class Checkout3 extends BaseController
 
             $orderData = array(
                 'order_id'=>$orderId,
-                'shipping_full_name'=>$_POST['shipping_address']['first_name'].' '.$_POST['shipping_address']['last_name'],
-                'billing_full_name'=>$_POST['billing_address']['first_name'].' '.$_POST['billing_address']['last_name'],
+                'shipping_full_name'=>$_POST['shipping_address']['shipping_first_name'].' '.$_POST['shipping_address']['shipping_last_name'],
+                'billing_full_name'=>$_POST['billing_address']['billing_first_name'].' '.$_POST['billing_address']['billing_last_name'],
                 'shipping_type'=>$_POST['shipping_type'],
                 'shipping_price'=>$_POST['shipping_price'],
                 'payment_type'=>$_POST['payment_type'],
                 'email'=>$_POST['email'],
-                'country'=>$_POST['billing_address']['country'],
+                'country'=>$_POST['billing_address']['billing_country'],
                 'products'=>$products,
                 'currency'=>config('config')->currency,
                 'discount'=>$discount_amount,
@@ -110,7 +128,6 @@ class Checkout3 extends BaseController
         $data['bestSellers'] = $this->Public_model->getbestSellers();
         $data['shipping_price']=session('shipping_price');
         $data['shipping_type']=session('shipping_type');
-
         return $this->render('checkout3', $head, $data);
     }
 
@@ -157,11 +174,15 @@ class Checkout3 extends BaseController
             $_SESSION['final_amount'] = $_POST['final_amount'] . $_POST['amount_currency'];
             unset($_SESSION['shopping_cart']);
             @delete_cookie('shopping_cart');
+            unset($_SESSION['shipping_address'],$_SESSION['billing_address'],$_SESSION['guest_user']);
+
             return redirect()->to(LANG_URL . '/checkout/successbank')->withCookies();
         }
         if ($_POST['payment_type'] == 'cashOnDelivery') {
             unset($_SESSION['shopping_cart']);
             @delete_cookie('shopping_cart');
+            unset($_SESSION['shipping_address'],$_SESSION['billing_address'],$_SESSION['guest_user']);
+
             return redirect()->to(LANG_URL . '/checkout/successcash')->withCookies();
         }
         if ($_POST['payment_type'] == 'PayPal') {
@@ -181,7 +202,7 @@ class Checkout3 extends BaseController
         $titlecustomer=$german?"Ihre Bestellung bei nodedevices.de":"Your order on nodedevices.de";
 
         //to customer
-        $this->sendmail->orderConfirmation($orderData['email'], $_POST['billing_address']['first_name'] . ' ' . $_POST['billing_address']['last_name'], $titlecustomer,$orderData,$german);
+        $this->sendmail->orderConfirmation($orderData['email'], $_POST['billing_address']['billing_first_name'] . ' ' . $_POST['billing_address']['billing_last_name'], $titlecustomer,$orderData,$german);
         //$this->sendmail->clearAddresses();
         //Send to admin users
         if (!empty($users)) {

@@ -25,24 +25,7 @@ class Users extends BaseController
         $this->sendmail = new SendMail();
     }
 
-    public function login()
-    {
-        if (isset($_POST['login'])) {
-            $result = $this->Public_model->checkPublicUserIsValid($_POST);
-            if ($result !== false) {
-                $_SESSION['logged_user'] = $result; //id of user
-                return redirect()->to(LANG_URL . '/myaccount');
-            } else {
-                session()->setFlashdata('error', lang_safe('wrong_user'));
-            }
-        }
-        $head = array();
-        $data = array();
-        $head['title'] = lang_safe('user_login');
-        $head['description'] = lang_safe('user_login');
-        $head['keywords'] = str_replace(" ", ",", $head['title']);
-        return $this->render('login', $head, $data);
-    }
+
 
     public function register()
     {
@@ -56,30 +39,15 @@ class Users extends BaseController
             
         }
         if (isset($_POST['login'])) {
-            $validation = \Config\Services::validation();
-            $validation->setRule('email', 'required|valid_email', lang_safe('invalid_email'));
-            $validation->setRule('pass', 'required', lang_safe('enter_password'));
-            $result = $this->Public_model->checkPublicUserIsValid($_POST);
-            if ($result !== false) {
-                if($result['verified'] == 0) {
-                    $email = $result['email'];
-                    $verificationToken = $result['verify_token'];
-                    //$email = $this->sendVerificationEmail($email,'Deutchland',$result['first_name'].' '. $result['last_name'], $verificationToken);
-                    session()->setFlashdata('loginError', lang_safe('verify_first', 'Please verify your email first'));
-                } else {
-                    session()->set([
-                        'logged_user' => $result['id'],
-                        'user_name' => $result['first_name'].$result['last_name'], // Store the user's name
-                        'email' => $result['email'], // Store the user's email
-                    ]);
-                
-                    return redirect()->to(LANG_URL . '/myaccount');
-                }
-                
+            $email = $_POST['email'];
+            $password = $_POST['pass'];
+            if ($this->performLogin($email, $password)) {
+                return redirect()->to(LANG_URL . '/myaccount');
             } else {
                 session()->setFlashdata('loginError', lang_safe('wrong_user'));
             }
         }
+
         $head = array();
         $data = array();
         $head['title'] = lang_safe('user_register');
@@ -350,7 +318,8 @@ class Users extends BaseController
         $fullName=$_POST['first_name'].' '. $_POST['last_name'];
 
         $verificationToken = random_string('alnum', 32);
-        $email = $this->sendVerificationEmail($email,$country,$fullName, $verificationToken);
+        //$email = $this->sendVerificationEmail($email,$country,$fullName, $verificationToken);
+        $email=true;
         if($email) {
             $_POST['verify_token'] = $verificationToken;
             $this->user_id = $this->Public_model->registerUser($_POST);
@@ -488,5 +457,32 @@ class Users extends BaseController
     function generateResetToken($length = 32)
     {
         return bin2hex(random_bytes($length));
+    }
+    public function performLogin($email, $password)
+    {
+        $validation = \Config\Services::validation();
+        $validation->setRule('email', 'required|valid_email', lang_safe('invalid_email'));
+        $validation->setRule('pass', 'required', lang_safe('enter_password'));
+        $loginData = [
+            'email' => $email,
+            'pass' => $password,
+        ];
+
+        $result = $this->Public_model->checkPublicUserIsValid($loginData);
+
+        if ($result !== false) {
+            if ($result['verified'] == 0) {
+                session()->setFlashdata('loginError', lang_safe('verify_first', 'Please verify your email first'));
+                return false;
+            } else {
+                session()->set([
+                    'logged_user' => $result['id'],
+                    'user_name' => $result['first_name'] .' '. $result['last_name'],
+                    'email' => $result['email'],
+                ]);
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -40,24 +40,25 @@ class ShoppingCart
             }
         }
         if ($_POST['action'] == 'removeProduct') {
-            $count = count(array_keys($_SESSION['shopping_cart'], $_POST['article_id']));
-            $i=1;
-            do {
-                if (($key = array_search($_POST['article_id'], $_SESSION['shopping_cart'])) !== false) {
-                    unset($_SESSION['shopping_cart'][$key]);
-                }
-                $i++;
-            } while ($i <= $count);
+            $keysToRemove = array_keys($_SESSION['shopping_cart'], $_POST['article_id']);
+            foreach ($keysToRemove as $key) {
+                unset($_SESSION['shopping_cart'][$key]);
+            }
+            // Re-index the array to maintain consistent indexing
+            $_SESSION['shopping_cart'] = array_values($_SESSION['shopping_cart']);
         }
+
         @set_cookie('shopping_cart', serialize($_SESSION['shopping_cart']), $this->cookieExpTime);
         $result = 0;
         if (!empty($_SESSION['shopping_cart'])) {
             $result = $this->getCartItems();
         }
-        // get items from db and add him to cart products list from ajax
 
-        $loop = new \App\Libraries\Loop;
-        $loop->getCartItems($result);
+        // get items from db and add him to cart products list from ajax
+//
+//        $loop = new \App\Libraries\Loop;
+//        $loop->getCartItems($result);
+
     }
 
     public function removeFromCart()

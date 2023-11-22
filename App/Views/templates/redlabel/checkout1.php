@@ -1,38 +1,13 @@
 <div class="container" id="checkout-page">
 
-    <?php if (isset($cartItems['array']) && $cartItems['array'] != null) { ?>
-    <?php
-    $countries = [
-        'Deutschland',
-        'Belgien',
-        'Bulgarien',
-        'Dänemark',
-        'Estland',
-        'Finnland',
-        'Griechenland',
-        'Kroatien',
-        'Lettland',
-        'Litauen',
-        'Luxemburg',
-        'Malta',
-        'Monaco',
-        'Niederlande',
-        'Österreich',
-        'Polen',
-        'Portugal',
-        'Rumänien',
-        'Schweden',
-        'Slowakei',
-        'Slowenien',
-        'Spanien',
-        'Tschechische Republik',
-        'Ungarn',
-        'Zypern',
-    ];
-    ?>
-    <?= purchase_steps(1) ?>
+    <?php if (isset($cartItems['array']) && $cartItems['array'] != null) {  ?>
 
-    <form method="POST" id="goOrder">
+
+    <?= purchase_steps(1, 1) ?>
+
+    <form method="POST" id="goOrder" name="checkout1">
+        <input type="hidden" name="user_status" value="<?= session()->has('logged_user') ? 'user' : 'guest' ?>">
+
         <?php
         if (session('submit_error')) {
             ?>
@@ -52,25 +27,32 @@
         }
         ?>
         <div class="row">
+            <?php if (!session()->has('logged_user')): ?>
             <div class="title alone">
                 <span><?= lang_safe('checkout_contact') ?></span>
             </div>
+
             <div class="row">
                 <div class="col-sm-9 ">
                     <div class="form-group col-sm-6">
                         <label for="emailAddressInput"><?= lang_safe('email_address') ?>
                             <sup><?= lang_safe('required') ?></sup></label>
-                        <input id="emailAddressInput" class="form-control" name="email"
-                               value="<?= @$_SESSION['email'] ?>"
-                               type="text" placeholder="<?= lang_safe('email_address') ?>">
+                        <input id="emailAddressInput" class="form-control" placeholder="<?= lang_safe('email_address') ?>" type="text" name="email" value="<?= session()->has('logged_user') && isset($userData) ? $userData->email : (session()->has('email') ? session()->get('email') : '') ?>">
+
                     </div>
                     <div class="form-group col-sm-6">
                         <label for="phoneInput"><?= lang_safe('phone') ?> </label>
-                        <input id="phoneInput" class="form-control" name="phone" value="<?= @$_SESSION['phone'] ?>"
-                               type="text" placeholder="<?= lang_safe('phone') ?>">
+                        <input id="phoneInput" class="form-control" placeholder="<?= lang_safe('phone') ?>" type="text" name="phone" value="<?= session()->has('logged_user') && isset($userData) ? $userData->phone : (session()->has('phone') ? session()->get('phone') : '') ?>">
+
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
+            <?php if (session()->has('logged_user')):  ?>
+                <input type="hidden" name="email" value="<?= esc($user_data->email ?? '') ?>">
+                <input type="hidden" name="phone" value="<?= esc($user_data->phone ?? '') ?>">
+            <?php endif; ?>
+
             <div class="billing-section" id="billing-section">
                 <div class="title alone">
                     <br>
@@ -81,16 +63,17 @@
                         <div class="form-group col-sm-6">
                             <label for="firstNameInput"><?= lang_safe('first_name') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="firstNameInput" class="form-control" name="billing_first_name"
-                                   value="<?= @$_SESSION['billing_address']['first_name'] ?>" type="text"
-                                   placeholder="<?= lang_safe('first_name') ?>">
+                            <input id="firstNameInput" class="form-control" placeholder="<?= lang_safe('first_name') ?>"
+                                   type="text" name="billing_first_name"
+                                   value="<?= get_form_field_value($user_data ?? null, 'billing_address', 'billing_first_name') ?>">
+
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="lastNameInput"><?= lang_safe('last_name') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="lastNameInput" class="form-control" name="billing_last_name"
-                                   value="<?= @$_SESSION['billing_address']['last_name'] ?>" type="text"
-                                   placeholder="<?= lang_safe('last_name') ?>">
+                            <input id="lastNameInput" class="form-control" placeholder="<?= lang_safe('first_name') ?>"
+                                   type="text" name="billing_last_name"
+                                   value="<?= get_form_field_value($user_data ?? null, 'billing_address', 'billing_last_name') ?>">
                         </div>
                     </div>
                 </div>
@@ -98,9 +81,9 @@
                     <div class="col-sm-9">
                         <div class="form-group col-sm-6">
                             <label for="companyInput"><?= lang_safe('company') ?></label>
-                            <input id="companyInput" class="form-control" name="billing_company"
-                                   value="<?= @$_SESSION['billing_address']['company'] ?>"
-                                   type="text" placeholder="<?= lang_safe('company') ?>">
+                            <input id="companyInput" class="form-control" placeholder="<?= lang_safe('company') ?>"
+                                   type="text" name="billing_company"
+                                   value="<?= get_form_field_value($user_data ?? null, 'billing_address', 'billing_company') ?>">
                         </div>
                     </div>
                 </div>
@@ -109,16 +92,20 @@
                         <div class="form-group col-sm-6">
                             <label for="streetInput"><?= lang_safe('street') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="streetInput" class="form-control" name="billing_street"
-                                   value="<?= @$_SESSION['billing_address']['street'] ?>"
-                                   type="text" placeholder="<?= lang_safe('street') ?>">
+
+                            <input id="streetInput" class="form-control" placeholder="<?= lang_safe('street') ?>"
+                                   type="text" name="billing_street"
+                                   value="<?= get_form_field_value($user_data ?? null, 'billing_address', 'billing_street') ?>">
+
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="housenrInput"><?= lang_safe('housenr') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="housenrInput" class="form-control" name="billing_housenr"
-                                   value="<?= @$_SESSION['billing_address']['housenr'] ?>"
-                                   type="text" placeholder="<?= lang_safe('housenr') ?>">
+
+                            <input id="housenrInput" class="form-control" placeholder="<?= lang_safe('housenr') ?>"
+                                   type="text" name="billing_housenr"
+                                   value="<?= get_form_field_value($user_data ?? null, 'billing_address', 'billing_housenr') ?>">
+
                         </div>
                     </div>
                 </div>
@@ -127,29 +114,33 @@
                         <div class="form-group col-sm-6">
                             <label for="country"><?= lang_safe('country') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-
                             <select size="1" id="country" name="billing_country" class="form-control">
-                                <?php
-                                foreach ($countries as $countryName) {
-                                    $selected = isset($_SESSION['billing_address']['country']) && $_SESSION['billing_address']['country'] == $countryName ? 'selected' : '';
-                                    echo "<option value=\"$countryName\" $selected>$countryName</option>";
-                                }
-                                ?>
+                                <?php foreach ($countries as $countryName): ?>
+                                    <?php
+                                    $currentCountry = get_form_field_value($user_data ?? null, 'billing_address', 'billing_country');
+                                    $selected = $countryName === $currentCountry ? 'selected' : '';
+                                    ?>
+                                    <option value="<?= esc($countryName) ?>" <?= $selected ?>><?= esc($countryName) ?></option>
+                                <?php endforeach; ?>
                             </select>
+
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="postInput"><?= lang_safe('post_code') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="postInput" class="form-control" name="billing_post_code"
-                                   value="<?= @$_SESSION['billing_address']['post_code'] ?>"
-                                   type="text" placeholder="<?= lang_safe('post_code') ?>">
+                            <input id="postInput" class="form-control" placeholder="<?= lang_safe('post_code') ?>"
+                                   type="text" name="billing_post_code"
+                                   value="<?= get_form_field_value($user_data ?? null, 'billing_address', 'billing_post_code') ?>">
+
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="cityInput"><?= lang_safe('city') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="cityInput" class="form-control" name="billing_city"
-                                   value="<?= @$_SESSION['billing_address']['city'] ?>"
-                                   type="text" placeholder="<?= lang_safe('city') ?>">
+
+                            <input id="cityInput" class="form-control" placeholder="<?= lang_safe('city') ?>"
+                                   type="text" name="billing_city"
+                                   value="<?= get_form_field_value($user_data ?? null, 'billing_address', 'billing_city') ?>">
+
                         </div>
                     </div>
                 </div>
@@ -176,16 +167,19 @@
                         <div class="form-group col-sm-6">
                             <label for="shippingFirstNameInput"> <?= lang_safe('first_name') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="shippingFirstNameInput" class="form-control" name="shipping_first_name"
-                                    type="text"
-                                   placeholder="<?= lang_safe('first_name') ?>">
+
+                            <input id="shippingFirstNameInput" class="form-control"
+                                   placeholder="<?= lang_safe('first_name') ?>" type="text" name="shipping_first_name"
+                                   value="<?= get_form_field_value($user_data ?? null, 'shipping_address', 'shipping_first_name') ?>">
+
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="shippingLastNameInput"> <?= lang_safe('last_name') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="shippingLastNameInput" class="form-control" name="shipping_last_name"
-                                   type="text"
-                                   placeholder="<?= lang_safe('last_name') ?>">
+                            <input id="shippingLastNameInput" class="form-control"
+                                   placeholder="<?= lang_safe('last_name') ?>" type="text" name="shipping_last_name"
+                                   value="<?= get_form_field_value($user_data ?? null, 'shipping_address', 'shipping_last_name') ?>">
+
                         </div>
                     </div>
                 </div>
@@ -193,9 +187,10 @@
                     <div class="col-sm-9">
                         <div class="form-group col-sm-6">
                             <label for="shippingCompanyInput"> <?= lang_safe('company') ?></label>
-                            <input id="shippingCompanyInput" class="form-control" name="shipping_company"
+                            <input id="shippingCompanyInput" class="form-control" placeholder="<?= lang_safe('company') ?>"
+                                   type="text" name="shipping_company"
+                                   value="<?= get_form_field_value($user_data ?? null, 'shipping_address', 'shipping_company') ?>">
 
-                                   type="text" placeholder="<?= lang_safe('company') ?>">
                         </div>
                     </div>
                 </div>
@@ -204,16 +199,18 @@
                         <div class="form-group col-sm-6">
                             <label for="shippingStreetInput"> <?= lang_safe('street') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="shippingStreetInput" class="form-control" name="shipping_street"
+                            <input id="shippingStreetInput" class="form-control" placeholder="<?= lang_safe('street') ?>"
+                                   type="text" name="shipping_street"
+                                   value="<?= get_form_field_value($user_data ?? null, 'shipping_address', 'shipping_street') ?>">
 
-                                   type="text" placeholder="<?= lang_safe('street') ?>">
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="shippingHousenrInput"> <?= lang_safe('housenr') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="shippingHousenrInput" class="form-control" name="shipping_housenr"
+                            <input id="shippingHousenrInput" class="form-control" placeholder="<?= lang_safe('housenr') ?>"
+                                   type="text" name="shipping_housenr"
+                                   value="<?= get_form_field_value($user_data ?? null, 'shipping_address', 'shipping_housenr') ?>">
 
-                                   type="text" placeholder="<?= lang_safe('housenr') ?>">
                         </div>
 
                         <div class="form-group col-sm-6">
@@ -221,38 +218,45 @@
                                 <sup><?= lang_safe('required') ?></sup></label>
 
                             <select size="1" id="shippingCountry" name="shipping_country" class="form-control">
-                                <?php
-                                foreach ($countries as $countryName) {
-                                    $selected = isset($_SESSION['shipping_address']['country']) && $_SESSION['shipping_address']['country'] == $countryName ? 'selected' : '';
-                                    echo "<option value=\"$countryName\" $selected >$countryName</option>";                                }
-                                ?>
+                                <?php foreach ($countries as $countryName): ?>
+                                    <?php
+                                    $currentShippingCountry = get_form_field_value($user_data ?? null, 'shipping_address', 'shipping_country');
+                                    $selected = $countryName === $currentShippingCountry ? 'selected' : '';
+                                    ?>
+                                    <option value="<?= esc($countryName) ?>" <?= $selected ?>><?= esc($countryName) ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="shippingPostInput"><?= lang_safe('post_code') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="shippingPostInput" class="form-control" name="shipping_post_code"
 
-                                   type="text" placeholder="<?= lang_safe('post_code') ?>">
+                            <input id="shippingPostInput" class="form-control" placeholder="<?= lang_safe('post_code') ?>"
+                                   type="text" name="shipping_post_code"
+                                   value="<?= get_form_field_value($user_data ?? null, 'shipping_address', 'shipping_post_code') ?>">
+
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="shippingCityInput"> <?= lang_safe('city') ?>
                                 <sup><?= lang_safe('required') ?></sup></label>
-                            <input id="shippingCityInput" class="form-control" name="shipping_city"
+                            <input id="shippingCityInput" class="form-control" placeholder="<?= lang_safe('city') ?>"
+                                   type="text" name="shipping_city"
+                                   value="<?= get_form_field_value($user_data ?? null, 'shipping_address', 'shipping_city') ?>">
 
-                                   type="text" placeholder="<?= lang_safe('city') ?>">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-12 ">
+                    <?php if (!session()->has('logged_user')): ?>
                     <div class="form-group col-sm-9">
                         <br><br>
                         <label for="notesInput"><?= lang_safe('notes') ?></label>
                         <textarea id="notesInput" class="form-control" name="notes"
                                   rows="3"><?= @$_SESSION['notes'] ?></textarea>
                     </div>
+                    <?php endif; ?>
 
                     <div class="form-group col-sm-12">
                         <label>
@@ -298,32 +302,18 @@
 </div>
 </form>
 <?php } else { ?>
-    <div class="empty-cart">
-        <span><?= lang_safe('empty_cart') ?></span>
-    </div>
-<?php } ?>
-</div>
 
+<div class="container">
+    <div class="col-sm-6">
+        <div class="alert alert-info">
+            <?= lang_safe('empty_cart') ?>
+        </div>
+    </div>
+</div>
+<?php } ?>
 <script>
     $(document).ready(function () {
-        if ($('#shippingCountry').val() === '') {
-            // Set the default value to "Deutschland"
-            $('#shippingCountry').val('Deutschland');
-            console.log("iam here")
-        }
-        // Function to hide the shipping address section
-        function hideShippingAddressSection() {
-            $('.shipping-section').hide();
-        }
-
-        // Function to show the shipping address section
-        function showShippingAddressSection() {
-            $('.shipping-section').show();
-        }
-
-        $('#sameAddressCheckbox').change(function () {
-            handleCopyBillingToShipping()
-        });
+        // Function to copy billing address to shipping address
         function copyBillingToShipping() {
             $('#shippingFirstNameInput').val($('#firstNameInput').val());
             $('#shippingLastNameInput').val($('#lastNameInput').val());
@@ -334,47 +324,67 @@
             $('#shippingPostInput').val($('#postInput').val());
             $('#shippingCityInput').val($('#cityInput').val());
         }
-        function populateShippingFromSession() {
-            $('#shippingFirstNameInput').val('<?= isset($_SESSION['shipping_address']['first_name']) ? $_SESSION['shipping_address']['first_name'] : '' ?>');
-            $('#shippingLastNameInput').val('<?= isset($_SESSION['shipping_address']['last_name']) ? $_SESSION['shipping_address']['last_name'] : '' ?>');
-            $('#shippingCompanyInput').val('<?= isset($_SESSION['shipping_address']['company']) ? $_SESSION['shipping_address']['company'] : '' ?>');
-            $('#shippingStreetInput').val('<?= isset($_SESSION['shipping_address']['street']) ? $_SESSION['shipping_address']['street'] : '' ?>');
-            $('#shippingHousenrInput').val('<?= isset($_SESSION['shipping_address']['housenr']) ? $_SESSION['shipping_address']['housenr'] : '' ?>');
-            $('#shippingCountry').val('<?= isset($_SESSION['shipping_address']['country']) ? $_SESSION['shipping_address']['country'] : '' ?>');
-            $('#shippingPostInput').val('<?= isset($_SESSION['shipping_address']['post_code']) ? $_SESSION['shipping_address']['post_code'] : '' ?>');
-            $('#shippingCityInput').val('<?= isset($_SESSION['shipping_address']['city']) ? $_SESSION['shipping_address']['city'] : '' ?>');
-        }
-        function clearShippingFields() {
-            $('#shippingFirstNameInput').val('');
-            $('#shippingLastNameInput').val('');
-            $('#shippingCompanyInput').val('');
-            $('#shippingStreetInput').val('');
-            $('#shippingHousenrInput').val('');
-            $('#shippingPostInput').val('');
-            $('#shippingCityInput').val('');
-        }
-        $('#checkoutButton').click(function () {
-            if ($('#sameAddressCheckbox').is(':checked')) {
-                copyBillingToShipping();
-            }
-            $('#country').val()
-            $('#goOrder').submit();
-        });
-        function handleCopyBillingToShipping() {
-            if ($('#sameAddressCheckbox').is(':checked')) {
-                copyBillingToShipping();
-                hideShippingAddressSection();
-                $('#sameShipping').val("true");
 
+        // Function to populate shipping address from user data or session
+        function populateShippingFields() {
+            <?php if (session()->has('logged_user')): ?>
+            $('#shippingFirstNameInput').val('<?= esc($user_data->shipping_first_name ?? '') ?>');
+            $('#shippingLastNameInput').val('<?= esc($user_data->shipping_last_name ?? '') ?>');
+            $('#shippingCompanyInput').val('<?= esc($user_data->shipping_company ?? '') ?>');
+            $('#shippingStreetInput').val('<?= esc($user_data->shipping_street ?? '') ?>');
+            $('#shippingHousenrInput').val('<?= esc($user_data->shipping_housenr ?? '') ?>');
+            $('#shippingCountry').val('<?= esc($user_data->shipping_country ?? '') ?>');
+            $('#shippingPostInput').val('<?= esc($user_data->shipping_post_code ?? '') ?>');
+            $('#shippingCityInput').val('<?= esc($user_data->shipping_city ?? '') ?>');
+
+            <?php elseif (isset($_SESSION['shipping_address'])): ?>
+            $('#shippingFirstNameInput').val('<?= esc($_SESSION['shipping_address']['first_name'] ?? '') ?>');
+            $('#shippingLastNameInput').val('<?= esc($_SESSION['shipping_address']['last_name'] ?? '') ?>');
+            $('#shippingCompanyInput').val('<?= esc($_SESSION['shipping_address']['company'] ?? '') ?>');
+            $('#shippingStreetInput').val('<?= esc($_SESSION['shipping_address']['street'] ?? '') ?>');
+            $('#shippingHousenrInput').val('<?= esc($_SESSION['shipping_address']['housenr'] ?? '') ?>');
+            $('#shippingCountry').val('<?= esc($_SESSION['shipping_address']['country'] ?? '') ?>');
+            $('#shippingPostInput').val('<?= esc($_SESSION['shipping_address']['post_code'] ?? '') ?>');
+            $('#shippingCityInput').val('<?= esc($_SESSION['shipping_address']['city'] ?? '') ?>');
+
+            <?php endif; ?>
+        }
+
+        // Function to handle the change event of the checkbox
+        function handleCheckboxChange() {
+            if ($('#sameAddressCheckbox').is(':checked')) {
+                copyBillingToShipping();
+                $('.shipping-section').hide();
+                $('#sameShipping').val("true");
             } else {
-                <?php if(isset($_SESSION['same_address']) && $_SESSION['same_address'] == "false") { ?>
-                populateShippingFromSession();
-                <?php } else { ?>
-                clearShippingFields();
-                <?php } ?>
-                showShippingAddressSection();
+                populateShippingFields();
+                $('.shipping-section').show();
                 $('#sameShipping').val("false");
             }
         }
+
+        // Initialize the form based on user status and session data
+        function initializeForm() {
+            <?php if (session()->has('logged_user')): ?>
+            $('#sameAddressCheckbox').prop('checked', false);
+            <?php elseif (isset($_SESSION['same_address']) && $_SESSION['same_address'] == "false"): ?>
+            $('#sameAddressCheckbox').prop('checked', false);
+
+        <?php else: ?>
+            $('#sameAddressCheckbox').prop('checked', true);
+            copyBillingToShipping();
+            <?php endif; ?>
+            $('.shipping-section').toggle(!$('#sameAddressCheckbox').is(':checked'));
+        }
+
+        initializeForm();
+        $('#sameAddressCheckbox').change(handleCheckboxChange);
+
+        $('#checkoutButton').click(function () {
+            if ($('#sameAddressCheckbox').prop('checked')==true)
+                copyBillingToShipping();
+            $('#goOrder').submit();
+        });
     });
 </script>
+

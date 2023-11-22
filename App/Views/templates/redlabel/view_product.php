@@ -374,7 +374,7 @@
                             <hr class="max-675">
                             <div class="col-6" style="font-weight:bold;">
                                 <p style="font-weight:bold;">
-                                    <?= lang_safe('modal_cart_total') ?><br><span style="font-weight:normal;">
+                                    <?= lang_safe('modal_cart_total') ?><br><span style="font-weight:normal;" id="cartTotal">
                                         <?php if ((int) $cartItems != 0) {
                                             $finalSum = str_replace(',', '', $cartItems['finalSum']);
 
@@ -384,11 +384,14 @@
                                             // Format the result to 2 decimal points
                                             $formattedPrice = number_format($totalPrice, 2);
                                             ?>
-                                            <?= $cartItems['finalSum'] . CURRENCY ?>
+                                            <?= $formattedPrice  ?>
                                         </span>
+                                    <span style="font-weight:normal;"><?=CURRENCY?></span>
                                     </p>
                                 <?php } else { ?>
-                                    <?= $product['price'] . CURRENCY ?><span></p>
+                                <?= $product['price'] ?></span>
+                                    <span style="font-weight:normal;"><?=CURRENCY?></span>
+                                    </p>
                                     <?php } ?>
                             </div>
                             <div class="col-12">

@@ -283,17 +283,39 @@ function redirectToGoogleMaps() {
     });
 </script>
 <script>
-    function changeImageToBlack() {
+    function toggleImageColor(imgSelector, imageName) {
+        // Get the current source of the image
+        var currentSrc = $(imgSelector).attr("src");
 
-            // Change the image source to myaccount_black.png
-            $("#myAccountLink img").attr("src", "<?= base_url('png/myaccount_black.png') ?>");
-        // Change the image source to myaccount_black.png
-    }
+        // Determine the new source based on the current one
+        var newSrc = currentSrc.includes(imageName + "_white.png") ?
+            "<?= base_url('png/') ?>" + imageName + "_black.png" :
+            "<?= base_url('png/') ?>" + imageName + "_white.png";
 
-    function changeImageToWhite() {
-        // Change the image source back to myaccount_white.png
-        $("#myAccountLink img").attr("src", "<?= base_url('png/myaccount_white.png') ?>");
+        // Update the image source
+        $(imgSelector).attr("src", newSrc);
     }
+    // Bind the function to the hover event of the shopping cart icon
+    $(".shopping-cart-dropdown-wrapper").hover(
+        function() {
+            // Mouse enter event
+            toggleImageColor('.shopping_cart_img', 'cart');
+        },
+        function() {
+            // Mouse leave event
+            toggleImageColor('.shopping_cart_img', 'cart');
+        }
+    );
+
+    // Similarly, for the account link
+    $("#myAccountLink").hover(
+        function() {
+            toggleImageColor('#myAccountLink img', 'myaccount');
+        },
+        function() {
+            toggleImageColor('#myAccountLink img', 'myaccount');
+        }
+    );
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {

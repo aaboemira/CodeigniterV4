@@ -384,7 +384,7 @@ class Public_model extends Model
                     'shipping_price' => $post['shipping_price'], // Insert shipping price
                     'shipping_type' => $post['shipping_type']
                 ))) {
-//            ///log_message('error', print_r($builder->error(), true));
+//            log_message('error', print_r($builder->error(), true));
         }
 
         
@@ -392,16 +392,16 @@ class Public_model extends Model
         $builder = $this->db->table('orders_clients');
         if (!$builder->insert(array(
                     'for_id' => $lastId,
-                    'first_name' => $post['billing_address']['first_name'],
-                    'last_name' => $post['billing_address']['last_name'],
-                    'company' => $post['billing_address']['company'],
+                    'first_name' => $post['billing_address']['billing_first_name'],
+                    'last_name' => $post['billing_address']['billing_last_name'],
+                    'company' => $post['billing_address']['billing_company'],
                     'email' => $post['email'],
                     'phone' => $post['phone'],
-                    'city' => $post['billing_address']['city'],
-                    'street' => $post['billing_address']['street'],
-                    'housenr' => $post['billing_address']['housenr'],
-                    'country' => $post['billing_address']['country'],
-                    'post_code' => $post['billing_address']['post_code'],
+                    'city' => $post['billing_address']['billing_city'],
+                    'street' => $post['billing_address']['billing_street'],
+                    'housenr' => $post['billing_address']['billing_housenr'],
+                    'country' => $post['billing_address']['billing_country'],
+                    'post_code' => $post['billing_address']['billing_post_code'],
                     'notes' => $post['notes']
                 ))) {
            // ///log_message('error', print_r($builder->error(), true));
@@ -409,14 +409,14 @@ class Public_model extends Model
         $builder = $this->db->table('orders_shipping');
         if (!$builder->insert(array(
             'for_id' => $lastId,
-            'first_name' => $post['shipping_address']['first_name'],
-            'last_name' => $post['shipping_address']['last_name'],
-            'company' => $post['shipping_address']['company'],
-            'city' => $post['shipping_address']['city'],
-            'street' => $post['shipping_address']['street'],
-            'housenr' => $post['shipping_address']['housenr'],
-            'country' => $post['shipping_address']['country'],
-            'post_code' => $post['shipping_address']['post_code'],
+            'first_name' => $post['shipping_address']['shipping_first_name'],
+            'last_name' => $post['shipping_address']['shipping_last_name'],
+            'company' => $post['shipping_address']['shipping_company'],
+            'city' => $post['shipping_address']['shipping_city'],
+            'street' => $post['shipping_address']['shipping_street'],
+            'housenr' => $post['shipping_address']['shipping_housenr'],
+            'country' => $post['shipping_address']['shipping_country'],
+            'post_code' => $post['shipping_address']['shipping_post_code'],
         ))) {
             // ///log_message('error', print_r($builder->error(), true));
         }
@@ -743,27 +743,63 @@ class Public_model extends Model
 
     public function registerUser($post)
     {
+        // Begin the transaction
+        $this->db->transStart();
 
         $hashedPassword = hash('sha256', $post['pass']);
 
-        $builder = $this->db->table('users_public');
-        $builder->insert(array(
+        // Insert into users_public
+        $userData = [
+            'email' => $post['email'],
             'first_name' => $post['first_name'],
             'last_name' => $post['last_name'],
-            'country' => $post['country'],
-            'post_code' => $post['post_code'],
-            'housenr' => $post['housenr'],
-            'street' => $post['street'],
+            'password' => $hashedPassword,
             'phone' => $post['phone'],
             'mobile' => $post['mobile'],
-            'lang'=>$post['language'],
-            'email' => $post['email'],
+            'lang' => $post['language'],
             'account_type' => $post['account_type'],
-            'verify_token' => $post['verify_token'],
-            'password' => $hashedPassword,
-        ));
-        return $this->db->insertID();
+            'verify_token' => $post['verify_token']
+        ];
+        $this->db->table('users_public')->insert($userData);
+        $userId = $this->db->insertID();
+
+        // Prepare address data
+        $addressData = [
+            'first_name' => $post['first_name'],
+            'last_name' => $post['last_name'],
+            'street' => $post['street'],
+            'post_code' => $post['post_code'],
+            'country' => $post['country'],
+            'city' => $post['city'],
+            'housenr' => $post['housenr']
+        ];
+
+        // Insert into users_billing_addresses
+        $this->db->table('users_billing_addresses')->insert($addressData);
+        $billingAddressId = $this->db->insertID();
+
+        // Insert into users_shipping_addresses
+        $this->db->table('users_shipping_addresses')->insert($addressData);
+        $shippingAddressId = $this->db->insertID();
+
+        // Update users_public with the address IDs
+        $this->db->table('users_public')->where('id', $userId)->update([
+            'billing_address_id' => $billingAddressId,
+            'shipping_address_id' => $shippingAddressId
+        ]);
+
+        // Complete the transaction
+        $this->db->transComplete();
+
+        if ($this->db->transStatus() === FALSE)
+        {
+            // generate an error... or use the log_message() function to log your error
+            return false;
+        }
+
+        return $userId;
     }
+
     public function setResetToken($email, $resetToken, $expirationTime)
     {
         $builder = $this->db->table('users_public');
@@ -804,6 +840,37 @@ class Public_model extends Model
         $builder->where('id', $post['id']);
         $builder->update($array);
     }
+    public function updateShippingAddress($userId, $shippingData)
+    {
+        // Retrieve shipping_id from users_public table
+        $shippingId = $this->db->table('users_public')
+            ->select('shipping_address_id')
+            ->where('id', $userId)
+            ->get()
+            ->getRow()
+            ->shipping_address_id;
+
+        // Update the node_users_shipping_addresses table
+        $builder = $this->db->table('users_shipping_addresses');
+        $builder->where('shipping_id', $shippingId);
+        return $builder->update($shippingData); // Ensure to check the result of update
+    }
+
+    public function updateBillingAddress($userId, $billingData)
+    {
+        // Retrieve billing_id from users_public table
+        $billingId = $this->db->table('users_public')
+            ->select('billing_address_id')
+            ->where('id', $userId)
+            ->get()
+            ->getRow()
+            ->billing_address_id;
+
+        // Update the node_users_billing_addresses table
+        $builder = $this->db->table('users_billing_addresses');
+        $builder->where('billing_id', $billingId);
+        return $builder->update($billingData); // Ensure to check the result of update
+    }
 
     public function updatePassword($post)
     {
@@ -833,11 +900,21 @@ class Public_model extends Model
         }
     }
 
-   
+
     public function getUserProfileInfoByEmail($email)
     {
         $builder = $this->db->table('users_public');
         $builder->where('email', $email);
+        $query = $builder->get();
+        return $query->getRow();
+    }
+    public function getUserWithAddressesByEmail($email)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->select('users_public.*, billing.first_name as billing_first_name, billing.last_name as billing_last_name,billing.company as billing_company, billing.street as billing_street, billing.post_code as billing_post_code, billing.country as billing_country, billing.city as billing_city, billing.housenr as billing_housenr, shipping.first_name as shipping_first_name, shipping.last_name as shipping_last_name,shipping.company as shipping_company, shipping.street as shipping_street, shipping.post_code as shipping_post_code, shipping.country as shipping_country, shipping.city as shipping_city, shipping.housenr as shipping_housenr');
+        $builder->join('users_billing_addresses as billing', 'users_public.billing_address_id = billing.billing_id', 'left');
+        $builder->join('users_shipping_addresses as shipping', 'users_public.shipping_address_id = shipping.shipping_id', 'left');
+        $builder->where('users_public.email', $email);
         $query = $builder->get();
         return $query->getRow();
     }
