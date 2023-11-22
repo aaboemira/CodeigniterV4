@@ -8,8 +8,16 @@
  * 3 - success order
  */
 
-function purchase_steps($step1 = null, $step2 = null, $step3 = null, $step4 = null)
+function purchase_steps($step0=null,$step1 = null, $step2 = null, $step3 = null, $step4 = null)
 {
+
+    if ($step0 == 1) {
+        $icon0 = 'ok.png';
+        $class0 = 'step-bg-ok';
+    } else {
+        $icon0 = 'no.png';
+        $class0 = 'step-bg-not-ok';
+    }
     if ($step1 == 1) {
         $icon1 = 'ok.png';
         $class1 = 'step-bg-ok';
@@ -41,7 +49,10 @@ function purchase_steps($step1 = null, $step2 = null, $step3 = null, $step4 = nu
     } 
     ?>
     <div class="row steps">
-        <div class="col-sm-3 step <?= $class1 ?>" onclick="location.href='<?= LANG_URL . '/checkout1'?>';">
+        <div class="col-sm-2 step <?= $class0 ?>" onclick="location.href='<?= LANG_URL . '/checkout1'?>';">
+            <span class="step"> <?= lang_safe('checkout0')?>
+        </div>
+        <div class="col-sm-2 step <?= $class1 ?>" onclick="location.href='<?= LANG_URL . '/checkout1'?>';">
             <span class="step"> <?= lang_safe('checkout1')?>
         </div>
         <div class="col-sm-3 step <?= $class2 ?>" onclick="location.href='<?= LANG_URL . '/checkout2'?>';">
@@ -50,7 +61,7 @@ function purchase_steps($step1 = null, $step2 = null, $step3 = null, $step4 = nu
         <div class="col-sm-3 step <?= $class3 ?>" onclick="location.href='<?= LANG_URL . '/checkout3'?>';">
             <span class="step"> <?= lang_safe('checkout3')?>
         </div>
-        <div class="col-sm-3 step <?= $class4 ?>" onclick="location.href='#';">
+        <div class="col-sm-2 step <?= $class4 ?>" onclick="location.href='#';">
             <span class="step"> <?= lang_safe('checkout4')?>
         </div>
         <!-- <div class="col-sm-4 step <?= $class2 ?>">

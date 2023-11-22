@@ -192,17 +192,17 @@ function generateEmailHTML($orderData) {
                     <h3>Lieferadresse:</h3>
                     <p> '.$orderData['shipping_full_name'].'<br>
                     '.(!empty($orderData['address']['company']) ? $orderData['address']['company'].'<br>' : '').'
-                    '.$orderData['address']['shipping_address']['street'].' ' .$orderData['address']['shipping_address']['housenr'].'<br>
-                    '.$orderData['address']['shipping_address']['post_code'].' '.$orderData['address']['shipping_address']['city'].'<br>
-                    '.$orderData['address']['shipping_address']['country'].'</p>
+                    '.$orderData['address']['shipping_address']['shipping_street'].' ' .$orderData['address']['shipping_address']['shipping_housenr'].'<br>
+                    '.$orderData['address']['shipping_address']['shipping_post_code'].' '.$orderData['address']['shipping_address']['shipping_city'].'<br>
+                    '.$orderData['address']['shipping_address']['shipping_country'].'</p>
 
                 
                     <h3>Rechnungsadresse:</h3>
                     <p> '.$orderData['billing_full_name'].'<br>
                     '.(!empty($orderData['address']['company']) ? $orderData['address']['company'].'<br>' : '').'
-                    '.$orderData['address']['billing_address']['street'].' ' .$orderData['address']['billing_address']['housenr'].'<br>
-                    '.$orderData['address']['billing_address']['post_code'].' '.$orderData['address']['billing_address']['city'].'<br>
-                    '.$orderData['address']['billing_address']['country'].'</p>
+                    '.$orderData['address']['billing_address']['billing_street'].' ' .$orderData['address']['billing_address']['billing_housenr'].'<br>
+                    '.$orderData['address']['billing_address']['billing_post_code'].' '.$orderData['address']['billing_address']['billing_city'].'<br>
+                    '.$orderData['address']['billing_address']['billing_country'].'</p>
 
                     <p><span style="font-weight:bold;">Gewählte Zahlungsart: </span>'.$orderData['payment_type'].'</p>
                                 
@@ -343,7 +343,7 @@ function generateEmailHTML_en($orderData) {
 
             <h2>Order Confirmation</h2>
             <h3>
-                Hello '.$orderData['full_name'].',
+                Hello '.$orderData['billing_full_name'].',
             </h3>
             <p>
                 We hereby confirm your order, your order number: SHND'.$orderData['order_id'].'.
@@ -426,18 +426,18 @@ function generateEmailHTML_en($orderData) {
                         </table>
 
                     <h3>Shipping Address:</h3>
-                    <p> '.$orderData['full_name'].'<br>
+                    <p> '.$orderData['shipping_full_name'].'<br>
                     '.(!empty($orderData['address']['company']) ? $orderData['address']['company'].'<br>' : '').'
-                    '.$orderData['address']['shipping_address']['street'].' ' .$orderData['address']['shipping_address']['housenr'].'<br>
-                    '.$orderData['address']['shipping_address']['post_code'].' '.$orderData['address']['shipping_address']['city'].'<br>
-                    '.$orderData['address']['shipping_address']['country'].'</p>
+                    '.$orderData['address']['shipping_address']['shipping_street'].' ' .$orderData['address']['shipping_address']['shipping_housenr'].'<br>
+                    '.$orderData['address']['shipping_address']['shipping_post_code'].' '.$orderData['address']['shipping_address']['shipping_city'].'<br>
+                    '.$orderData['address']['shipping_address']['shipping_country'].'</p>
                     
                     <h3>Billing Address:</h3>
-                    <p> '.$orderData['full_name'].'<br>
+                    <p> '.$orderData['billing_full_name'].'<br>
                     '.(!empty($orderData['address']['company']) ? $orderData['address']['company'].'<br>' : '').'
-                    '.$orderData['address']['billing_address']['street'].' ' .$orderData['address']['billing_address']['housenr'].'<br>
-                    '.$orderData['address']['billing_address']['post_code'].' '.$orderData['address']['billing_address']['city'].'<br>
-                    '.$orderData['address']['billing_address']['country'].'</p>
+                    '.$orderData['address']['billing_address']['billing_street'].' ' .$orderData['address']['billing_address']['billing_housenr'].'<br>
+                    '.$orderData['address']['billing_address']['billing_post_code'].' '.$orderData['address']['billing_address']['billing_city'].'<br>
+                    '.$orderData['address']['billing_address']['billing_country'].'</p>
                 
 
 
