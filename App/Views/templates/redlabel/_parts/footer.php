@@ -283,7 +283,12 @@ function redirectToGoogleMaps() {
     });
 </script>
 <script>
-    function toggleImageColor(imgSelector, imageName) {
+    function toggleImageColor(imgSelector, imageName, disableOnMobile = false) {
+        // Check if the function should be disabled on mobile based on screen width
+        if (disableOnMobile && window.innerWidth <= 768) {
+            return; // Do nothing on mobile
+        }
+
         // Get the current source of the image
         var currentSrc = $(imgSelector).attr("src");
 
@@ -299,11 +304,11 @@ function redirectToGoogleMaps() {
     $(".shopping-cart-dropdown-wrapper").hover(
         function() {
             // Mouse enter event
-            toggleImageColor('.shopping_cart_img', 'cart');
+            toggleImageColor('.shopping_cart_img', 'cart',true);
         },
         function() {
             // Mouse leave event
-            toggleImageColor('.shopping_cart_img', 'cart');
+            toggleImageColor('.shopping_cart_img', 'cart',true);
         }
     );
 

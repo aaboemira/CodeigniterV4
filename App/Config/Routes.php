@@ -43,7 +43,7 @@ $routes->add('(\w{2})?/?checkout/successbank', 'Checkout::successPaymentBank');
 $routes->add('(\w{2})?/?checkout/paypalpayment', 'Checkout::paypalPayment');
 $routes->add('(\w{2})?/?checkout/order-error', 'Checkout::orderError');
 
-$routes->add('(\w{2})?/?checkout1', 'Checkout1');
+$routes->add('(\w{2})?/?checkout1', 'checkout1');
 $routes->add('(\w{2})?/?checkout2', 'Checkout2');
 $routes->add('(\w{2})?/?checkout3', 'Checkout3');
 
@@ -105,6 +105,8 @@ $routes->get('captcha', "Users::captcha");
 // Register Public Users Page
 $routes->add('register', "Users::register");
 $routes->add('(\w{2})/register', "Users::register");
+$routes->post('checkout1/login', 'checkout1::login');
+$routes->post('checkout1/shopAsGuest', 'checkout1::shopAsGuest');
 
 $routes->add('auth/verify/(:segment)', "Users::verify/$1");
 $routes->add('(\w{2})/auth/verify/(:segment)', "Users::verify/$1");

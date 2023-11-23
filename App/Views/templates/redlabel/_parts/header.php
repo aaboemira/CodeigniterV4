@@ -264,7 +264,7 @@
                                                 <br>
                                                 <span style="font-weight:normal; font-size: 1.8rem" id="cartTotal2">
                                                     <?= $cartItems['finalSum']  ?>
-                                                </span><span style="font-weight:normal;"><?=CURRENCY?></span>
+                                                </span><span style="font-weight:normal; font-size: 1.8rem;"><?=CURRENCY?></span>
                                             </p>
                                         </div>
                                     <?php endif; ?>
@@ -407,7 +407,7 @@
                                     <?php } ?>
 
                                     <div class="dropdown-item no-hover">
-                                        <hr class="account-divider no-hover">
+                                        <hr class="account-divider hr-2 no-hover">
                                     </div>
                                     <a class=" btn btn-primary btn-new  logout-button" style="text-align: center"
                                        href="<?= base_url('logout') ?>">
