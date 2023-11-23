@@ -128,14 +128,21 @@ function manageShoppingCart(action, article_id, reload) {
     if (action == 'remove'||action == 'removeProduct') {
         var action_success_msg = lang.remove_from_cart;
     }
+    console.log(action)
     $.ajax({
         type: "POST",
         url: variable.manageShoppingCartUrl,
         data: {article_id: article_id, action: action}
     }).done(function (data) {
 
-        $(".dropdown-cart").empty();
-        $(".dropdown-cart").append(data);
+        //
+        // $(".dropdown-cart").empty();
+        // $(".dropdown-cart").append(data);
+        var cartTotal = data.cart;
+        // Update the cartTotal element with the new total
+        $('#cartTotal').text(cartTotal);
+        $('#cartTotal2').text(cartTotal);
+
         var sum_items = parseInt($('.sumOfItems').text());
         if (action == 'add') {
             $('.sumOfItems').text(sum_items + 1);
@@ -152,7 +159,6 @@ function manageShoppingCart(action, article_id, reload) {
         }
         //ShowNotificator('alert-info', action_success_msg);
     }).fail(function (err) {
-        console.log(err)
         ShowNotificator('alert-danger', action_error_msg);
     }).always(function () {
         if (action == 'add') {

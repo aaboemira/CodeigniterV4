@@ -34,18 +34,11 @@ class Checkout1 extends BaseController
             if ($this->request->getPost('action') == 'change_address') {
                 $data['change_address'] = true;
                 return $this->render('checkout1', $head, $data);
-            } elseif ($this->request->getPost('action') == 'go_checkout') {
-                // Logic for proceeding to checkout
-                 if($this->processUserFormData($userData)){
-                     return redirect()->to(LANG_URL . '/checkout2');
-                 }else{
-                     return redirect()->to(LANG_URL . '/checkout1');
-                 }
-
             }
         }
         if (isset($_POST['user_status'])) {
             // Process the form data
+
             $formDataValid = $this->processFormData($this->request->getPost());
             if ($formDataValid) {
                 return redirect()->to(LANG_URL . '/checkout2');
@@ -63,6 +56,7 @@ class Checkout1 extends BaseController
             return $this->render('checkout1', $head, $data);
         }
         elseif (session()->has('logged_user')) {
+            helper('form'); // This loads your custom form helper
             return $this->render('checkout1/logged_checkout1', $head, $data);
         }
         else {
@@ -126,14 +120,26 @@ class Checkout1 extends BaseController
             ];
 
             $userId = session()->get('logged_user');
-            $updateShippingResult = $this->Public_model->updateShippingAddress($userId, $shippingData);
-            $updateBillingResult = $this->Public_model->updateBillingAddress($userId, $billingData);
-            if ($updateShippingResult === false || $updateBillingResult === false) {
-                // Handle error
-                // Add an error message for the user
-                session()->setFlashdata('submit_error', 'Failed to update addresses.');
-                return false;
+            $saveBillingAddress = isset($_POST['save_billing_address']);
+            $saveShippingAddress = isset($_POST['save_shipping_address']);
+            if ($saveBillingAddress) {
+                $updateBillingResult = $this->Public_model->updateBillingAddress($userId, $billingData);
+                if ($updateBillingResult === false) {
+                    // Handle error
+                    session()->setFlashdata('submit_error', 'Failed to update billing address.');
+                    return false;
+                }
             }
+
+            if ($saveShippingAddress) {
+                $updateShippingResult = $this->Public_model->updateShippingAddress($userId, $shippingData);
+                if ($updateShippingResult === false) {
+                    // Handle error
+                    session()->setFlashdata('submit_error', 'Failed to update shipping address.');
+                    return false;
+                }
+            }
+
         }
         // Check if updates were successful
 
