@@ -153,14 +153,7 @@
                         Save permanent billing address
                     </label>
                 </div>
-
-                <!-- Checkbox to save permanent shipping address -->
-                <div class="form-group checkboxDiv col-sm-12">
-                    <label for="saveShippingAddressCheckbox">
-                        <input type="checkbox" name="save_shipping_address" id="saveShippingAddressCheckbox">
-                        Save permanent shipping address
-                    </label>
-                </div>
+            
             <?php endif; ?>
             <!-- Checkbox to indicate if shipping address is the same as billing address -->
             <div class="form-group checkboxDiv col-sm-12">
@@ -263,6 +256,15 @@
                     </div>
                 </div>
             </div>
+            <?php if (session()->has('logged_user')): ?>
+                <!-- Checkbox to save permanent shipping address -->
+                <div class="form-group checkboxDiv col-sm-12">
+                    <label for="saveShippingAddressCheckbox">
+                        <input type="checkbox" name="save_shipping_address" id="saveShippingAddressCheckbox">
+                        Save permanent shipping address
+                    </label>
+                </div>
+            <?php endif; ?>
             <div class="row">
                 <div class="col-sm-12 ">
                     <?php if (!session()->has('logged_user')): ?>
