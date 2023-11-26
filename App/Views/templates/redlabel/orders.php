@@ -1,4 +1,18 @@
+<style>
+    .table-responsive .table th,
+    .table-responsive .table td {
+        border-top: none; /* Remove default top border */
+        border-right: none; /* Remove default right border */
+        border-left: none; /* Remove default left border */
+        border-bottom: 1px solid #ccc; /* Add a bottom border */
+        padding: 8px;
+        text-align: center;
+    }
+    .table-responsive .table th {
+        background-color: #f0f0f0; /* Grey background for th */
+    }
 
+</style>
 <div class="container-fluid user-page">
     <div class="row">
             <ol class="breadcrumb">
@@ -9,47 +23,49 @@
             <?= view('templates/redlabel/_parts/sidebar'); ?>
 
         <div class="col-md-9">
-
+            <h1 style="color:black;font-size: 2.5em;"><?= lang_safe('my_orders') ?></h1>
+            <p style="color: black; font-size: 1.5em;"><?= lang_safe('my_orders_description') ?></p>
+            <hr>
         <?= lang_safe('user_order_history') ?>
             <div class="table-responsive">
-                <table class="table table-condensed table-bordered table-striped">
+                <table class="table custom-table">
                     <thead>
                         <tr>
-                            <th><?= lang_safe('usr_order_id') ?></th>
+                            <th><?= lang_safe('record_number') ?></th>
                             <th><?= lang_safe('usr_order_date') ?></th>
-                            <th><?= lang_safe('usr_order_address') ?></th>
-                            <th><?= lang_safe('usr_order_phone') ?></th>
-                            <th><?= lang_safe('user_order_products') ?></th>
+                            <th><?= lang_safe('usr_order_id') ?></th>
+                            <th><?= lang_safe('status') ?></th>
+                            <th><?= lang_safe('delivery') ?></th>
+                            <th><?= lang_safe('total') ?></th>
+                            <th><?= lang_safe('action') ?></th>
+
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        if (!empty($orders_history)) {
-                            foreach ($orders_history as $order) {
+                        if (!empty($orders)) {
+                            $i=0;
+                            foreach ($orders as $order) {
+                                $i++;
                                 ?>
                                 <tr>
-                                    <td><?= $order['order_id'] ?></td>
+                                    <td><?= $i ?></td>
                                     <td><?= date('d.m.Y', $order['date']) ?></td>
-                                    <td><?= $order['address'] ?></td>
-                                    <td><?= $order['phone'] ?></td>
-                                    <td>    
-                                        <?php
-                                        $arr_products = unserialize($order['products']);
-                                        foreach ($arr_products as $product) {
-                                            ?>
-                                            <div style="word-break: break-all;">
-                                                <div>
-                                                    <img src="<?= base_url('attachments/shop_images/' . $product['product_info']['image']) ?>" alt="Product" style="width:100px; margin-right:10px;" class="img-responsive">
-                                                </div>
-                                                <a target="_blank" href="<?= base_url($product['product_info']['url']) ?>">
-                                                    <?= base_url($product['product_info']['url']) ?> 
-                                                </a> 
-                                                <div style=" background-color: #f1f1f1; border-radius: 2px; padding: 2px 5px;"><b><?= lang('user_order_quantity') ?></b> <?= $product['product_quantity']; ?></div>
-                                                <div class="clearfix"></div>
-                                            </div>
-                                            <hr>
-                                        <?php }
-                                        ?>
+                                    <td><?=lang_safe('shnd'). $order['order_id'] ?></td>
+                                    <td><?= lang_safe('order_status_'.$order['order_status']) ?></td>
+                                    <td>
+                                        <?php if (!empty($order['shipping_number'])): ?>
+                                            <a href="<?= $shipping_link . $order['shipping_number'] ?>"><?= lang_safe('track_shipment') ?></a>
+                                        <?php else: ?>
+                                            <?= lang_safe('not_available') ?>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?= $order['total_amount'] .CURRENCY ?></td>
+                                    <td>
+                                        <!-- Button to trigger modal -->
+                                        <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" style="position:relative;top:-6px;" data-target="#orderDetailsModal<?= $order['order_id'] ?>">
+                                            <i class="fa fa-eye" aria-hidden="true"></i> <!-- Eye icon for Font Awesome 4.7.0 -->
+                                        </button>
                                     </td>
                                 </tr>
                                 <?php
@@ -62,7 +78,12 @@
                         <?php } ?>
                     </tbody>
                 </table>
-                <?= $links_pagination ?>
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <?= $paginationLinks ?>
+                    </ul>
+                </nav>
             </div>        
             </div>
             

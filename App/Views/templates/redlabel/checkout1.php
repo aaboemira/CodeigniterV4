@@ -153,7 +153,7 @@
                         Save permanent billing address
                     </label>
                 </div>
-            
+
             <?php endif; ?>
             <!-- Checkbox to indicate if shipping address is the same as billing address -->
             <div class="form-group checkboxDiv col-sm-12">

@@ -15,13 +15,13 @@ class Public_model extends Model
 
     protected $db;
 
-	public function __construct()
-	{
-		$this->db = Database::connect();
+    public function __construct()
+    {
+        $this->db = Database::connect();
         $this->showOutOfStock = (new Home_admin_model())->getValueStore('outOfStock');
         $this->showInSliderProducts = (new Home_admin_model())->getValueStore('showInSlider');
         $this->multiVendor = (new Home_admin_model())->getValueStore('multiVendor');
-	}
+    }
 
     public function productsCount($big_get)
     {
@@ -29,10 +29,10 @@ class Public_model extends Model
         $builder->join('products_translations', 'products_translations.for_id = products.id', 'left');
         $builder->where('products_translations.abbr', MY_LANGUAGE_ABBR);
         if (!empty($big_get) && isset($big_get['category'])) {
-            $this->getFilter($builder,$big_get);
+            $this->getFilter($builder, $big_get);
         }
         $builder->where('visibility', 1);
-		$builder->where('is_visible', 1);
+        $builder->where('is_visible', 1);
         $builder->where('is_main_view_from_variant', 0);
         if ($this->showOutOfStock == 0) {
             $builder->where('quantity >', 0);
@@ -45,7 +45,7 @@ class Public_model extends Model
         }
         return $builder->countAll();
     }
-	
+
 
     public function getNewProducts()
     {
@@ -56,7 +56,7 @@ class Public_model extends Model
         $builder->where('products_translations.abbr', MY_LANGUAGE_ABBR);
         $builder->where('products.in_slider', 0);
         $builder->where('visibility', 1);
-		$builder->where('is_visible', 1);
+        $builder->where('is_visible', 1);
         if ($this->showOutOfStock == 0) {
             $builder->where('quantity >', 0);
         }
@@ -89,7 +89,7 @@ class Public_model extends Model
         }
         $builder->join('blog_translations', 'blog_translations.for_id = blog_posts.id', 'left');
         $builder->where('blog_translations.abbr', MY_LANGUAGE_ABBR);
-        $query = $builder->select('blog_posts.id, blog_translations.title, blog_translations.description, blog_posts.url, blog_posts.time, blog_posts.image')->get( $limit, $page);
+        $query = $builder->select('blog_posts.id, blog_translations.title, blog_translations.description, blog_posts.url, blog_posts.time, blog_posts.image')->get($limit, $page);
         return $query->getResultArray();
     }
 
@@ -100,7 +100,7 @@ class Public_model extends Model
             $builder->limit($limit, $start);
         }
         if (!empty($big_get) && isset($big_get['category'])) {
-            $this->getFilter($builder,$big_get);
+            $this->getFilter($builder, $big_get);
         }
         $builder->select('vendors.url as vendor_url, products.id,products.image, products.quantity, products.is_main_view_from_variant, products.is_variant, products.variant_id, 
         products.article_nr, products.is_visible, products.shipment_destination, products.Reserve_Produkt_03,
@@ -109,7 +109,7 @@ class Public_model extends Model
         $builder->join('vendors', 'vendors.id = products.vendor_id', 'left');
         $builder->where('products_translations.abbr', MY_LANGUAGE_ABBR);
         $builder->where('visibility', 1);
-		$builder->where('is_visible', 1);
+        $builder->where('is_visible', 1);
         if ($vendor_id !== false) {
             $builder->where('vendor_id', $vendor_id);
         }
@@ -126,6 +126,7 @@ class Public_model extends Model
         $query = $builder->get();
         return $query->getResultArray();
     }
+
     public function getVariants($variant_id)
     {
         $builder = $this->db->table('products');
@@ -134,13 +135,14 @@ class Public_model extends Model
         products_translations.variant_name, products_translations.variant_description, products.url');
         $builder->join('products_translations', 'products_translations.for_id = products.id', 'left');
         $builder->where('products.variant_id', $variant_id);
-		$builder->where('is_visible', 1);
-        
+        $builder->where('is_visible', 1);
+
         $builder->orderBy('position', 'asc');
         $query = $builder->get();
         return $query->getResultArray();
     }
-	 public function getShippings()
+
+    public function getShippings()
     {
         $builder = $this->db->table('products');
         $builder->select('vendors.url as vendor_url, products.id,products.image, products.quantity, products.is_main_view_from_variant, products.is_variant, products.variant_id, 
@@ -149,13 +151,14 @@ class Public_model extends Model
         $builder->join('products_translations', 'products_translations.for_id = products.id', 'left');
         $builder->join('vendors', 'vendors.id = products.vendor_id', 'left');
         $builder->where('products_translations.abbr', MY_LANGUAGE_ABBR);
-		$builder->where('shipment_destination >', 0);
-       
+        $builder->where('shipment_destination >', 0);
+
         $builder->orderBy('position', 'asc');
         $query = $builder->get();
-		
+
         return $query->getResultArray();
     }
+
     public function getShippingsByDist($dist)
     {
         $builder = $this->db->table('products');
@@ -165,14 +168,14 @@ class Public_model extends Model
         $builder->join('products_translations', 'products_translations.for_id = products.id', 'left');
         $builder->join('vendors', 'vendors.id = products.vendor_id', 'left');
         $builder->where('products_translations.abbr', MY_LANGUAGE_ABBR);
-		$builder->where('shipment_destination =', $dist);
-       
+        $builder->where('shipment_destination =', $dist);
+
         $builder->orderBy('position', 'asc');
         $query = $builder->get();
-		
+
         return $query->getResultArray();
     }
-	
+
     public function getOneLanguage($myLang)
     {
         $builder = $this->db->table('languages');
@@ -182,7 +185,7 @@ class Public_model extends Model
     private function getFilter($builder, $big_get)
     {
         if ($big_get['category'] != '') {
-            (int) $big_get['category'];
+            (int)$big_get['category'];
             $findInIds = array();
             $findInIds[] = $big_get['category'];
             $query = $this->db->query('SELECT id FROM shop_categories WHERE sub_for = ' . $big_get['category']);
@@ -244,10 +247,10 @@ class Public_model extends Model
     public function getShopCategories()
     {
         $query = $this->db->table('shop_categories_translations')->select('shop_categories.sub_for, shop_categories.id, shop_categories_translations.name')
-        ->where('abbr', MY_LANGUAGE_ABBR)
-        ->orderBy('position', 'asc')
-        ->join('shop_categories', 'shop_categories.id = shop_categories_translations.for_id', 'INNER')
-        ->get();
+            ->where('abbr', MY_LANGUAGE_ABBR)
+            ->orderBy('position', 'asc')
+            ->join('shop_categories', 'shop_categories.id = shop_categories_translations.for_id', 'INNER')
+            ->get();
         $arr = array();
         if ($query !== false) {
             foreach ($query->getResultArray() as $row) {
@@ -256,13 +259,13 @@ class Public_model extends Model
         }
         return $arr;
     }
-  
+
 
     public function getSeo($page)
     {
         $query = $this->db->table('seo_pages_translations')->where('page_type', $page)
-        ->where('abbr', MY_LANGUAGE_ABBR)
-        ->get();
+            ->where('abbr', MY_LANGUAGE_ABBR)
+            ->get();
         $arr = array();
         if ($query !== false) {
             foreach ($query->getResultArray() as $row) {
@@ -358,53 +361,53 @@ class Public_model extends Model
         unset($post['id'], $post['quantity']);
         $post['date'] = time();
         $products_to_order = [];
-        if(!empty($post['products'])) {
-            foreach($post['products'] as $pr_id => $pr_qua) {
+        if (!empty($post['products'])) {
+            foreach ($post['products'] as $pr_id => $pr_qua) {
                 $products_to_order[] = [
                     'product_info' => $this->getOneProductForSerialize($pr_id),
                     'product_quantity' => $pr_qua
-                    ];
+                ];
             }
         }
         $post['products'] = serialize($products_to_order);
 
-        
+
         $this->db->transStart();
         $builder = $this->db->table('orders');
         if (!$builder->insert(array(
-                    'order_id' => $post['order_id'],
-                    'products' => $post['products'],
-                    'date' => $post['date'],
-                    'referrer' => $post['referrer'],
-                    'clean_referrer' => $post['clean_referrer'],
-                    'payment_type' => $post['payment_type'],
-                    'paypal_status' => @$post['paypal_status'],
-                    'discount_code' => @$post['discountCode'],
-                    'user_id' => $post['user_id'],
-                    'shipping_price' => $post['shipping_price'], // Insert shipping price
-                    'shipping_type' => $post['shipping_type']
-                ))) {
+            'order_id' => $post['order_id'],
+            'products' => $post['products'],
+            'date' => $post['date'],
+            'referrer' => $post['referrer'],
+            'clean_referrer' => $post['clean_referrer'],
+            'payment_type' => $post['payment_type'],
+            'paypal_status' => @$post['paypal_status'],
+            'discount_code' => @$post['discountCode'],
+            'user_id' => $post['user_id'],
+            'shipping_price' => $post['shipping_price'], // Insert shipping price
+            'shipping_type' => $post['shipping_type']
+        ))) {
 //            log_message('error', print_r($builder->error(), true));
         }
 
-        
+
         $lastId = $this->db->insertID();
         $builder = $this->db->table('orders_clients');
         if (!$builder->insert(array(
-                    'for_id' => $lastId,
-                    'first_name' => $post['billing_address']['billing_first_name'],
-                    'last_name' => $post['billing_address']['billing_last_name'],
-                    'company' => $post['billing_address']['billing_company'],
-                    'email' => $post['email'],
-                    'phone' => $post['phone'],
-                    'city' => $post['billing_address']['billing_city'],
-                    'street' => $post['billing_address']['billing_street'],
-                    'housenr' => $post['billing_address']['billing_housenr'],
-                    'country' => $post['billing_address']['billing_country'],
-                    'post_code' => $post['billing_address']['billing_post_code'],
-                    'notes' => $post['notes']
-                ))) {
-           // ///log_message('error', print_r($builder->error(), true));
+            'for_id' => $lastId,
+            'first_name' => $post['billing_address']['billing_first_name'],
+            'last_name' => $post['billing_address']['billing_last_name'],
+            'company' => $post['billing_address']['billing_company'],
+            'email' => $post['email'],
+            'phone' => $post['phone'],
+            'city' => $post['billing_address']['billing_city'],
+            'street' => $post['billing_address']['billing_street'],
+            'housenr' => $post['billing_address']['billing_housenr'],
+            'country' => $post['billing_address']['billing_country'],
+            'post_code' => $post['billing_address']['billing_post_code'],
+            'notes' => $post['notes']
+        ))) {
+            // ///log_message('error', print_r($builder->error(), true));
         }
         $builder = $this->db->table('orders_shipping');
         if (!$builder->insert(array(
@@ -428,7 +431,7 @@ class Public_model extends Model
             return $post['order_id'];
         }
     }
-    
+
     public function getOneProductForSerialize($id)
     {
         $builder = $this->db->table('products');
@@ -475,36 +478,36 @@ class Public_model extends Model
                 $this->db->transStart();
                 $builder = $this->db->table('vendors_orders');
                 if (!$builder->insert(array(
-                            'order_id' => $post['order_id'],
-                            'products' => $post['products'],
-                            'date' => $post['date'],
-                            'referrer' => $post['referrer'],
-                            'clean_referrer' => $post['clean_referrer'],
-                            'payment_type' => $post['payment_type'],
-                            'paypal_status' => @$post['paypal_status'],
-                            'discount_code' => @$post['discountCode'],
-                            'vendor_id' => $productInfo['vendor_id']
-                        ))) {
-                   // ///log_message('error', print_r($builder->error(), true));
+                    'order_id' => $post['order_id'],
+                    'products' => $post['products'],
+                    'date' => $post['date'],
+                    'referrer' => $post['referrer'],
+                    'clean_referrer' => $post['clean_referrer'],
+                    'payment_type' => $post['payment_type'],
+                    'paypal_status' => @$post['paypal_status'],
+                    'discount_code' => @$post['discountCode'],
+                    'vendor_id' => $productInfo['vendor_id']
+                ))) {
+                    // ///log_message('error', print_r($builder->error(), true));
                 }
                 $lastId = $this->db->insertID();
                 $builder = $this->db->table('vendors_orders_clients');
                 if (!$builder->insert(array(
-                            'for_id' => $lastId,
-                            'first_name' => $post['first_name'],
-                            'last_name' => $post['last_name'],
-                            'company' => $post['company'],
-                            'city' => $post['city'],
-                            'email' => $post['email'],
-                            'phone' => $post['phone'],
-                            'street' => $post['street'],
-                            'housenr' => $post['housenr'],
-                            'country' => $post['country'],
-                            'city' => $post['city'],
-                            'post_code' => $post['post_code'],
-                            'notes' => $post['notes']
-                        ))) {
-                  //  ///log_message('error', print_r($builder->error(), true));
+                    'for_id' => $lastId,
+                    'first_name' => $post['first_name'],
+                    'last_name' => $post['last_name'],
+                    'company' => $post['company'],
+                    'city' => $post['city'],
+                    'email' => $post['email'],
+                    'phone' => $post['phone'],
+                    'street' => $post['street'],
+                    'housenr' => $post['housenr'],
+                    'country' => $post['country'],
+                    'city' => $post['city'],
+                    'post_code' => $post['post_code'],
+                    'notes' => $post['notes']
+                ))) {
+                    //  ///log_message('error', print_r($builder->error(), true));
                 }
                 if ($this->db->transStatus() === FALSE) {
                     $this->db->transRollback();
@@ -577,7 +580,7 @@ class Public_model extends Model
         $builder->join('vendors', 'vendors.id = products.vendor_id', 'left');
         $builder->where('products.id !=', $noId);
         $builder->where('products.is_variant !=', 1);
-        
+
         if ($vendor_id !== false) {
             $builder->where('vendor_id', $vendor_id);
         }
@@ -645,10 +648,10 @@ class Public_model extends Model
     {
         if (!empty($dynPages)) {
             $result = $this->db->table('active_pages')->join('textual_pages_tanslations', 'textual_pages_tanslations.for_id = active_pages.id', 'left')
-            ->whereIn('active_pages.name', $dynPages)
-            ->where('textual_pages_tanslations.abbr', MY_LANGUAGE_ABBR)
-            ->select('textual_pages_tanslations.name as lname, active_pages.name as pname')
-            ->get();
+                ->whereIn('active_pages.name', $dynPages)
+                ->where('textual_pages_tanslations.abbr', MY_LANGUAGE_ABBR)
+                ->select('textual_pages_tanslations.name as lname, active_pages.name as pname')
+                ->get();
             $ar = array();
             $i = 0;
             foreach ($result->getResultArray() as $arr) {
@@ -680,20 +683,20 @@ class Public_model extends Model
         $builder = $this->db->table('orders');
         $builder->where('order_id', $order_id);
         if (!$builder->update(array(
-                    'paypal_status' => $status,
-                    'processed' => $processed
-                ))) {
-         //   ///log_message('error', print_r($builder->error(), true));
+            'paypal_status' => $status,
+            'processed' => $processed
+        ))) {
+            //   ///log_message('error', print_r($builder->error(), true));
         }
     }
 
     public function getCookieLaw()
     {
         $builder = $this->db->table('cookie_law')
-        ->join('cookie_law_translations', 'cookie_law_translations.for_id = cookie_law.id', 'inner')
-        ->where('cookie_law_translations.abbr', MY_LANGUAGE_ABBR)
-        ->where('cookie_law.visibility', '1')
-        ->select('link, theme, message, button_text, learn_more');
+            ->join('cookie_law_translations', 'cookie_law_translations.for_id = cookie_law.id', 'inner')
+            ->where('cookie_law_translations.abbr', MY_LANGUAGE_ABBR)
+            ->where('cookie_law.visibility', '1')
+            ->select('link, theme, message, button_text, learn_more');
         $query = $builder->get();
         if ($builder->countAllResults() > 0) {
             return $query->getRowArray();
@@ -791,8 +794,7 @@ class Public_model extends Model
         // Complete the transaction
         $this->db->transComplete();
 
-        if ($this->db->transStatus() === FALSE)
-        {
+        if ($this->db->transStatus() === FALSE) {
             // generate an error... or use the log_message() function to log your error
             return false;
         }
@@ -814,6 +816,7 @@ class Public_model extends Model
 
         return $this->db->affectedRows();
     }
+
     public function getUserByResetToken($token)
     {
         $builder = $this->db->table('users_public');
@@ -829,17 +832,44 @@ class Public_model extends Model
         }
     }
 
-    public function updateProfile($post)
+    public function updateProfile($userId, $userData)
     {
-        $array = array(
-            'name' => $post['name'],
-            'phone' => $post['phone'],
-            'email' => $post['email']
-        );
-        $builder = $this->db->table('users_public');
-        $builder->where('id', $post['id']);
-        $builder->update($array);
+        // Begin the transaction
+        $this->db->transStart();
+
+        // Update users_public table
+        $publicData = [
+            'email' => $userData['email'],
+            'first_name' => $userData['first_name'],
+            'last_name' => $userData['last_name'],
+            'phone' => $userData['phone'],
+            'mobile' => $userData['mobile'],
+            'lang' => $userData['language'],
+        ];
+        $this->db->table('users_public')->where('id', $userId)->update($publicData);
+        $billingAddressData = [
+            'first_name' => $userData['first_name'],
+            'last_name' => $userData['last_name'],
+            'street' => $userData['street'],
+            'post_code' => $userData['post_code'],
+            'country' => $userData['country'],
+            'city' => $userData['city'],
+            'housenr' => $userData['housenr'],
+        ];
+        $this->db->table('users_billing_addresses')->where('billing_id', $userData['billing_id'])->update($billingAddressData);
+
+        // Complete the transaction
+        $this->db->transComplete();
+
+        if ($this->db->transStatus() === FALSE) {
+            // log_message('error', print_r($this->db->error(), true));
+            dd(print_r($this->db->error(), true));
+            return false;
+        }
+
+        return true;
     }
+
     public function updateShippingAddress($userId, $shippingData)
     {
         // Retrieve shipping_id from users_public table
@@ -900,6 +930,16 @@ class Public_model extends Model
         }
     }
 
+    public function getUserWithAddressesByID($id)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->select('users_public.*, billing.first_name as billing_first_name, billing.last_name as billing_last_name,billing.company as billing_company, billing.street as billing_street, billing.post_code as billing_post_code, billing.country as billing_country, billing.city as billing_city, billing.housenr as billing_housenr, shipping.first_name as shipping_first_name, shipping.last_name as shipping_last_name,shipping.company as shipping_company, shipping.street as shipping_street, shipping.post_code as shipping_post_code, shipping.country as shipping_country, shipping.city as shipping_city, shipping.housenr as shipping_housenr');
+        $builder->join('users_billing_addresses as billing', 'users_public.billing_address_id = billing.billing_id', 'left');
+        $builder->join('users_shipping_addresses as shipping', 'users_public.shipping_address_id = shipping.shipping_id', 'left');
+        $builder->where('users_public.id', $id);
+        $query = $builder->get();
+        return $query->getRowArray();
+    }
 
     public function getUserProfileInfoByEmail($email)
     {
@@ -908,6 +948,7 @@ class Public_model extends Model
         $query = $builder->get();
         return $query->getRow();
     }
+
     public function getUserWithAddressesByEmail($email)
     {
         $builder = $this->db->table('users_public');
@@ -968,17 +1009,49 @@ class Public_model extends Model
 
     public function getUserOrdersHistory($userId, $limit, $page)
     {
+        $offset = ($page - 1) * $limit; // Correctly calculate the offset
+
         $builder = $this->db->table('orders');
         $builder->where('user_id', $userId);
-        $builder->orderBy('id', 'DESC');
+        $builder->orderBy('date', 'DESC');
         $builder->select('orders.*, orders_clients.first_name,'
-                . ' orders_clients.last_name, orders_clients.email, orders_clients.phone, orders_clients.company,'
-                . 'orders_clients.street, orders_clients.housenr, orders_clients.country, orders_clients.city, orders_clients.post_code,'
-                . ' orders_clients.notes, discount_codes.type as discount_type, discount_codes.amount as discount_amount');
+            . ' orders_clients.last_name, orders_clients.email, orders_clients.phone, orders_clients.company,'
+            . 'orders_clients.street, orders_clients.housenr, orders_clients.country, orders_clients.city, orders_clients.post_code,'
+            . ' orders_clients.notes, discount_codes.type as discount_type, discount_codes.amount as discount_amount');
         $builder->join('orders_clients', 'orders_clients.for_id = orders.id', 'inner');
         $builder->join('discount_codes', 'discount_codes.code = orders.discount_code', 'left');
-        $result = $builder->get($limit, $page);
+        $builder->limit($limit, $offset); // Use limit and offset
+        $result = $builder->get();
         return $result->getResultArray();
     }
 
+    public function deleteUserAccount($userId)
+    {
+        // Begin the transaction
+        $this->db->transStart();
+
+        // Get the user's billing and shipping address IDs
+        $user = $this->db->table('users_public')->select('billing_address_id, shipping_address_id')->where('id', $userId)->get()->getRow();
+        if ($user) {
+            // Delete user data from related tables first to maintain referential integrity
+            if ($user->billing_address_id) {
+                $this->db->table('users_billing_addresses')->where('billing_id', $user->billing_address_id)->delete();
+            }
+            if ($user->shipping_address_id) {
+                $this->db->table('users_shipping_addresses')->where('shipping_id', $user->shipping_address_id)->delete();
+            }
+        }
+
+        $this->db->table('users_public')->where('id', $userId)->delete();
+
+        // Complete the transaction
+        $this->db->transComplete();
+
+        if ($this->db->transStatus() === FALSE) {
+            // handle the error...
+            log_message('error', 'Failed to delete user account for user ID: ' . $userId);
+            return false;
+        }
+        return true;
+    }
 }

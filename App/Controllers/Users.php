@@ -115,37 +115,11 @@ class Users extends BaseController
         $head['description'] = lang_safe('my_acc');
         $head['keywords'] = str_replace(" ", ",", $head['title']);
         $data['userInfo'] = $this->Public_model->getUserProfileInfo($_SESSION['logged_user']);
-        $rowscount = $this->Public_model->getUserOrdersHistoryCount($_SESSION['logged_user']);
-        $data['orders_history'] = $this->Public_model->getUserOrdersHistory($_SESSION['logged_user'], $this->num_rows, $page);
-        $data['links_pagination'] = pagination('myaccount', $rowscount, $this->num_rows, 2);
+
         return $this->render('user', $head, $data);
     }
 
-    public function account($page = 0)
-    {
-        if (!session()->has('logged_user')) {
-            return redirect()->to(LANG_URL . '/register');
-        }
-        if (isset($_POST['update'])) {
-            $_POST['id'] = $_SESSION['logged_user'];
-            $count_emails = $this->Public_model->countPublicUsersWithEmail($_POST['email'], $_POST['id']);
-            if ($count_emails == 0) {
-                $this->Public_model->updateProfile($_POST);
-            }
-            session()->setFlashdata('success', 'Success');
-            return redirect()->to(current_url());
-        }
-        $head = array();
-        $data = array();
-        $head['title'] = lang_safe('my_acc');
-        $head['description'] = lang_safe('my_acc');
-        $head['keywords'] = str_replace(" ", ",", $head['title']);
-        $data['userInfo'] = $this->Public_model->getUserProfileInfo($_SESSION['logged_user']);
-        $rowscount = $this->Public_model->getUserOrdersHistoryCount($_SESSION['logged_user']);
-        $data['orders_history'] = $this->Public_model->getUserOrdersHistory($_SESSION['logged_user'], $this->num_rows, $page);
-        $data['links_pagination'] = pagination('myaccount', $rowscount, $this->num_rows, 2);
-        return $this->render('account', $head, $data);
-    }
+
 
     public function password()
     {
@@ -227,20 +201,7 @@ class Users extends BaseController
         return $this->render('address', $head, $data);
     }
 
-    public function orders($page = 0)
-    {
-        $head = array();
-        $data = array();
-        $head['title'] = lang_safe('my_acc');
-        $head['description'] = lang_safe('my_acc');
-        $head['keywords'] = str_replace(" ", ",", $head['title']);
-        $data['userInfo'] = $this->Public_model->getUserProfileInfo($_SESSION['logged_user']);
-        $rowscount = $this->Public_model->getUserOrdersHistoryCount($_SESSION['logged_user']);
-        $data['orders_history'] = $this->Public_model->getUserOrdersHistory($_SESSION['logged_user'], $this->num_rows, $page);
-        //echo '<pre>'; print_r($data['orders_history']); die;
-        $data['links_pagination'] = pagination('myaccount', $rowscount, $this->num_rows, 2);
-        return $this->render('orders', $head, $data);
-    }
+
 
     public function logout()
     {

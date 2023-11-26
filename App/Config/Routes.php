@@ -53,7 +53,7 @@ $routes->add('(\w{2})?/?clearShoppingCart', 'Home::clearShoppingCart');
 $routes->add('(\w{2})?/?removeFromCart', 'Home::removeFromCart');
 $routes->post('(\w{2})?/?discountCodeChecker', 'Home::discountCodeChecker');
 
-// home page pagination
+// home page paginatio
 $routes->add(rawurlencode('home') . '/(:num)', "Home::index/$1");
 // load javascript language file
 $routes->add('loadlanguage/(:segment)', "Loader::jsFile/$1");
@@ -126,10 +126,17 @@ $routes->add('(\w{2})/smart-home', "Users::smartHome");
 $routes->add('newsletter', "Users::newsletter");
 $routes->add('(\w{2})/newsletter', "Users::newsletter");
 
-$routes->add('orders', "Users::orders");
-$routes->add('(\w{2})/orders', "Users::orders");
-$routes->add('account', "Users::account");
-$routes->add('(\w{2})/account', "Users::account");
+$routes->get('orders', 'Orders::orders');
+$routes->get('orders/(:num)', 'Orders::orders/$1');
+$routes->add('(\w{2})/orders', "Orders::orders");
+
+
+$routes->add('account', "Account::account");
+$routes->add('(\w{2})/account', "Account::account");
+$routes->get('/account/delete', 'Account::delete');
+
+
+
 $routes->add('password', "Users::password");
 $routes->add('(\w{2})/password', "Users::password");
 $routes->add('password/recover', 'Users::forgotPassword');
