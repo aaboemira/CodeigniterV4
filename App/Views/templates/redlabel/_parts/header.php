@@ -347,7 +347,7 @@
                                     <hr class="no-hover" style="margin:10px;">
                                     <div class="account-menu-register">
                                         <a class=" register-link" style="margin-top: 10px;"
-                                           href="<?= base_url("/register") ?>" title="Registrierung">
+                                           href="<?= base_url("/register") ?>" title="<?= lang_safe('register') ?>">
                                             <span><?= lang_safe('register') ?></span>
                                             <span class="icon icon-arrow-right ">
                                                             <svg viewBox="0 0 24 24" version="1.1"

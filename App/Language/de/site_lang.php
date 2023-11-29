@@ -328,6 +328,8 @@ $lang['rejected']= 'Rejected';
 $lang['remember_me']= 'Merken';
 $lang['required']= '*';
 $lang['reset']= 'zurücksetzen';
+$lang['reset_success_msg']= 'Erfolg bei der Kontowiederherstellung';
+
 $lang['return_polici_text']= '30 Tage Rückgaberecht';
 $lang['save_text']= 'Sicher surfen und bezahlen mit SSL- Verschlüsselung';
 $lang['schneller_versand_text']= 'Schnelle Lieferung';

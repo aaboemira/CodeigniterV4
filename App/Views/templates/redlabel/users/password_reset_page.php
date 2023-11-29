@@ -40,13 +40,13 @@
                 <div class="well well-sm">
                     <form method="POST"  id="password_reset">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-7">
                                 <div class="form-group">
                                     <label for="password">
                                         <?= lang_safe('password', 'Enter new password') ?>
                                     </label>
                                     <div class="input-group">
-                                        <input type="password" name="pass" class="form-control" id="password" required="required" />
+                                        <input type="password" name="pass" class="form-control" id="password" required="required" autocomplete />
                                         <span class="input-group-btn">
                                                 <button class="btn btn-default toggle-password" type="button"
                                                         data-target="password">
@@ -56,13 +56,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-7">
                                 <div class="form-group">
                                     <label for="password_repeat">
                                         <?= lang_safe('password_repeat', 'Repeat new password') ?>
                                     </label>
                                     <div class="input-group">
-                                    <input type="password" name="pass_repeat" class="form-control" id="password_repeat" required="required" />
+                                    <input type="password" name="pass_repeat" class="form-control" id="password_repeat" required="required" autocomplete />
                                         <span class="input-group-btn">
                                             <button class="btn btn-default toggle-password" type="button"
                                                     data-target="password_repeat">
@@ -74,7 +74,7 @@
                             </div>
                             <input type="hidden" name="id" class="form-control" id="id" value="<?=$user_id?>" required="required" />
                             <div class="col-md-12">
-                                <button type="submit" name="reset_password" class="btn btn-primary pull-left" id="reset_password">
+                                <button type="submit" name="reset_password" class="btn btn-new pull-left" id="reset_password">
                                     <?= lang_safe('reset') ?>
                                 </button>
                             </div>

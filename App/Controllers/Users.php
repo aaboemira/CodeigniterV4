@@ -369,7 +369,7 @@ class Users extends BaseController
                 ) {
                     // Password meets the requirements
                     $this->Public_model->updatePassword($_POST);
-                    return redirect()->to('/register'); // Redirect to /register after successful password update
+                    return $this->render('users/forget_success', $head, $data);
                 } else {
                     // Password does not meet the requirements
                     session()->setFlashdata('error', lang_safe('invalid_password', 'Password must contain at least 1 special character, 1 number, and 1 letter'));

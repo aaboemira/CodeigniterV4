@@ -1000,6 +1000,20 @@ class Public_model extends Model
         $query = $builder->select('url')->get();
         return $query;
     }
+    public function getUserOrdersHistory($userId, $limit, $page)
+    {
+        $builder = $this->db->table('orders');
+        $builder->where('user_id', $userId);
+        $builder->orderBy('id', 'DESC');
+        $builder->select('orders.*, orders_clients.first_name,'
+            . ' orders_clients.last_name, orders_clients.email, orders_clients.phone, orders_clients.company,'
+            . 'orders_clients.street, orders_clients.housenr, orders_clients.country, orders_clients.city, orders_clients.post_code,'
+            . ' orders_clients.notes, discount_codes.type as discount_type, discount_codes.amount as discount_amount');
+        $builder->join('orders_clients', 'orders_clients.for_id = orders.id', 'inner');
+        $builder->join('discount_codes', 'discount_codes.code = orders.discount_code', 'left');
+        $result = $builder->get($limit, $page);
+        return $result->getResultArray();
+    }
 
     public function getUserOrdersHistoryCount($userId)
     {
