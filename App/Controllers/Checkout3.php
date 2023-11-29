@@ -71,7 +71,7 @@ class Checkout3 extends BaseController
             $_POST['shipping_type']=session('shipping_type');
             $_POST['shipping_address']=session('shipping_address');
             $_POST['billing_address']=session('billing_address');
-
+            $_POST['status']='receipt_confirmed';
             //hier alle variablen von session nach post kopieren
             $_POST['referrer'] = session('referrer');
             $_POST['clean_referrer'] = cleanReferral($_POST['referrer']);

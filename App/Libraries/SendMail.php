@@ -20,12 +20,12 @@ class SendMail
         $this->mail->isSMTP();
         //$this->mail->SMTPDebug = 2;
         $this->mail->Debugoutput = 'html';
-        $this->mail->Host = 'mx.freenet.de';
+        $this->mail->Host = 'smtp.gmail.com';
         $this->mail->Port = 465;
         $this->mail->SMTPSecure = 'ssl';
         $this->mail->SMTPAuth = true;
-        $this->mail->Username = "Kontaktformular_ND@freenet.de";
-        $this->mail->Password = "gQQK5Q5wuxUDJJP";
+        $this->mail->Username = "a.aboemira1@gmail.com";
+        $this->mail->Password = "hflqrrqhrfgogxcf";
         $this->mail->CharSet = 'UTF-8';
 		$this->emailHelper=new EmailHelper();
         $this->passwordEmailHelper=new PasswordResetEmailHelper();
@@ -125,9 +125,9 @@ class SendMail
         $german=false;
 
         //$this->mail->setFrom('kontakt@nodedevices.de', 'Node Devices');
-        $this->mail->setFrom('kontakt@nodedevices.de', 'Node Devices');
+        $this->mail->setFrom('a.aboemira1@gmail.com', 'Node Devices');
         $this->mail->addAddress($toEmail);
-        if ($data->country=='Deutschland')$german=true;
+        if ($data->billing_country=='Deutschland')$german=true;
         // Email subject
         if($german){
             $html=$this->passwordEmailHelper->generateEmailHTML($data,$resetLink);
@@ -174,6 +174,7 @@ class SendMail
 
         if (!$this->mail->send()) {
             log_message('error', 'Mailer Error: ' . $this->mail->ErrorInfo);
+            die();
             return false;
         }
 

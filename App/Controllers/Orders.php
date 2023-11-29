@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\admin\Products_model;
 use App\Models\Public_model;
 
 class Orders extends BaseController
@@ -11,6 +12,8 @@ class Orders extends BaseController
     public function __construct()
     {
         $this->Public_model = new Public_model();
+        $this->Products_model = new Products_model();
+
     }
 
     // ... [rest of your Users controller code] ...
@@ -38,7 +41,7 @@ class Orders extends BaseController
             $data['paginationLinks'] .= "<li class='page-item $active'><a class='page-link' href='/orders/$i'>$i</a></li>";
         }
 
-        return $this->render('orders', $head, $data);
+        return $this->render('orders/index', $head, $data);
     }
     public function addTotalAmountToOrders($orders) {
         foreach ($orders as &$order) {
@@ -64,14 +67,87 @@ class Orders extends BaseController
             $shippingPrice = $order['shipping_price'] ?? 0;
             $productsTotal += $shippingPrice;
 
-            // Add total amount to the order
-            $order['total_amount'] = round($productsTotal, 2);
+            // Format total amount to have 2 decimal places
+            $order['total_amount'] = number_format($productsTotal, 2, '.', '');
         }
         return $orders;
     }
 
-// ... [rest of your Users controller code] ...
 
+    public function showOrder($orderId)
+    {
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('my_acc');
+        $head['description'] = lang_safe('my_acc');
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        if (!$orderId) {
+            // Redirect or show an error if no order ID is provided
+            return redirect()->to('/orders');
+        }
 
+        $orderDetails = $this->Public_model->getOrderById($orderId);
+
+        if (!$orderDetails) {
+            // Redirect or show an error if the order is not found
+            return redirect()->to('/orders');
+        }
+        // Unserialize products data
+        $orderDetails['products'] = unserialize($orderDetails['products']);
+
+        $data = [
+            'order' => $orderDetails,
+            // Add any additional data you need for the view
+        ];
+
+        return $this->render('orders/show_orders', $head, $data);
+    }
+
+    public function generateInvoice($orderId) {
+        $orderDetails = $this->Public_model->getOrderById($orderId);
+        $country=$orderDetails['billing_country'];
+        if (!$orderDetails) {
+            // Handle the case where the order doesn't exist
+            return redirect()->to('/orders');
+        }
+        $german = ($country == 'Deutschland') ? true : false;
+
+        // Retrieve products and other necessary information
+        $products = unserialize($orderDetails['products']);
+        $orderDetails['products']=$this->addProductTitle($products);
+        $orderDetails['currency']=CURRENCY;
+        $orderDetails['date']=date('d.m.Y ', $orderDetails['date']);
+        $pdfLibrary = new \App\Libraries\GenerateInvoice();
+        if ($german) {
+            $pdfContent = $pdfLibrary->generateInvoiceHtml($orderDetails, $orderDetails['products']);
+        } else {
+            $pdfContent = $pdfLibrary->generateInvoiceHtmlEnglish($orderDetails, $orderDetails['products']);
+        }
+        // Output PDF to browser (you may also implement file saving if needed)
+        $this->response->setHeader('Content-Type', 'application/pdf');
+        echo $pdfContent;
+    }
+
+    public function addProductTitle($productsData)
+    {
+        $result = array();
+
+        foreach ($productsData as $product) {
+            if (isset($product['product_info']['id'])) {
+                $productId = $product['product_info']['id'];
+                $translationTitle = $this->Products_model->getProductTranslationTitle($productId);
+
+                if ($translationTitle !== false) {
+                    $product['product_info']['title'] = $translationTitle;
+                } else {
+                    $product['product_info']['title'] = 'Translation Not Found'; // You can customize this message.
+                }
+
+                $result[] = $product;
+            }
+        }
+
+        return $result;
+    }
 
 }

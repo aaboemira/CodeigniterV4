@@ -174,7 +174,8 @@ class Orders extends ADMIN_Controller
             }
             return true;
         }
-    }    public function sendBestellbestaetigung($orderData)
+    }
+    public function sendBestellbestaetigung($orderData)
     {
         $users = $this->Public_model->getNotifyUsers();
         $myDomain = config('config')->base_url;

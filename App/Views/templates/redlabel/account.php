@@ -243,17 +243,33 @@ $languages = [
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="current_password"><?= lang_safe('current_password') ?></label>
+                                            <div class="input-group">
                                             <input type="password" class="form-control" name="current_password"
                                                    id="current_password"
                                                    placeholder="<?= lang_safe('enter_current_password') ?>" />
+                                            <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-default toggle-password"
+                                                                data-target="current_password">
+                                                            <i class="fa fa-eye" id="eye-icon-repeat"></i>
+                                                        </button>
+                                            </span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="new_password"><?= lang_safe('new_password') ?></label>
+                                            <div class="input-group">
                                             <input type="password" class="form-control" name="new_password"
                                                    id="new_password"
                                                    placeholder="<?= lang_safe('enter_new_password') ?>" />
+                                            <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-default toggle-password"
+                                                                data-target="new_password">
+                                                            <i class="fa fa-eye" id="eye-icon-repeat"></i>
+                                                        </button>
+                                            </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -385,7 +385,8 @@ class Public_model extends Model
             'discount_code' => @$post['discountCode'],
             'user_id' => $post['user_id'],
             'shipping_price' => $post['shipping_price'], // Insert shipping price
-            'shipping_type' => $post['shipping_type']
+            'shipping_type' => $post['shipping_type'],
+            'order_status'=>$post['status']
         ))) {
 //            log_message('error', print_r($builder->error(), true));
         }
@@ -1007,23 +1008,34 @@ class Public_model extends Model
         return $builder->countAllResults();
     }
 
-    public function getUserOrdersHistory($userId, $limit, $page)
-    {
-        $offset = ($page - 1) * $limit; // Correctly calculate the offset
 
+    public function getOrderById($orderId)
+    {
         $builder = $this->db->table('orders');
-        $builder->where('user_id', $userId);
-        $builder->orderBy('date', 'DESC');
-        $builder->select('orders.*, orders_clients.first_name,'
-            . ' orders_clients.last_name, orders_clients.email, orders_clients.phone, orders_clients.company,'
-            . 'orders_clients.street, orders_clients.housenr, orders_clients.country, orders_clients.city, orders_clients.post_code,'
-            . ' orders_clients.notes, discount_codes.type as discount_type, discount_codes.amount as discount_amount');
-        $builder->join('orders_clients', 'orders_clients.for_id = orders.id', 'inner');
+        $builder->where('orders.order_id', $orderId);
+
+        // Select fields from the orders table and related client and shipping tables
+        $builder->select('orders.*, '
+            . 'clients.first_name as billing_first_name, clients.last_name as billing_last_name, '
+            . ' clients.company as billing_company,clients.notes as notes,'
+            . 'clients.street as billing_street, clients.housenr as billing_housenr, clients.country as billing_country, '
+            . 'clients.city as billing_city, clients.post_code as billing_post_code, clients.notes as billing_notes, '
+            . 'shipping.first_name as shipping_first_name, shipping.last_name as shipping_last_name, '
+            . 'shipping.company as shipping_company, shipping.street as shipping_street, '
+            . 'shipping.housenr as shipping_housenr, shipping.country as shipping_country, '
+            . 'shipping.city as shipping_city, shipping.post_code as shipping_post_code, '
+            . 'discount_codes.type as discount_type, discount_codes.amount as discount_amount');
+
+        // Join with the orders_clients and orders_shippings tables
+        $builder->join('orders_clients as clients', 'clients.for_id = orders.id', 'inner');
+        $builder->join('orders_shipping as shipping', 'shipping.for_id = orders.id', 'inner');
         $builder->join('discount_codes', 'discount_codes.code = orders.discount_code', 'left');
-        $builder->limit($limit, $offset); // Use limit and offset
+
         $result = $builder->get();
-        return $result->getResultArray();
+
+        return $result->getRowArray(); // Return a single row
     }
+
 
     public function deleteUserAccount($userId)
     {
@@ -1053,5 +1065,22 @@ class Public_model extends Model
             return false;
         }
         return true;
+    }
+    public function getSmartHomeDevicesByUID($uid, $limit, $page)
+    {
+        $offset = ($page - 1) * $limit; // Correctly calculate the offset
+
+        $builder = $this->db->table('SmartHomeDevices');
+        $builder->select('DeviceID, SerialNumber, UID, DeviceName, State, IsConnected');
+        $builder->where('UID', $uid);
+        $builder->limit($limit, $offset);
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+    public function countSmartHomeDevicesByUID($uid)
+    {
+        $builder = $this->db->table('SmartHomeDevices');
+        $builder->where('UID', $uid);
+        return $builder->countAllResults();
     }
 }

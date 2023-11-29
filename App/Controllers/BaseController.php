@@ -105,7 +105,6 @@ abstract class BaseController extends Controller
  
 
          $head['nav_categories'] = $tree = $this->buildTree1($all_categories);
-
          return view($this->template . '_parts/template', ['page'=> $view, 'data' => $data ,'head' => $head, 'footer' => $footer]);
      }
 

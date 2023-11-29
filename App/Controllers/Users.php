@@ -279,8 +279,8 @@ class Users extends BaseController
         $fullName=$_POST['first_name'].' '. $_POST['last_name'];
 
         $verificationToken = random_string('alnum', 32);
-        //$email = $this->sendVerificationEmail($email,$country,$fullName, $verificationToken);
-        $email=true;
+        $email = $this->sendVerificationEmail($email,$country,$fullName, $verificationToken);
+        //$email=true;
         if($email) {
             $_POST['verify_token'] = $verificationToken;
             $this->user_id = $this->Public_model->registerUser($_POST);
@@ -311,7 +311,7 @@ class Users extends BaseController
             $session = $_SESSION['code'];
             $email = $_POST['email'];
             // Check if the email exists in your database
-            $user = $this->Public_model->getUserProfileInfoByEmail($email);
+            $user = $this->Public_model->getUserWithAddressesByEmail($email);
 
             if ($user&&$this->validateCaptcha($result,$session)) {
                 // Generate a unique reset token and store it in your database

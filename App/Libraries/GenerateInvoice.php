@@ -4,7 +4,7 @@ namespace App\Libraries;
 require_once APPPATH.'Libraries/dompdf/autoload.inc.php';
 use Dompdf\Dompdf;
 
-class GeneratePDF
+class GenerateInvoice
 {
 
     protected $dompdf;
@@ -189,28 +189,18 @@ class GeneratePDF
             <p class="title" style="margin-top:30px;padding-left:10px; style="text-align:left;">Node Devices GmbH • Neuhauserstr. 36c • 70599 Stuttgart</p>
 
             <div class="header">';
-            $userDetailsHtml = '<div class="user-details">';
-            if (!empty($order['user_details']['full_name'])) {
-                $userDetailsHtml .= '<p> ' . $order['user_details']['full_name'] . '';
-            }
-            if (!empty($order['user_details']['company'])) {
-                $userDetailsHtml .= ' <br>' . $order['user_details']['company'] . '';
-            }
-            if (!empty($order['user_details']['addr_1'])) {
-                $userDetailsHtml .= '<br>' . $order['user_details']['addr_1'] . '';
-            }
-            if (!empty($order['user_details']['addr_2'])) {
-                $userDetailsHtml .= '<br>' . $order['user_details']['addr_2'] . '';
-            }
-            if (!empty($order['user_details']['country'])) {
-                $userDetailsHtml .= '<br>' . $order['user_details']['country'] . '</p>';
-            }
+        $userDetailsHtml = '<div class="user-details">';
+        $userDetailsHtml .= '<p> ' . $order['billing_first_name'].' '.$order['billing_last_name'] . '';
+        if (!empty($order['billing_company'])) {
+            $userDetailsHtml .= ' <br>' . $order['billing_company'] . '';
+        }
+            $userDetailsHtml .= '<br>' . $order['billing_street'] . ' ' . $order['billing_housenr']. '';
+            $userDetailsHtml .= '<br>' . $order['billing_post_code'] . ' ' . $order['billing_city']  . '';
+            $userDetailsHtml .= '<br>' . $order['billing_country'] . '</p>';
             $userDetailsHtml .= '</div>';
-                if (!empty(trim(strip_tags($userDetailsHtml)))) {
-                    $html .= $userDetailsHtml;
-                }
 
-                $html .= '
+            $html .= $userDetailsHtml;
+        $html .= '
                 <div class="order-details" >
                     <table class="header-table">
                         <thead">
@@ -224,7 +214,7 @@ class GeneratePDF
                             Rechnungsdatum:
                             </td>
                             <td style="text-align:left">
-                            '.$order['order_date'].'
+                            '.$order['date'].'
                             </td>
                         </tr>
                         </tbody>
@@ -235,7 +225,7 @@ class GeneratePDF
                                     Bestelldatum:
                                 </td>
                                 <td style="text-align:left">
-                                '.$order['order_date'].'
+                                '.$order['date'].'
                                 </td>
                             </tr>
                             <tr >                            
@@ -290,36 +280,36 @@ class GeneratePDF
                         <td>' . number_format($product['product_info']['price'],2) .$order['currency']. '</td>
                         <td>' . number_format($product['product_info']['price'] * $product['product_quantity'], 2) .$order['currency']. '</td>
                     </tr>';
-                    $priceIncludingVAT = $product['product_info']['price'] * $product['product_quantity'];
-                    $discountPercentage = $order['discount']; 
-                    $vatRate = 0.19; // 19% VAT rate
-                    $ProductNetTotal = round(($priceIncludingVAT / (1 + ($vatRate ))),2);
+            $priceIncludingVAT = $product['product_info']['price'] * $product['product_quantity'];
+            $discountPercentage = $order['discount'];
+            $vatRate = 0.19; // 19% VAT rate
+            $ProductNetTotal = round(($priceIncludingVAT / (1 + ($vatRate ))),2);
 
-                    // Calculate the VAT amount
-                    $ProductVat = round(($priceIncludingVAT - $ProductNetTotal),2);
-                    // Calculate the discount amount
-                    $ProductDiscount = round((($priceIncludingVAT * $discountPercentage) / 100),2);
-                    
-
-                    
-                    
-                    //Total For all products
-                    $totalDiscount+=$ProductDiscount;
-                    $totalVat+=$ProductVat;
-                    $totalSub+=$ProductNetTotal;
-                    $totalNet+=$priceIncludingVAT-$ProductDiscount;
+            // Calculate the VAT amount
+            $ProductVat = round(($priceIncludingVAT - $ProductNetTotal),2);
+            // Calculate the discount amount
+            $ProductDiscount = round((($priceIncludingVAT * $discountPercentage) / 100),2);
 
 
-                }
-                $shipping_price = empty($order['shipping_price']) ? 0 : $order['shipping_price'];
-                if ($shipping_price!= 0) {
-                    $netPriceForShipping = $shipping_price / (1 + ($vatRate ));
-                    $shippingVat=$shipping_price-$netPriceForShipping;
-                    $totalSub+=$netPriceForShipping;
-                    $totalVat+=$shippingVat;
-                    $totalNet+=$shipping_price;
-                    $rowCount++;
-                    $html .= '<tr>
+
+
+            //Total For all products
+            $totalDiscount+=$ProductDiscount;
+            $totalVat+=$ProductVat;
+            $totalSub+=$ProductNetTotal;
+            $totalNet+=$priceIncludingVAT-$ProductDiscount;
+
+
+        }
+        $shipping_price = empty($order['shipping_price']) ? 0 : $order['shipping_price'];
+        if ($shipping_price!= 0) {
+            $netPriceForShipping = $shipping_price / (1 + ($vatRate ));
+            $shippingVat=$shipping_price-$netPriceForShipping;
+            $totalSub+=$netPriceForShipping;
+            $totalVat+=$shippingVat;
+            $totalNet+=$shipping_price;
+            $rowCount++;
+            $html .= '<tr>
                     <td>' . $rowCount . '</td>
                     <td>-</td>
                     <td>' . $order['shipping_type']. '</td>
@@ -328,7 +318,7 @@ class GeneratePDF
                     <td>' . number_format($order['shipping_price'],2) .$order['currency']. '</td>
                     <td>' . number_format($order['shipping_price'], 2) .$order['currency']. '</td>
                 </tr>';
-                }
+        }
         $html .= '</tbody>
                 <tfoot>
                     <tr>
@@ -336,15 +326,15 @@ class GeneratePDF
                         <td colspan="2">Gesamt netto</td>
                         <td colspan="2">'.number_format($totalSub, 2).$order['currency'].'</td>
                     </tr>';
-                    if ($order['discount'] != 0) {
-                        $html .= '<tr>
+        if ($order['discount'] != 0) {
+            $html .= '<tr>
                                 <td colspan="3"></td>
                                     <td colspan="2">Rabatt</td>
                                     <td colspan="2" style="padding-right:10px;">-' . number_format($totalDiscount, 2).$order['currency']. '</td>
                                   </tr>';
-                    }
+        }
 
-                    
+
         $html.='        
                     <tr>
                         <td colspan="3"></td>
@@ -352,7 +342,7 @@ class GeneratePDF
                         <td colspan="2">'.number_format($totalVat, 2).$order['currency'].'</td>
                     </tr>
                     ';
-                    $html.=' 
+        $html.=' 
                     <tr class"total" style="padding-bottom:0 !important; margin-bottom:0 !important;">
                         <td colspan="3"></td>
                         <td colspan="2" style="font-weight:bold !important; padding-bottom:0 !important; margin-bottom:0 !important;">Gesamtbetrag</td>
@@ -388,12 +378,12 @@ class GeneratePDF
             </div>
         </body>
         </html>';
-    
-        return $this->generatePdf($html);
-}
 
-function generateInvoiceHtmlEnglish($order, $arr_products) {
-    $html = '<!DOCTYPE html>
+        return $this->generatePdf($html);
+    }
+
+    function generateInvoiceHtmlEnglish($order, $arr_products) {
+        $html = '<!DOCTYPE html>
     <html>
     <head>
         <meta charset="utf-8">
@@ -555,25 +545,15 @@ function generateInvoiceHtmlEnglish($order, $arr_products) {
 
         <div class="header">';
         $userDetailsHtml = '<div class="user-details">';
-        if (!empty($order['user_details']['full_name'])) {
-            $userDetailsHtml .= '<p> ' . $order['user_details']['full_name'] . '';
+        $userDetailsHtml .= '<p> ' . $order['billing_first_name'].' '.$order['billing_last_name'] . '';
+        if (!empty($order['billing_company'])) {
+            $userDetailsHtml .= ' <br>' . $order['billing_company'] . '';
         }
-        if (!empty($order['user_details']['company'])) {
-            $userDetailsHtml .= ' <br>' . $order['user_details']['company'] . '';
-        }
-        if (!empty($order['user_details']['addr_1'])) {
-            $userDetailsHtml .= '<br>' . $order['user_details']['addr_1'] . '';
-        }
-        if (!empty($order['user_details']['addr_2'])) {
-            $userDetailsHtml .= '<br>' . $order['user_details']['addr_2'] . '';
-        }
-        if (!empty($order['user_details']['country'])) {
-            $userDetailsHtml .= '<br>' . $order['user_details']['country'] . '</p>';
-        }
+        $userDetailsHtml .= '<br>' . $order['billing_street'] . ' ' . $order['billing_housenr']. '';
+        $userDetailsHtml .= '<br>' . $order['billing_post_code'] . ' ' . $order['billing_city']  . '';
+        $userDetailsHtml .= '<br>' . $order['billing_country'] . '</p>';
         $userDetailsHtml .= '</div>';
-        if (!empty(trim(strip_tags($userDetailsHtml)))) {
-            $html .= $userDetailsHtml;
-        }
+        $html .= $userDetailsHtml;
 
         $html .= '
             <div class="order-details" >
@@ -589,7 +569,7 @@ function generateInvoiceHtmlEnglish($order, $arr_products) {
                         Invoice Date:
                         </td>
                         <td style="text-align:left">
-                        '.$order['order_date'].'
+                        '.$order['date'].'
                         </td>
                     </tr>
                     </tbody>
@@ -600,7 +580,7 @@ function generateInvoiceHtmlEnglish($order, $arr_products) {
                                 Order Date:
                             </td>
                             <td style="text-align:left">
-                            '.$order['order_date'].'
+                            '.$order['date'].'
                             </td>
                         </tr>
                         <tr >                            
@@ -639,14 +619,14 @@ function generateInvoiceHtmlEnglish($order, $arr_products) {
             </tr>
             </thead>
             <tbody>';
-    $totalDiscount=0;
-    $totalVat=0;
-    $totalNet=0;
-    $totalSub=0;
-    $rowCount = 0; // Initialize a row count variable
-    foreach ($arr_products as $product) {
-        $rowCount++;
-        $html .= '<tr>
+        $totalDiscount=0;
+        $totalVat=0;
+        $totalNet=0;
+        $totalSub=0;
+        $rowCount = 0; // Initialize a row count variable
+        foreach ($arr_products as $product) {
+            $rowCount++;
+            $html .= '<tr>
                     <td>' . $rowCount . '</td>
                     <td>' . (!empty($product['product_info']['article_nr']) ? $product['product_info']['article_nr'] : '-') . '</td>
                     <td>' . $product['product_info']['title'] . '</td>
@@ -655,36 +635,36 @@ function generateInvoiceHtmlEnglish($order, $arr_products) {
                     <td>' . number_format($product['product_info']['price'],2) .$order['currency']. '</td>
                     <td>' . number_format($product['product_info']['price'] * $product['product_quantity'], 2) .$order['currency']. '</td>
                 </tr>';
-                $priceIncludingVAT = $product['product_info']['price'] * $product['product_quantity'];
-                $discountPercentage = $order['discount']; 
-                $vatRate = 0.19; // 19% VAT rate
-                $ProductNetTotal = round(($priceIncludingVAT / (1 + ($vatRate ))),2);
+            $priceIncludingVAT = $product['product_info']['price'] * $product['product_quantity'];
+            $discountPercentage = $order['discount'];
+            $vatRate = 0.19; // 19% VAT rate
+            $ProductNetTotal = round(($priceIncludingVAT / (1 + ($vatRate ))),2);
 
-                // Calculate the VAT amount
-                $ProductVat = round(($priceIncludingVAT - $ProductNetTotal),2);
-                // Calculate the discount amount
-                $ProductDiscount = round((($priceIncludingVAT * $discountPercentage) / 100),2);
-                
-
-                
-                
-                //Total For all products
-                $totalDiscount+=$ProductDiscount;
-                $totalVat+=$ProductVat;
-                $totalSub+=$ProductNetTotal;
-                $totalNet+=$priceIncludingVAT-$ProductDiscount;
+            // Calculate the VAT amount
+            $ProductVat = round(($priceIncludingVAT - $ProductNetTotal),2);
+            // Calculate the discount amount
+            $ProductDiscount = round((($priceIncludingVAT * $discountPercentage) / 100),2);
 
 
-            }
-            $shipping_price = empty($order['shipping_price']) ? 0 : $order['shipping_price'];
-            if ($shipping_price!= 0) {
-                $netPriceForShipping = $shipping_price / (1 + ($vatRate ));
-                $shippingVat=$shipping_price-$netPriceForShipping;
-                $totalSub+=$netPriceForShipping;
-                $totalVat+=$shippingVat;
-                $totalNet+=$shipping_price;
-                $rowCount++;
-                $html .= '<tr>
+
+
+            //Total For all products
+            $totalDiscount+=$ProductDiscount;
+            $totalVat+=$ProductVat;
+            $totalSub+=$ProductNetTotal;
+            $totalNet+=$priceIncludingVAT-$ProductDiscount;
+
+
+        }
+        $shipping_price = empty($order['shipping_price']) ? 0 : $order['shipping_price'];
+        if ($shipping_price!= 0) {
+            $netPriceForShipping = $shipping_price / (1 + ($vatRate ));
+            $shippingVat=$shipping_price-$netPriceForShipping;
+            $totalSub+=$netPriceForShipping;
+            $totalVat+=$shippingVat;
+            $totalNet+=$shipping_price;
+            $rowCount++;
+            $html .= '<tr>
                 <td>' . $rowCount . '</td>
                 <td>-</td>
                 <td>' . $order['shipping_type']. '</td>
@@ -693,31 +673,31 @@ function generateInvoiceHtmlEnglish($order, $arr_products) {
                 <td>' . number_format($order['shipping_price'],2) .$order['currency']. '</td>
                 <td>' . number_format($order['shipping_price'], 2) .$order['currency']. '</td>
             </tr>';
-            }
-    $html .= '</tbody>
+        }
+        $html .= '</tbody>
             <tfoot>
                 <tr>
                     <td colspan="3"></td>
                     <td colspan="2">Total Net</td>
                     <td colspan="2">'.number_format($totalSub, 2).$order['currency'].'</td>
                 </tr>';
-                if ($order['discount'] != 0) {
-                    $html .= '<tr>
+        if ($order['discount'] != 0) {
+            $html .= '<tr>
                             <td colspan="3"></td>
                                 <td colspan="2">Discount</td>
                                 <td colspan="2"style="padding-right:10px;">-' . number_format($totalDiscount, 2).$order['currency']. '</td>
                               </tr>';
-                }
+        }
 
 
-    $html.='        
+        $html.='        
                 <tr>
                     <td colspan="3"></td>
                     <td colspan="2">VAT 19.00%</td>
                     <td colspan="2">'.number_format($totalVat, 2).$order['currency'].'</td>
                 </tr>
                 ';
-                $html.=' 
+        $html.=' 
                 <tr class"total" style="padding-bottom:0 !important; margin-bottom:0 !important;">
                     <td colspan="3"></td>
                     <td colspan="2" style="font-weight:bold !important; padding-bottom:0 !important; margin-bottom:0 !important;">Total Amount</td>
@@ -754,8 +734,8 @@ function generateInvoiceHtmlEnglish($order, $arr_products) {
     </body>
     </html>';
 
-    return $this->generatePdf($html);
-}
+        return $this->generatePdf($html);
+    }
 
 
 }
