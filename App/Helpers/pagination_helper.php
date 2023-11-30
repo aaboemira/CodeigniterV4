@@ -2,6 +2,8 @@
 
 
 function pagination($url, $rowscount, $per_page, $segment = 2) {
+    return '';
+
     $request = \Config\Services::request(); // Get the request instance
     $pager = \Config\Services::pager(); // Get the pager service
 
