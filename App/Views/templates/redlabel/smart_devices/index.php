@@ -29,6 +29,21 @@
         background-color: #f0f0f0; /* Slight background color on hover for visual feedback */
         text-decoration: none; /* Removes the underline text decoration from the anchor tag on hover */
     }
+    .status-indicator {
+        width: 20px;  /* Adjust size as needed */
+        height: 20px; /* Adjust size as needed */
+        border-radius: 50%; /* Makes it a circle */
+        display: inline-block;
+    }
+
+    .green {
+        background-color: green;
+    }
+
+    .red {
+        background-color: red;
+    }
+
 </style>
 <div class="container-fluid user-page">
     <div class="row">
@@ -40,19 +55,59 @@
         <?= view('templates/redlabel/_parts/sidebar'); ?>
 
         <div class="col-md-9">
+            <?php if (session('error')) { ?>
+                <div class="alert alert-danger">
+                    <?= session('error') ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <?php } ?>
+            <?php if (session('success')) { ?>
+                <div class="alert alert-success">
+                    <?= session('success') ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <?php } ?>
             <h1 style="color:black;font-size: 2.5em;"><?= lang_safe('my_smart_home_devices') ?></h1>
+            <div class="add-device-button">
+                <a href="<?= base_url('/smartdevices/add') ?>" class="btn btn-primary">Add New Device</a>
+            </div>
+            <!-- Bootstrap Modal for Spinner -->
+            <div class="modal " id="global-spinner-modal" tabindex="-1" role="dialog" aria-labelledby="spinnerModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                    <div class="modal-content">
+                        <div class="modal-body text-center">
+                            <!-- Spinner (you can replace this with any spinner of your choice) -->
+                            <div class="spinner">
+                                <i class="fa fa-spinner fa-spin fa-3x"></i>
+                            </div>
+                            <p>Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <hr>
             <div class="table-responsive">
+                <?php if (empty($devices)): ?>
+                    <p><?= lang_safe('no_devices_found') ?></p>
+                <?php else: ?>
+
+
                 <table class="table custom-table">
                     <thead>
                     <tr>
                         <th><?= lang_safe('pos') ?></th>
+                        <th><?= lang_safe('name') ?></th>
                         <th><?= lang_safe('serial_number') ?></th>
                         <th><?= lang_safe('state') ?></th>
                         <th><?= lang_safe('is_connected') ?></th>
                         <th><?= lang_safe('control') ?></th>
                         <th><?= lang_safe('manage') ?></th>
-
+                        <th><?= lang_safe('refresh') ?></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -61,17 +116,47 @@
                         foreach ($devices as $device) {
                             ?>
                             <tr>
-                                <td><?= $device['DeviceID'] ?></td>
-                                <td><?= $device['SerialNumber'] ?></td>
-                                <td><?= $device['State'] ?></td>
-                                <td><?= $device['IsConnected'] ? lang_safe('yes') : lang_safe('no') ?></td>
+                                <div id="loading-indicator-<?= $device['device_id'] ?>" style="display: none;">
+                                    <!-- Your loading spinner here -->
+                                </div>
+                                <td><?= $device['device_id'] ?></td>
+                                <td><?= $device['device_name'] ?></td>
+                                <td><?= $device['serial_number'] ?></td>
+                                <td><?= $device['state'] ?></td>
+                                <td class="connected-cell">
+                                    <div class="status-indicator <?= $device['connected'] ? 'green' : 'red' ?>"></div>
+                                </td>
                                 <td>
-                                    <a class="icon-border" href="<?= base_url('/devices/show/' . $device['DeviceID']) ?>"><i class="fa fa-cogs"><?= lang_safe('control') ?></i>
+                                    <a class="icon-border" href="<?= base_url('/devices/show/' . $device['device_id']) ?>"><i class="fa fa-cogs"><?= lang_safe('control') ?></i>
                                     </a>
                                 </td>
                                 <td>
-                                    <a class="icon-border" href="<?= base_url('/devices/show/' . $device['DeviceID']) ?>"><i class="fa fa-cogs"><?= lang_safe('manage') ?></i>
-                                    </a>
+                                    <div class="dropdown">
+                                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                                            Manage
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="<?= base_url('/smartdevices/editDevice/' . $device['device_id']) ?>">
+                                                    <i class="fa fa-pencil"></i> Edit Device
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="<?= base_url('/smartdevices/deleteDevice/' . $device['device_id']) ?>" onclick="return confirm('Are you sure you want to delete this device?');">
+                                                    <i class="fa fa-trash"></i> Delete Device
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="<?= base_url('/smartdevices/accessControl/' . $device['device_id']) ?>">
+                                                    <i class="fa fa-users"></i> Access Control
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn-refresh" data-device-id="<?= $device['device_id'] ?>" onclick="refreshStatus(<?= $device['device_id'] ?>)">Refresh</button>
                                 </td>
                             </tr>
                             <?php
@@ -84,7 +169,7 @@
                     <?php } ?>
                     </tbody>
                 </table>
-
+                <?php endif; ?>
                 <nav aria-label="Page navigation">
                     <ul class="pagination" style="position:relative !important;z-index:2;">
                         <?= $paginationLinks ?>
@@ -96,3 +181,29 @@
 </div>
 
 </div>
+<script>
+    function refreshStatus(deviceId) {
+        $('#global-spinner-modal').modal('show');
+
+        // Show a loading indicator here, e.g., a spinner next to the refresh button
+        $.ajax({
+            url: '<?= base_url('/smartdevices/refreshDeviceStatus') ?>',
+            type: 'POST',
+            data: { deviceId: deviceId },
+            success: function(response) {
+                // Update the UI with the new status
+                var row = $('button[data-device-id="' + deviceId + '"]').closest('tr');
+                row.find('.connected-cell').html(response.connected ? '<div class="status-indicator green"></div>' : '<div class="status-indicator red"></div>');
+                row.find('.state-cell').text(response.state);
+                $('#global-spinner-modal').modal('hide');
+
+                // Hide the loading indicator
+            },
+            error: function() {
+                alert("Error refreshing status");
+                // Hide the loading indicator
+            }
+        });
+    }
+</script>
+

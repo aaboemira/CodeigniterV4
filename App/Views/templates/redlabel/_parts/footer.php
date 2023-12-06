@@ -384,6 +384,8 @@ function redirectToGoogleMaps() {
         // Adjust the button classes when the window is resized
         window.addEventListener('resize', adjustButtonClasses);
     });
+
+
 </script>
 
 </body>

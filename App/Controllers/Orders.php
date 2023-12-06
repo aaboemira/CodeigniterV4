@@ -19,6 +19,9 @@ class Orders extends BaseController
     // ... [rest of your Users controller code] ...
     public function orders($page = 0)
     {
+        if (!session()->has('logged_user')) {
+            return redirect()->to(LANG_URL . '/register');
+        }
         $head = array();
         $data = array();
         $head['title'] = lang_safe('my_acc');
@@ -76,6 +79,9 @@ class Orders extends BaseController
 
     public function showOrder($orderId)
     {
+        if (!session()->has('logged_user')) {
+            return redirect()->to(LANG_URL . '/register');
+        }
         $head = array();
         $data = array();
         $head['title'] = lang_safe('my_acc');

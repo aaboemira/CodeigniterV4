@@ -175,18 +175,6 @@ class Users extends BaseController
         return $this->render('address', $head, $data);
     }
 
-    public function smartHome()
-    {
-        if (!session()->has('logged_user')) {
-            return redirect()->to(LANG_URL . '/register');
-        }
-        $head = array();
-        $data = array();
-        $head['title'] = lang_safe('my_acc');
-        $head['description'] = lang_safe('my_acc');
-        $head['keywords'] = str_replace(" ", ",", $head['title']);
-        return $this->render('address', $head, $data);
-    }
 
     public function newsletter()
     {

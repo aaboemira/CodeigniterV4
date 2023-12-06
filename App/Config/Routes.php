@@ -122,12 +122,25 @@ $routes->add('(\w{2})/address', "Users::address");
 
 $routes->add('smart-home', "SmartDevices::index");
 $routes->get('smart-home/(:num)', 'SmartDevices::index/$1');
+$routes->get('/smartdevices/add', 'SmartDevices::add');
+$routes->post('/smartdevices/store', 'SmartDevices::store');
+$routes->post('/smartdevices/refreshDeviceStatus', 'SmartDevices::refreshDeviceStatus');
+$routes->get('/smartdevices/deleteDevice/(:num)', 'SmartDevices::deleteDevice/$1');
+$routes->get('/smartdevices/editDevice/(:num)', 'SmartDevices::editDevice/$1');
+$routes->post('/smartdevices/updateDevice', 'SmartDevices::updateDevice');
+
+
+$routes->get('/smartdevices/accessControl/(:num)', 'SmartDevices::accessControl/$1');
+$routes->post('/smartdevices/addGuest', 'SmartDevices::addGuest');
+$routes->get('/smartdevices/deleteGuest/(:num)', 'SmartDevices::deleteGuest/$1');
+$routes->post('/smartdevices/updateGuest', 'SmartDevices::updateGuest');
 
 $routes->add('(\w{2})/smart-home', "Users::smartHome");
 
-$routes->add('newsletter', "Users::newsletter");
-$routes->add('(\w{2})/newsletter', "Users::newsletter");
-
+$routes->add('newsletter', "Newsletter::index");
+$routes->add('(\w{2})/newsletter', "Newsletter::newsletter");
+$routes->post('/newsletter/subscribe', 'Newsletter::subscribe');
+$routes->post('/newsletter/unsubscribe', 'Newsletter::unsubscribe');
 $routes->get('orders', 'Orders::orders');
 $routes->get('orders/(:num)', 'Orders::orders/$1');
 $routes->add('(\w{2})/orders', "Orders::orders");

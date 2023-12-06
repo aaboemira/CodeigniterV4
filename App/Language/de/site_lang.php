@@ -12,7 +12,13 @@ $lang['Zwischensumme']= 'Zwischensumme';
 $lang['about_us']= 'Über uns';
 $lang['action'] = 'Aktion';
 $lang['account_type']= 'Sie send ein';
+$lang['access_control_for']= 'Access Control For';
+
 $lang['add_to_cart']= 'Zum Warenkorb hinzufügen';
+$lang['add_device']='Add Device';
+$lang['add_guest']='Add Guest';
+$lang['add_new_guest']='Add New Guest';
+
 $lang['added_after']= 'Hinzugefügt seit';
 $lang['added_before']= 'Zuvor hinzugefügt ';
 $lang['added_on']= 'Zum Warenkorb hinzugefügt ';
@@ -50,6 +56,8 @@ $lang['captcha_didnt_match']= '- Der Sicherheitscode stimmt nicht überein';
 $lang['captcha_wrong']= 'Captcha Didnt match';
 $lang['cash_on_delivery']= 'Bar Bezahlung bei Abholung';
 $lang['categories']= 'Kategorien';
+$lang['can_control']= 'Can Control';
+
 $lang['change_address']= 'Change Address';
 $lang['change_password']= 'Change Passwort';
 $lang['check_code']= 'Gutscheincode prüfen';
@@ -72,6 +80,8 @@ $lang['clear_the_filter']= 'Filter zurücksetzen';
 $lang['colour']= 'Farbe';
 $lang['company']= 'Firma';
 $lang['confirm_order_subj']= 'Bestätigen';
+$lang['confirm_delete_guest']= 'Are you sure to delete?';
+
 $lang['contact_check']= 'Bitte akzeptieren Sie die Richtlinie, um diese Kontaktmöglichkeit zu verwenden';
 $lang['contact_details']= 'Kontakt';
 $lang['contact_policy']= 'Kontaktieren Sie uns gerne über einen der aufgelisteten Kanäle. Wir kümmern uns schnellstmöglich um Ihr Anliegen und melden uns umgehend bei Ihnen zurück.';
@@ -100,6 +110,8 @@ $lang['delivery']= 'Lieferung';
 $lang['delivery_status_available']= 'Lieferzeit verz. bis 7 Tage';
 $lang['delivery_status_direct_available']= 'Sofort lieferbar';
 $lang['delivery_status_not_available']= 'Ausverkauft - Aktuell nicht lieferbar';
+$lang['denied']= 'Denied';
+
 $lang['description']= 'Produktbeschreibung';
 $lang['details']= 'Vorschau';
 $lang['device_name'] = 'Gerätename';
@@ -108,6 +120,7 @@ $lang['discount_code']= 'Gutscheincode';
 $lang['download_invoice']= 'Download Invoice';
 
 $lang['edit']= 'Bearbeiten';
+$lang['edit_guest']= 'Edit Guest';
 $lang['email']= 'Email';
 $lang['email_added']= 'Ihre Email Adresse wurde hinzugeügt';
 $lang['email_address']= 'E-Mail-Adresse';
@@ -149,11 +162,17 @@ $lang['forget_password']= 'Passwort vergessen?';
 $lang['forgot_pass']= 'Forgot password';
 $lang['freeShipping']= 'Versandkostenfreier Versand ab %price%%currency% ';
 $lang['freeShippingHeader']= 'Bestellen';
+$lang['granted']= 'Granted';
+
 $lang['get_angebot']= 'Angebot anfordern';
 $lang['get_angebot_text']= 'Bitte füllen Sie das Formular aus - Sie erhalten nach der Prüfung Ihres Modells schnellstmöglich unser Angebot';
+$lang['guest_email']= ' Guest Email';
+
 $lang['go_back']= 'Zurück';
 $lang['go_to_checkout']= 'Zur Kasse gehen';
 $lang['go_to_paypal']= 'zu Paypal';
+
+
 $lang['hideXsNav']= 'Kategorien ausblenden';
 $lang['home']= 'Startseite';
 $lang['home_arrivals_text']= '   .';
@@ -189,11 +208,14 @@ $lang['lang_empty']= '- Sprache';
 $lang['last_name']= 'Nachname';
 $lang['last_name_empty']= '- Nachname';
 $lang['latest_blog']= 'Latest blog';
+$lang['list_of_guests']= 'Guests List';
+
 $lang['login']= 'Login';
 $lang['login_to_acc']= 'Login to your account';
 $lang['login_to_your_acc']= 'Login to Your Account';
 $lang['login_vendor_error']= 'Wrong email or password';
 $lang['logout']= 'Logout';
+
 $lang['material']= 'Material';
 $lang['manage']= 'Manage';
 
@@ -230,6 +252,9 @@ $lang['newsletter']= 'Newsletter';
 $lang['newsletter_agreement']= 'Ich möchte den Newsletter erhalten';
 $lang['no_archives']= 'No Archives';
 $lang['no_categories']= 'Keine Kategorien';
+$lang['no_devices_found']= 'No Devices Found';
+$lang['no_guests_found']= 'No Guests Found';
+
 $lang['no_posts']= 'No published articles';
 $lang['no_products']= 'Keine Produkte';
 $lang['no_products_in_cart']= 'Es befinden sich noch keine Produkte in Ihrem Einkaufwagen';
@@ -240,6 +265,8 @@ $lang['nodematic_login']= 'Nodematic Login';
 $lang['not_available']= 'Nicht verfügbar';
 $lang['not_selected']= 'Nichts ausgewählt';
 $lang['notes']= 'Sonstige Bemerkungen';
+$lang['not_subscribed_heading'] = 'Subscribe to Our Newsletter';
+$lang['not_subscribed_info'] = 'Be the first to discover our brand new products and features! Our newsletter not only informs you about the latest developments in our “Node Devices Smart Home” app, but also about innovations on our website. Stay informed and be the first to experience the exciting innovations we have in store for you.<br>Also take part in our exclusive discount campaigns and save money. Register now and dont miss any advantages!';
 $lang['num_added_to_cart']= 'Anzahl Artikel im Warenkorb';
 $lang['oberflaeche']= 'Nachbearbeitung';
 $lang['oder_from_category']= 'Weitere Artikel in dieser Kategorie';
@@ -296,6 +323,8 @@ $lang['please_enter_password']= 'Please enter a password';
 $lang['please_enter_phone']= 'Please enter phone';
 $lang['please_repeat_password']= 'Please repeat the password';
 $lang['post_code']= 'PLZ';
+$lang['pos']= 'POS';
+
 $lang['price']= 'Preis';
 $lang['price_from']= 'Preis von ';
 $lang['price_high']= 'höchster Preis';
@@ -332,6 +361,7 @@ $lang['reset_success_msg']= 'Erfolg bei der Kontowiederherstellung';
 
 $lang['return_polici_text']= '30 Tage Rückgaberecht';
 $lang['save_text']= 'Sicher surfen und bezahlen mit SSL- Verschlüsselung';
+$lang['save_changes']='Save Changes';
 $lang['schneller_versand_text']= 'Schnelle Lieferung';
 $lang['search']= 'Suche';
 $lang['search_by_keyword_body']= 'Suche in der Beschreibung';
@@ -367,6 +397,11 @@ $lang['stueckzahl']= 'Stückzahl';
 $lang['sub_total']= 'Zwischensumme';
 $lang['subject']= 'Betreff';
 $lang['subscribe']= 'Anmelden';
+$lang['subscribed_heading'] = 'You are Subscribed to Our Newsletter';
+$lang['subscribed_info'] = 'Thank you for subscribing! You will receive updates about new products, special offers, and more.';
+
+$lang['subscribe'] = 'Subscribe';
+
 $lang['none']='Keine';
 $lang['the_reason']= 'Bestellnummer NDSH';
 $lang['there_is_payment_error']= 'Es gibt aktuell Probleme mit der Bestellung. Bitte kontaktieren Sie uns..';
@@ -381,6 +416,9 @@ $lang['track_shipment']= 'Track Shipment';
 $lang['type_a_number']= 'Bezeichnung';
 $lang['u_login']= 'Einloggen';
 $lang['update']= 'Update';
+$lang['update_device']= 'Update Device';
+$lang['unsubscribe'] = 'Unsubscribe';
+
 $lang['user_email_is_taken']= '- Diese E-Mail-Adresse wird bereits verwendet';
 $lang['user_forgotten_page']= 'Passwortwiederherstellung';
 $lang['user_login']= 'User login';
@@ -394,6 +432,7 @@ $lang['usr_order_address']= 'Addresse';
 $lang['usr_order_date']= 'Datum';
 $lang['usr_order_id']= 'Bestellnummer';
 $lang['usr_order_phone']= 'Telefon ';
+$lang['uid']='UID';
 $lang['vendor']= 'Vendor';
 $lang['vendor_add_product']= 'Produkt hinzufügen ';
 $lang['vendor_cover_image']= 'Cover image';

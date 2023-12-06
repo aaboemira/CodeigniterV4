@@ -3,7 +3,7 @@ $countries = [
     'Deutschland',
     'Belgien',
     'Bulgarien',
-    'Dänemark',
+    'Danemark',
     'Estland',
     'Finnland',
     'Griechenland',
@@ -14,10 +14,10 @@ $countries = [
     'Malta',
     'Monaco',
     'Niederlande',
-    'Österreich',
+    'Osterreich',
     'Polen',
     'Portugal',
-    'Rumänien',
+    'Rumanien',
     'Schweden',
     'Slowakei',
     'Slowenien',
@@ -26,24 +26,26 @@ $countries = [
     'Ungarn',
     'Zypern',
 ];
+
 $languages = [
     'deu' => 'Deutsch',
     'eng' => 'Englisch',
     'nld' => 'Nederlands',
-    'fra' => 'Français',
+    'fra' => 'Francais',
     'ita' => 'Italiano',
     'spa' => 'Español',
-    'tur' => 'Türkçe',
-    'rus' => 'Русский',
-    'zho' => '中国的',
+    'tur' => 'Turkce',
+    'rus' => 'Russian',
+    'zho' => 'Chinese',
     'lit' => 'Lietuvos',
-    'ukr' => 'Український',
+    'ukr' => 'Ukrainian',
     'pol' => 'Polski',
     'por' => 'Portugal',
     'kor' => 'Korea',
     'lav' => 'Lettland',
     'est' => 'Estland',
 ];
+
 
 ?>
 <div class="container-fluid user-page">

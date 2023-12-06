@@ -30,14 +30,14 @@ $languages = [
     'deu' => 'Deutsch',
     'eng' => 'Englisch',
     'nld' => 'Nederlands',
-    'fra' => 'Français',
+    'fra' => 'Francais',
     'ita' => 'Italiano',
     'spa' => 'Español',
-    'tur' => 'Türkçe',
-    'rus' => 'Русский',
-    'zho' => '中国的',
+    'tur' => 'Turkce',
+    'rus' => 'Russian',
+    'zho' => 'Chinese',
     'lit' => 'Lietuvos',
-    'ukr' => 'Український',
+    'ukr' => 'Ukrainian',
     'pol' => 'Polski',
     'por' => 'Portugal',
     'kor' => 'Korea',
@@ -81,7 +81,7 @@ $languages = [
                                         <span class="input-group-addon"><span
                                                     class="glyphicon glyphicon-envelope"></span>
                                         </span>
-                                        <input type="email" name="email" class="form-control_email" id="email"
+                                        <input type="email" name="email" class="form-control_email" id="email_login"
                                                value="<?= set_value('email') ?>"
                                                placeholder="<?= lang_safe('enter_email') ?>" required="required"
                                                style="width:100%"/>
@@ -111,7 +111,7 @@ $languages = [
                             </div>
                             <div class="col-md-12">
                                 <button type="submit" name="login" class="btn btn-primary btn-new pull-left"
-                                        id="btnContactUs">
+                                        >
                                     <?= lang_safe('login') ?>
                                 </button>
                             </div>
@@ -210,7 +210,7 @@ $languages = [
                                         <span class="input-group-addon"><span
                                                     class="glyphicon glyphicon-envelope"></span>
                                         </span>
-                                        <input type="text" name="email" class="form-control_email" id="email"
+                                        <input type="text" name="email" class="form-control_email" id="email_register"
                                                value="<?= set_value('email') ?>"
                                                placeholder="<?= lang_safe('enter_email') ?>" =""
                                         style="width: 100%"/>
@@ -224,9 +224,9 @@ $languages = [
                                         <span class="input-group-addon"><span
                                                     class="glyphicon glyphicon-phone"></span>
                                         </span>
-                                        <input type="text" name="phone" class="form-control_email" id="phone"
+                                        <input type="text" name="phone" class="form-control_email"
                                                value="<?= set_value('phone') ?>"
-                                               placeholder="<?= lang_safe('please_enter_phone') ?>" =""
+                                               placeholder="<?= lang_safe('please_enter_phone') ?>"
                                         style="width: 100%"/>
                                     </div>
                                 </div>
@@ -238,9 +238,9 @@ $languages = [
                                         <span class="input-group-addon"><span
                                                     class="glyphicon glyphicon-phone"></span>
                                         </span>
-                                        <input type="text" name="mobile" class="form-control_email" id="phone"
+                                        <input type="text" name="mobile" class="form-control_email"
                                                value="<?= set_value('mobile') ?>"
-                                               placeholder="<?= lang_safe('please_enter_mobile') ?>" =""
+                                               placeholder="<?= lang_safe('please_enter_mobile') ?>"
                                         style="width: 100%"/>
                                     </div>
                                 </div>
@@ -282,9 +282,9 @@ $languages = [
                                                 <label for="language"><?= lang_safe('lang') ?> *</label>
                                                 <select size="1" id="language" name="language" class="form-control">
                                                     <?php
-                                                    foreach ($languages as $languageKey => $languageName) {
-                                                        echo "<option value=\"$languageKey\">$languageName</option>";
-                                                    }
+                                                        foreach ($languages as $languageKey => $languageName) {
+                                                            echo "<option value=\"$languageKey\">$languageName</option>";
+                                                        }
                                                     ?>
                                                 </select>
                                             </div>
@@ -317,7 +317,7 @@ $languages = [
                                                 <input type="password" class="form-control" name="pass"
                                                        id="password_register"
                                                        value="<?= set_value('pass') ?>"
-                                                       placeholder="<?= lang_safe('please_enter_password') ?>"
+                                                       placeholder="<?= lang_safe('please_enter_password') ?>"autocomplete
                                                        />
                                                 <span class="input-group-btn">
                                                     <button class="btn btn-default toggle-password" type="button"
@@ -339,8 +339,8 @@ $languages = [
                                                 <input type="password" name="pass_repeat" class="form-control"
                                                        id="password_repeat"
                                                        value="<?= set_value('pass_repeat') ?>"
-                                                       placeholder="<?= lang_safe('please_repeat_password') ?>"
-                                                =""/>
+                                                       placeholder="<?= lang_safe('please_repeat_password') ?>" autocomplete
+                                                />
                                                 <span class="input-group-btn">
                                                         <button type="button" class="btn btn-default toggle-password"
                                                                 data-target="password_repeat">
@@ -386,7 +386,7 @@ $languages = [
                             </div>
                             <div class="col-md-12">
                                 <button type="submit" name="signup" class="btn btn-primary btn-new pull-left"
-                                        id="btnContactUs">
+                                        >
                                     <?= lang_safe('register_me') ?>
                                 </button>
                             </div>

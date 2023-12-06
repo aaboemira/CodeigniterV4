@@ -1080,21 +1080,117 @@ class Public_model extends Model
         }
         return true;
     }
+    public function getSmartDeviceByID($id)
+    {
+
+        $builder = $this->db->table('smart_devices');
+        $builder->select('*');
+        $builder->where('device_id', $id);
+        $query = $builder->get();
+        return $query->getRowArray();
+    }
     public function getSmartHomeDevicesByUID($uid, $limit, $page)
     {
         $offset = ($page - 1) * $limit; // Correctly calculate the offset
 
-        $builder = $this->db->table('SmartHomeDevices');
-        $builder->select('DeviceID, SerialNumber, UID, DeviceName, State, IsConnected');
-        $builder->where('UID', $uid);
+        $builder = $this->db->table('smart_devices');
+        $builder->select('*');
+        $builder->where('user_id', $uid);
         $builder->limit($limit, $offset);
         $query = $builder->get();
         return $query->getResultArray();
     }
+
     public function countSmartHomeDevicesByUID($uid)
     {
-        $builder = $this->db->table('SmartHomeDevices');
+        $builder = $this->db->table('smart_devices');
         $builder->where('UID', $uid);
         return $builder->countAllResults();
     }
+    public function saveSmartDevice($deviceData) {
+
+        $builder = $this->db->table('smart_devices');
+        return $builder->insert($deviceData);
+    }
+    public function updateSmartDeviceStatus($deviceData) {
+        // Assuming 'device_id' is the primary key or unique identifier for the devices
+        $deviceId = $deviceData['device_id'];
+
+        // Prepare the data for updating
+        $updateData = [
+            'connected' => $deviceData['connected'],
+            'state' => $deviceData['state']
+        ];
+
+        $builder = $this->db->table('smart_devices');
+        $builder->where('device_id', $deviceId);
+        return $builder->update($updateData);
+    }
+    public function updateSmartDevice($deviceData)
+    {
+        $builder = $this->db->table('smart_devices');
+        $builder->where('device_id', $deviceData['device_id']);
+        return $builder->update($deviceData);
+    }
+
+    public function deleteSmartDevice($deviceId) {
+        $builder = $this->db->table('smart_devices');
+        $builder->where('device_id', $deviceId);
+        return $builder->delete();
+    }
+
+    public function getGuestsForDevice($deviceId) {
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->select('*');
+        $builder->where('device_id', $deviceId);
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+    public function addGuestToSmartDevice($guestData) {
+        $builder = $this->db->table('smart_devices_guests');
+        return $builder->insert($guestData);
+    }
+
+    public function isGuestAddedToDevice($email, $deviceId) {
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->where('email', $email);
+        $builder->where('device_id', $deviceId);
+        $query = $builder->get();
+
+        // If the query returns more than 0 rows, the guest is already added
+        return $query->getNumRows() > 0;
+    }
+    public function deleteGuest($guestId) {
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->where('id', $guestId);
+        return $builder->delete();
+    }
+    public function updateGuest($guestId, $guestEmail, $canControl)
+    {
+        $data = [
+            'email' => $guestEmail,
+            'can_control' => $canControl
+        ];
+
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->where('id', $guestId);
+        return $builder->update($data);
+    }
+
+    public function subscribeToNewsletter($userId)
+    {
+        // Update the user's record to set newsletter to 1 (subscribed)
+        $data = ['newsletter' => 1];
+        $builder = $this->db->table('users_public');
+        $builder->where('id', $userId)->update($data);
+    }
+
+    public function unsubscribeFromNewsletter($userId)
+    {
+        // Update the user's record to set newsletter to 0 (unsubscribed)
+        $data = ['newsletter' => 0];
+        $builder = $this->db->table('users_public');
+        $builder->where('id', $userId)->update($data);
+    }
+
 }
