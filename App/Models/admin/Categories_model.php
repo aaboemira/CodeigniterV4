@@ -21,25 +21,69 @@ class Categories_model extends Model
         return $builder->countAllResults();
     }
 
-    public function getShopCategories($limit = null, $start = null)
+    public function getShopCategories($limit = null, $page = null)
     {
-        $limit_sql = '';
-        if ($limit !== null && $start !== null) {
-            $limit_sql = ' LIMIT ' . $start . ',' . $limit;
+        $offset_sql = '';
+        if ($limit !== null && $page !== null) {
+            $offset = ($page - 1) * $limit; // Calculate the offset
+            $offset_sql = ' LIMIT ' . $offset . ',' . $limit;
         }
-
-        $query = $this->db->query('SELECT translations_first.*, (SELECT name FROM shop_categories_translations WHERE for_id = sub_for AND abbr = translations_first.abbr) as sub_is, shop_categories.position FROM shop_categories_translations as translations_first INNER JOIN shop_categories ON shop_categories.id = translations_first.for_id ORDER BY position ASC ' . $limit_sql);
+    
+        // Execute the updated SQL query
+        $query = $this->db->query(
+            'SELECT 
+                sc.id AS category_id, 
+                sc.sub_for AS parent_category_id, 
+                sc.position AS category_position,
+                sct.name AS translation_name, 
+                sct.abbr AS language_abbr,
+                parent_sct.name AS parent_translation_name
+            FROM 
+                shop_categories AS sc
+            LEFT JOIN 
+                shop_categories_translations AS sct 
+                ON sc.id = sct.for_id
+            LEFT JOIN 
+                shop_categories AS parent_sc
+                ON sc.sub_for = parent_sc.id
+            LEFT JOIN 
+                shop_categories_translations AS parent_sct
+                ON parent_sc.id = parent_sct.for_id AND sct.abbr = parent_sct.abbr
+            ORDER BY 
+                sc.sub_for ASC, 
+                sc.position ASC, 
+                sct.id ASC,
+                sct.abbr ASC' . $offset_sql
+        );
+    
         $arr = array();
-        foreach ($query->getResult() as $shop_categorie) {
-            $arr[$shop_categorie->for_id]['info'][] = array(
-                'abbr' => $shop_categorie->abbr,
-                'name' => $shop_categorie->name
-            );
-            $arr[$shop_categorie->for_id]['sub'][] = $shop_categorie->sub_is;
-            $arr[$shop_categorie->for_id]['position'] = $shop_categorie->position;
+        foreach ($query->getResult() as $shop_category) {
+            $for_id = $shop_category->category_id;
+    
+            if (!isset($arr[$for_id])) {
+                $arr[$for_id] = [
+                    'info' => [],
+                    'sub' => [],
+                    'position' => $shop_category->category_position
+                ];
+            }
+    
+            $arr[$for_id]['info'][] = [
+                'abbr' => $shop_category->language_abbr,
+                'name' => $shop_category->translation_name
+            ];
+    
+            // Adding parent category name instead of ID
+            if ($shop_category->parent_category_id) {
+                $arr[$for_id]['sub'][] = $shop_category->parent_translation_name;
+            }
         }
+    
         return $arr;
     }
+    
+    
+    
 
     public function deleteShopCategorie($id)
     {

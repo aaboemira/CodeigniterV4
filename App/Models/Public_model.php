@@ -185,14 +185,10 @@ class Public_model extends Model
     private function getFilter($builder, $big_get)
     {
         if ($big_get['category'] != '') {
-            (int)$big_get['category'];
-            $findInIds = array();
-            $findInIds[] = $big_get['category'];
-            $query = $this->db->query('SELECT id FROM shop_categories WHERE sub_for = ' . $big_get['category']);
-            foreach ($query->getResultArray() as $row) {
-                $findInIds[] = $row['id'];
-            }
-            $builder->whereIn('products.shop_categorie', $findInIds);
+            $categoryIds = [$big_get['category']]; // Initialize with the root category
+            $subcategoryIds = $this->getAllSubcategoryIds($big_get['category']); // Fetch all subcategory IDs
+            $findInIds = array_merge($categoryIds, $subcategoryIds); // Merge root category with all subcategories
+            $builder->whereIn('products.shop_categorie', $findInIds); // Apply the filter
         }
         if ($big_get['in_stock'] != '') {
             if ($big_get['in_stock'] == 1)
@@ -243,7 +239,20 @@ class Public_model extends Model
         }
         return $builder;
     }
-
+    private function getAllSubcategoryIds($categoryId) {
+        static $allCategories = []; // Static variable to hold all categories across recursive calls
+    
+        $query = $this->db->query('SELECT id FROM shop_categories WHERE sub_for = ' . $categoryId);
+        foreach ($query->getResultArray() as $row) {
+            if (!in_array($row['id'], $allCategories)) {
+                $allCategories[] = $row['id'];
+                $this->getAllSubcategoryIds($row['id']); // Recursive call for each subcategory
+            }
+        }
+    
+        return $allCategories;
+    }
+    
     public function getShopCategories()
     {
         $query = $this->db->table('shop_categories_translations')->select('shop_categories.sub_for, shop_categories.id, shop_categories_translations.name')
@@ -386,7 +395,8 @@ class Public_model extends Model
             'user_id' => $post['user_id'],
             'shipping_price' => $post['shipping_price'], // Insert shipping price
             'shipping_type' => $post['shipping_type'],
-            'order_status'=>$post['status']
+            'order_status'=>$post['status'],
+            'discount'=>@$post['discount']
         ))) {
 //            log_message('error', print_r($builder->error(), true));
         }
@@ -1002,16 +1012,18 @@ class Public_model extends Model
     }
     public function getUserOrdersHistory($userId, $limit, $page)
     {
+        $offset = ($page - 1) * $limit; // Calculate the offset
+
         $builder = $this->db->table('orders');
-        $builder->where('user_id', $userId);
-        $builder->orderBy('id', 'DESC');
         $builder->select('orders.*, orders_clients.first_name,'
             . ' orders_clients.last_name, orders_clients.email, orders_clients.phone, orders_clients.company,'
             . 'orders_clients.street, orders_clients.housenr, orders_clients.country, orders_clients.city, orders_clients.post_code,'
             . ' orders_clients.notes, discount_codes.type as discount_type, discount_codes.amount as discount_amount');
         $builder->join('orders_clients', 'orders_clients.for_id = orders.id', 'inner');
         $builder->join('discount_codes', 'discount_codes.code = orders.discount_code', 'left');
-        $result = $builder->get($limit, $page);
+        $builder->where('user_id', $userId);
+        $builder->orderBy('orders.id', 'DESC');
+        $result = $builder->get($limit, $offset);
         return $result->getResultArray();
     }
 
@@ -1105,6 +1117,20 @@ class Public_model extends Model
     {
         $builder = $this->db->table('smart_devices');
         $builder->where('UID', $uid);
+        return $builder->countAllResults();
+    }
+    public function countSmartHomeDevicesByUserAndSerial($userID, $serial)
+    {
+        $builder = $this->db->table('smart_devices');
+        $builder->where('user_id', $userID);
+        $builder->where('serial_number', $serial);
+        return $builder->countAllResults();
+    }
+    public function countSmartHomeDevicesByUserAndName($userID, $name)
+    {
+        $builder = $this->db->table('smart_devices');
+        $builder->where('user_id', $userID);
+        $builder->where('device_name', $name);
         return $builder->countAllResults();
     }
     public function saveSmartDevice($deviceData) {

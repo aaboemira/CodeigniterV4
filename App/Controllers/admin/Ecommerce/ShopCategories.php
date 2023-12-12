@@ -30,10 +30,22 @@ class ShopCategories extends ADMIN_Controller
         $head['title'] = 'Administration - Home Categories';
         $head['description'] = '!';
         $head['keywords'] = '';
+
+
+        $rowscount = $this->Categories_model->categoriesCount();
+        $totalPages = ceil($rowscount / $this->num_rows);
+        $page = max(1, min($page, $totalPages));
+
+
         $data['shop_categories'] = $this->Categories_model->getShopCategories($this->num_rows, $page);
         $data['languages'] = $this->Languages_model->getLanguages();
         $rowscount = $this->Categories_model->categoriesCount();
-        $data['links_pagination'] = pagination('admin/shopcategories', $rowscount, $this->num_rows, 3);
+        // Create pagination links
+        $data['paginationLinks'] = '';
+        for ($i = 1; $i <= $totalPages; $i++) {
+            $active = $page == $i ? 'active' : '';
+            $data['paginationLinks'] .= "<li class='page-item $active'><a class='page-link' href='/admin/shopcategories/$i'>$i</a></li>";
+        }
         if (isset($_GET['delete'])) {
             $this->saveHistory('Delete a shop categorie');
             $this->Categories_model->deleteShopCategorie($_GET['delete']);

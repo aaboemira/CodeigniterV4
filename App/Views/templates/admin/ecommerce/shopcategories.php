@@ -75,9 +75,13 @@
                 }
                 ?>
             </table>
+            <nav aria-label="Page navigation">
+                    <ul class="pagination" style="position:relative !important;z-index:2;">
+                        <?= $paginationLinks ?>
+                    </ul>
+            </nav>
         </div>
         <?php
-        echo $links_pagination;
     } else {
         ?>
         <div class="clearfix"></div><hr>
