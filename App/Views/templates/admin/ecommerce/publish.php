@@ -209,20 +209,33 @@ if (session('result_publish')) {
     <div class="form-group for-shop">
         <label>Shop Categories</label>
         <select class="selectpicker form-control show-tick show-menu-arrow" name="shop_categorie">
-            <?php foreach ($shop_categories as $key_cat => $shop_categorie) { ?>
-            <option <?= isset($_POST['shop_categorie']) && $_POST['shop_categorie'] == $key_cat ? 'selected=""' : '' ?>
-                value="<?= $key_cat ?>">
-                <?php
-                    foreach ($shop_categorie['info'] as $nameAbbr) {
-                        if ($nameAbbr['abbr'] == config('config')->language_abbr) {
-                            echo $nameAbbr['name'];
-                        }
-                    }
-                    ?>
+        <?php 
+        foreach ($shop_categories as $key_cat => $shop_categorie) {
+            // Find the current language category name
+            $category_name = '';
+            foreach ($shop_categorie['info'] as $nameAbbr) {
+                if ($nameAbbr['abbr'] == config('config')->language_abbr) {
+                    $category_name = $nameAbbr['name'];
+                    break;
+                }
+            }
+
+            // Determine the index based on the current language for parent category
+            $index = config('config')->language_abbr == 'de' ? 0 : 1;
+            
+            // Check if there's a parent category and append it to the option text if it exists
+            $parent_name = isset($shop_categorie['sub'][$index]) ? ' - ' . $shop_categorie['sub'][$index] : '';
+
+            // Generate the option text
+            $option_text = $category_name . $parent_name;
+            ?>
+            <option <?= isset($_POST['shop_categorie']) && $_POST['shop_categorie'] == $key_cat ? 'selected=""' : '' ?> value="<?= $key_cat ?>">
+                <?= $option_text ?>
             </option>
             <?php } ?>
         </select>
     </div>
+
     <div class="form-group for-shop">
         <label>Quantity</label>
         <input type="text" placeholder="number" name="quantity"

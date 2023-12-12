@@ -11,7 +11,7 @@ use App\Models\admin\Categories_model;
 class ShopCategories extends ADMIN_Controller
 {
 
-    private $num_rows = 20;
+    private $num_rows = 10;
 
     protected $Languages_model;
     protected $Categories_model;
@@ -35,7 +35,6 @@ class ShopCategories extends ADMIN_Controller
         $rowscount = $this->Categories_model->categoriesCount();
         $totalPages = ceil($rowscount / $this->num_rows);
         $page = max(1, min($page, $totalPages));
-
 
         $data['shop_categories'] = $this->Categories_model->getShopCategories($this->num_rows, $page);
         $data['languages'] = $this->Languages_model->getLanguages();

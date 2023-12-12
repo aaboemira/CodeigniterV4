@@ -25,10 +25,11 @@ class Categories_model extends Model
     {
         $offset_sql = '';
         if ($limit !== null && $page !== null) {
+            $limit=$limit*2;
             $offset = ($page - 1) * $limit; // Calculate the offset
             $offset_sql = ' LIMIT ' . $offset . ',' . $limit;
         }
-    
+        
         // Execute the updated SQL query
         $query = $this->db->query(
             'SELECT 

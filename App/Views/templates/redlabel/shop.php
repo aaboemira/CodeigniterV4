@@ -222,10 +222,10 @@ if (count($sliderProducts) > 0) {
                                 <?= $page['name'] ?>
                             </a>
                             <?php
-                                    if ($children === true) {
-                                        loop_tree($page['children'], true);
-                                    } else {
-                                        ?>
+                            if ($children === true) {
+                                loop_tree($page['children'], true);
+                            } else {
+                            ?>
                         </li>
                         <?php
                                 }
