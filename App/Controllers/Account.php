@@ -31,7 +31,10 @@ class Account extends BaseController
                     session()->setFlashdata('error', 'Current password does not match');
                     return redirect()->to(current_url());
                 }
-
+                if (!$this->password_check($_POST['new_password'])) {
+                    session()->setFlashdata('error', lang_safe('invalid_password'));
+                    return redirect()->to(current_url());
+                }
                 // Proceed with password update
                 $passwordData = [
                     'id' => $_SESSION['logged_user'],
@@ -95,6 +98,16 @@ class Account extends BaseController
         session()->setFlashdata('error', 'You must be logged in to delete your account.');
         return redirect()->to(LANG_URL . '/login');
     }
-
+    private function password_check($password)
+    {
+        if (strlen($password) < 8 ||
+            preg_match('/\s/', $password) ||
+            !preg_match('/[#?!@$%^&*-]/', $password) ||
+            !preg_match('/\d/', $password) ||
+            !preg_match('/[a-zA-Z]/', $password)) {
+            return false;
+        }
+        return true;
+    }
 
 }

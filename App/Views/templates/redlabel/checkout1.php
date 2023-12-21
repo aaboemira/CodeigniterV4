@@ -123,7 +123,6 @@
                                     <option value="<?= esc($countryName) ?>" <?= $selected ?>><?= esc($countryName) ?></option>
                                 <?php endforeach; ?>
                             </select>
-
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="postInput"><?= lang_safe('post_code') ?>

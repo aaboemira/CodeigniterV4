@@ -42,6 +42,7 @@ $routes->add('(\w{2})?/?checkout/successcash', 'Checkout::successPaymentCashOnD'
 $routes->add('(\w{2})?/?checkout/successbank', 'Checkout::successPaymentBank');
 $routes->add('(\w{2})?/?checkout/paypalpayment', 'Checkout::paypalPayment');
 $routes->add('(\w{2})?/?checkout/order-error', 'Checkout::orderError');
+$routes->add('(\w{2})?/?checkout0', 'Checkout1::guestCheckout');
 
 $routes->add('(\w{2})?/?checkout1', 'Checkout1');
 $routes->add('(\w{2})?/?checkout2', 'Checkout2');
@@ -70,6 +71,10 @@ $routes->add('templatejs/(:segment)', "Loader::templateJs/$1");
 $routes->add('(:segment)-(:num)', "Home::viewProduct/$2");
 $routes->add('(\w{2})/(:segment)-(:num)', "Home::viewProduct/$3");
 $routes->add('shop-product-(:num)', "Home::viewProduct/$3");
+
+$routes->add('create-paypal-order', "PaypalPayment::createOrder");
+$routes->add('capture-paypal-order', "PaypalPayment::captureOrder");
+
 
 // blog urls style and pagination
 $routes->add('blog/(:num)', "Blog::index/$1");
@@ -107,6 +112,7 @@ $routes->add('register', "Users::register");
 $routes->add('(\w{2})/register', "Users::register");
 $routes->post('checkout1/login', 'Checkout1::login');
 $routes->post('checkout1/shopAsGuest', 'Checkout1::shopAsGuest');
+$routes->add('user/successMessage', "Users::showSuccessMessage");
 
 $routes->add('auth/verify/(:segment)', "Users::verify/$1");
 $routes->add('(\w{2})/auth/verify/(:segment)', "Users::verify/$1");
@@ -117,8 +123,11 @@ $routes->add('myaccount/(:num)', "Users::myaccount/$1");
 $routes->add('(\w{2})/myaccount', "Users::myaccount");
 $routes->add('(\w{2})/myaccount/(:num)', "Users::myaccount/$2");
 
-$routes->add('address', "Users::address");
-$routes->add('(\w{2})/address', "Users::address");
+$routes->add('address', "Address::index");
+$routes->add('(\w{2})/address', "Address::index");
+$routes->add('address/edit', "Address::edit");
+
+$routes->post('address/update', 'Address::updateAddresses');
 
 $routes->add('smart-home', "SmartDevices::index");
 $routes->get('smart-home/(:num)', 'SmartDevices::index/$1');
@@ -128,6 +137,7 @@ $routes->post('/smartdevices/refreshDeviceStatus', 'SmartDevices::refreshDeviceS
 $routes->get('/smartdevices/deleteDevice/(:num)', 'SmartDevices::deleteDevice/$1');
 $routes->get('/smartdevices/editDevice/(:num)', 'SmartDevices::editDevice/$1');
 $routes->post('/smartdevices/updateDevice', 'SmartDevices::updateDevice');
+$routes->post('smartdevices/controlDevice', 'SmartDevices::controlDevice');
 
 
 $routes->get('/smartdevices/accessControl/(:num)', 'SmartDevices::accessControl/$1');
@@ -141,6 +151,8 @@ $routes->add('newsletter', "Newsletter::index");
 $routes->add('(\w{2})/newsletter', "Newsletter::newsletter");
 $routes->post('/newsletter/subscribe', 'Newsletter::subscribe');
 $routes->post('/newsletter/unsubscribe', 'Newsletter::unsubscribe');
+
+
 $routes->get('orders', 'Orders::orders');
 $routes->get('orders/(:num)', 'Orders::orders/$1');
 $routes->add('(\w{2})/orders', "Orders::orders");

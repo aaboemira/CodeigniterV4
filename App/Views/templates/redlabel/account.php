@@ -51,9 +51,10 @@ $languages = [
 <div class="container-fluid user-page">
     <div class="row">
         <ol class="breadcrumb">
-            <li><a href="<?= LANG_URL ?>">Home</a></li>
-            <li><a href="<?= LANG_URL ?>/myaccount">Account</a></li>
-            <li>Data</li>
+            <li><a href="<?= LANG_URL ?>"><?= lang_safe('home') ?></a></li>
+            <li><a href="<?= LANG_URL ?>/myaccount"><?= lang_safe('my_account') ?></a></li>
+            <li><?= lang_safe('my_acc') ?></li>
+
         </ol>
         <?= view('templates/redlabel/_parts/sidebar'); ?>
         <div class="col-md-9">
@@ -248,7 +249,7 @@ $languages = [
                                             <div class="input-group">
                                             <input type="password" class="form-control" name="current_password"
                                                    id="current_password"
-                                                   placeholder="<?= lang_safe('enter_current_password') ?>" />
+                                                   placeholder="<?= lang_safe('enter_current_password') ?>" autocomplete="new-password" oninput="removeTrailingSpaces(this)" />
                                             <span class="input-group-btn">
                                                         <button type="button" class="btn btn-default toggle-password"
                                                                 data-target="current_password">
@@ -264,7 +265,7 @@ $languages = [
                                             <div class="input-group">
                                             <input type="password" class="form-control" name="new_password"
                                                    id="new_password"
-                                                   placeholder="<?= lang_safe('enter_new_password') ?>" />
+                                                   placeholder="<?= lang_safe('enter_new_password') ?>" autocomplete="new-password" oninput="removeTrailingSpaces(this)" />
                                             <span class="input-group-btn">
                                                         <button type="button" class="btn btn-default toggle-password"
                                                                 data-target="new_password">
@@ -286,7 +287,7 @@ $languages = [
 
                             <!-- Submit Button -->
                             <div class="form-group">
-                                <button type="submit" name="update" class="btn btn-primary pull-left" id="btnContactUs">
+                                <button type="submit" name="update" class="btn btn-new pull-left" id="btnContactUs">
                                     <?= lang_safe('update') ?>
                                 </button>
                             </div>

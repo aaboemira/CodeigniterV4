@@ -109,7 +109,7 @@ class Checkout3 extends BaseController
                 $this->orderId = $orderId;
                 $this->sendBestellbestaetigung($orderData);
                 //$this->setActivationLink();
-                //$this->sendNotifications();
+                $this->sendNotifications();
                 return $this->goToDestination();
             } else {
                 ///log_message('error', 'Cant save order!! ' . json_encode( $_POST));

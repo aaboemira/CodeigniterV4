@@ -219,11 +219,11 @@ function showDivs(n) {
 </script>
 
 
-<script>
+<!-- <script>
 gtag('event', 'conversion', {
     'send_to': 'AW-428847483/z16ECLWjkZEDEPvivswB'
 });
-</script>
+</script> -->
 <script>
 $(document).ready(function() {
     // Add a click event listener for the WhatsApp link
@@ -247,12 +247,12 @@ $(document).ready(function() {
         $("#contactModal").modal("show");
     });
 });
-$('#contactOptionsList a').click(function(e) {
-if (!$('#acceptPolicyCheckbox').prop('checked')) {
-e.preventDefault();
-ShowNotificator('alert-danger', '<?= lang_safe('contact_check')?>');
-}
-});
+// $('#contactOptionsList a').click(function(e) {
+// if (!$('#acceptPolicyCheckbox').prop('checked')) {
+// e.preventDefault();
+// ShowNotificator('alert-danger', '<?= lang_safe('contact_check')?>');
+// }
+// });
 </script>
 <script>
 function redirectToGoogleMaps() {
@@ -283,6 +283,7 @@ function redirectToGoogleMaps() {
     });
 </script>
 <script>
+
     function toggleImageColor(imgSelector, imageName, disableOnMobile = false) {
         // Check if the function should be disabled on mobile based on screen width
         if (disableOnMobile && window.innerWidth <= 768) {
@@ -291,7 +292,7 @@ function redirectToGoogleMaps() {
 
         // Get the current source of the image
         var currentSrc = $(imgSelector).attr("src");
-
+        console.log(currentSrc);
         // Determine the new source based on the current one
         var newSrc = currentSrc.includes(imageName + "_white.png") ?
             "<?= base_url('png/') ?>" + imageName + "_black.png" :
@@ -312,15 +313,43 @@ function redirectToGoogleMaps() {
         }
     );
 
-    // Similarly, for the account link
-    $("#myAccountLink").hover(
-        function() {
-            toggleImageColor('#myAccountLink img', 'myaccount');
-        },
-        function() {
-            toggleImageColor('#myAccountLink img', 'myaccount');
+    $(document).ready(function() {
+    // Function to handle hover effect
+    function handleHover(selector, imageName) {
+        if ($('.left-sidebar').length == 0) {
+            toggleImageColor(selector, imageName);
         }
-    );
+    }
+
+    // Check screen size and apply hover effect
+    function applyHoverBasedOnScreenSize() {
+        var screenWidth = $(window).width();
+
+        // Assuming 768px is the breakpoint for mobile devices
+        if (screenWidth < 768) {
+            // Mobile: Apply hover effect to the image
+            $("#myAccountLink img").hover(
+                function() { handleHover('#myAccountLink img', 'myaccount'); },
+                function() { handleHover('#myAccountLink img', 'myaccount'); }
+            );
+        } else {
+            // Desktop: Apply hover effect to the link
+            $("#myAccountLink").hover(
+                function() { handleHover('#myAccountLink img', 'myaccount'); },
+                function() { handleHover('#myAccountLink img', 'myaccount'); }
+            );
+        }
+    }
+
+    // Initial application
+    applyHoverBasedOnScreenSize();
+
+    // Reapply on window resize
+    $(window).resize(function() {
+        applyHoverBasedOnScreenSize();
+    });
+});
+
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -387,6 +416,61 @@ function redirectToGoogleMaps() {
 
 
 </script>
+<script>
+$(document).ready(function() {
+    // Check if the current page has a sidebar
+    if ($('.left-sidebar').length > 0) {
+        // Only execute the following code if a sidebar is present
+        function removeHoverEvents() {
+            if (isMobile()) {
+                // Unbind hover events
+                $('.login-dropdown-li > a').off('mouseenter mouseover');
+            }
+        }
+        // Function to check if it's a mobile device
+        function isMobile() {
+            return $(window).width() < 768;
+        }
 
+        // Function to forcibly open the dropdown
+        function forceOpenDropdown() {
+            if (isMobile()) {
+                // Add the 'open' class with a slight delay
+                setTimeout(function() {
+                    $('.login-dropdown-li').addClass('open');
+                    removeHoverEvents();
+                }, 0); // Timeout set to 0 to push execution to the end of the call stack
+            } else {
+                // Remove the 'open' class when not in mobile view
+                $('.login-dropdown-li').removeClass('open');
+            }
+        }
+
+        // Apply the 'open' class each time the navbar is toggled
+        $('.navbar-toggle').on('click', function() {
+            forceOpenDropdown();
+        });
+
+        // Handle window resize
+        $(window).resize(function() {
+            forceOpenDropdown();
+        });
+
+        // Prevent the default toggle behavior on mobile
+        $('.login-dropdown-li > a').on('click', function(e) {
+            if (isMobile()) {
+                e.preventDefault(); // Prevent the default action
+                e.stopPropagation();
+            }
+        });
+    }
+});
+
+    </script>
+<script>
+    function removeTrailingSpaces(inputElement) {
+        inputElement.value = inputElement.value.trim();
+    }
+</script>
 </body>
 </html>

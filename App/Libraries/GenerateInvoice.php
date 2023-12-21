@@ -14,7 +14,7 @@ class GenerateInvoice
         $this->dompdf = new Dompdf();
     }
 
-    public function generatePdf($html, $paper = 'A4', $orientation = 'portrait')
+    public function generatePdf($html,$fileName, $paper = 'A4', $orientation = 'portrait')
     {
         $this->dompdf->set_option('isPhpEnabled', true); // Enable PHP for dynamic content
         $this->dompdf->set_option('isHtml5ParserEnabled', true); // Enable HTML5 parsing
@@ -22,6 +22,7 @@ class GenerateInvoice
         $this->dompdf->setPaper($paper, $orientation);
         $this->dompdf->loadHtml($html);
         $this->dompdf->render();
+        $this->dompdf->stream($fileName, array("Attachment" => true));
         return $this->dompdf->output();
     }
 
@@ -378,8 +379,8 @@ class GenerateInvoice
             </div>
         </body>
         </html>';
-
-        return $this->generatePdf($html);
+        $filename='Invoice_SHND'.$order['order_id'];
+        return $this->generatePdf($html,$filename);
     }
 
     function generateInvoiceHtmlEnglish($order, $arr_products) {
@@ -733,6 +734,7 @@ class GenerateInvoice
         </div>
     </body>
     </html>';
+    $filename='Invoice_NO'.$order['order_id'];
 
         return $this->generatePdf($html);
     }

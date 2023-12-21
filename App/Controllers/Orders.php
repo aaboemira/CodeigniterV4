@@ -36,7 +36,6 @@ class Orders extends BaseController
         $page = max(1, min($page, $totalPages));
         $data['orders'] = $this->Public_model->getUserOrdersHistory($_SESSION['logged_user'], $this->num_rows, $page);
         $data['orders'] = $this->addTotalAmountToOrders($data['orders']);
-
         // Manually create pagination links
         $data['paginationLinks'] = '';
         for ($i = 1; $i <= $totalPages; $i++) {
@@ -55,16 +54,9 @@ class Orders extends BaseController
                 $productsTotal += $productInfo['price'] * $product['product_quantity'];
             }
 
-            // Apply discount if available
-            $discountAmount = $order['discount_amount'] ?? 0;
-            if ($discountAmount > 0) {
-                $discountType = $order['discount_type'];
-                if ($discountType === 'percentage') {
-                    $productsTotal -= ($productsTotal * ($discountAmount / 100));
-                } elseif ($discountType === 'fixed') {
-                    $productsTotal -= $discountAmount;
-                }
-            }
+            $discountPercentage = $order['discount']?? 0;
+            $productsTotal -= ($productsTotal * ($discountPercentage / 100));
+
 
             // Add shipping price if available
             $shippingPrice = $order['shipping_price'] ?? 0;
@@ -103,7 +95,6 @@ class Orders extends BaseController
 
         $data = [
             'order' => $orderDetails,
-            // Add any additional data you need for the view
         ];
 
         return $this->render('orders/show_orders', $head, $data);

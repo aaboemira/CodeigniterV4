@@ -43,7 +43,8 @@ class ShopCategories extends ADMIN_Controller
         $data['paginationLinks'] = '';
         for ($i = 1; $i <= $totalPages; $i++) {
             $active = $page == $i ? 'active' : '';
-            $data['paginationLinks'] .= "<li class='page-item $active'><a class='page-link' href='/admin/shopcategories/$i'>$i</a></li>";
+            $href = base_url("admin/shopcategories/$i"); // Generating the URL
+            $data['paginationLinks'] .= "<li class='page-item $active'><a class='page-link' href='{$href}'>$i</a></li>";
         }
         if (isset($_GET['delete'])) {
             $this->saveHistory('Delete a shop categorie');

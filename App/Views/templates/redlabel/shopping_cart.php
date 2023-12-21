@@ -185,7 +185,11 @@ if (!isset($cartItems['array'])) { ?>
             <div class="container checkout-container">
                 <div class="row">
                     <div class="col-sm-12 checkout-buttons">
-                        <a class="btn btn-primary btn-new go-checkout" class="pull-left" href="<?= LANG_URL . '/checkout1' ?>">
+                        <?php
+                        // Determine the URL based on whether the user is logged in or not
+                        $url = session()->has('logged_user') ? LANG_URL . '/checkout1' : LANG_URL . '/checkout0';
+                        ?>
+                        <a class="btn btn-primary btn-new go-checkout" class="pull-left" href="<?=$url ?>">
                         <?= lang_safe('go_to_checkout') ?>
                             <span class="glyphicon glyphicon-circle-arrow-right"></span>
                         </a>

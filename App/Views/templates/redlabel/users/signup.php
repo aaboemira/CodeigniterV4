@@ -84,7 +84,7 @@ $languages = [
                                         <input type="email" name="email" class="form-control_email" id="email_login"
                                                value="<?= set_value('email') ?>"
                                                placeholder="<?= lang_safe('enter_email') ?>" required="required"
-                                               style="width:100%"/>
+                                               style="width:100%" autocomplete="username"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -92,9 +92,9 @@ $languages = [
                                         <?= lang_safe('password') ?>
                                     </label>
                                     <div class="input-group">
-                                        <input type="text" name="pass" class="form-control" id="password_login"
+                                        <input type="password" name="pass" class="form-control" id="password_login"
                                                value="<?= set_value('pass') ?>"
-                                               placeholder="<?= lang_safe('please_enter_password') ?>" required="required"/>
+                                               placeholder="<?= lang_safe('please_enter_password') ?>" autocomplete="current-password" required="required" oninput="removeTrailingSpaces(this)"/>
                                         <span class="input-group-btn">
                                             <button class="btn btn-default toggle-password" type="button"
                                                     data-target="password_login">
@@ -317,8 +317,8 @@ $languages = [
                                                 <input type="password" class="form-control" name="pass"
                                                        id="password_register"
                                                        value="<?= set_value('pass') ?>"
-                                                       placeholder="<?= lang_safe('please_enter_password') ?>"autocomplete
-                                                       />
+                                                       placeholder="<?= lang_safe('please_enter_password') ?>"
+                                                       autocomplete="new-password" oninput="removeTrailingSpaces(this)"/>
                                                 <span class="input-group-btn">
                                                     <button class="btn btn-default toggle-password" type="button"
                                                             data-target="password_register">
@@ -339,14 +339,14 @@ $languages = [
                                                 <input type="password" name="pass_repeat" class="form-control"
                                                        id="password_repeat"
                                                        value="<?= set_value('pass_repeat') ?>"
-                                                       placeholder="<?= lang_safe('please_repeat_password') ?>" autocomplete
-                                                />
+                                                       placeholder="<?= lang_safe('please_repeat_password') ?>"
+                                                       autocomplete="new-password" oninput="removeTrailingSpaces(this)"/>
                                                 <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default toggle-password"
-                                                                data-target="password_repeat">
-                                                            <i class="fa fa-eye" id="eye-icon-repeat"></i>
-                                                        </button>
-                                            </span>
+                                                    <button type="button" class="btn btn-default toggle-password"
+                                                            data-target="password_repeat">
+                                                        <i class="fa fa-eye" id="eye-icon-repeat"></i>
+                                                    </button>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>

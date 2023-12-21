@@ -9,6 +9,7 @@ class SmartDevices extends BaseController
 {
     protected $Public_model;
     private $num_rows = 10;
+    private  $url = 'http://localhost:8012/dashboard/enddevice/Enddevice.php';
     public function __construct()
     {
         $this->Public_model = new Public_model();
@@ -16,62 +17,35 @@ class SmartDevices extends BaseController
 
     }
 
-    public function index($page = 0)
-    {
-        if (!session()->has('logged_user')) {
-            return redirect()->to(LANG_URL . '/register');
-        }
-        $head = array();
-        $data = array();
-        $head['title'] = lang_safe('my_acc');
-        $head['description'] = lang_safe('my_acc');
-        $head['keywords'] = str_replace(" ", ",", $head['title']);
-        $data['userInfo'] = $this->Public_model->getUserProfileInfo($_SESSION['logged_user']);
-
-        $userUID = $_SESSION['logged_user']; // Example: Fetch UID from session
-        $rowscount = $this->Public_model->countSmartHomeDevicesByUID($userUID);
-        $totalPages = ceil($rowscount / $this->num_rows); // Calculate total pages
-        $page = max(1, min($page, $totalPages));
-
-
-
-        $devices = $this->Public_model->getSmartHomeDevicesByUID($userUID,$this->num_rows,$page);
-        foreach ($devices as &$device) {
-            // Prepare the data for API request
-            $data = [
-                'serial' => $device['serial_number'],
-                'uid' => decryptData($device['UID'], '@@12@@'), // Assuming you have decryption function
-                'password' => decryptData($device['password'], '@@12@@'),
-                'api' => 'get_status'
-            ];
-            // Call the API
-            $url = 'http://localhost:8012/dashboard/enddevice/Enddevice.php';
-            $response = callAPI('POST', $url, $data);
-            $responseData = json_decode($response, true);
-
-            // Update device data based on the response
-            if ($responseData['status'] === 0) {
-                $device['connected'] = 1;
-                $device['state'] = $responseData['data']['gate_position_desc'];
-            } else {
-                $device['connected'] = 0;
-                $device['state'] = 'none';
-            }
-
-            // Update the device in the database
-            $this->Public_model->updateSmartDeviceStatus($device);
-        }
-        $data['devices']=$devices;
-
-
-        $data['paginationLinks'] = '';
-        for ($i = 1; $i <= $totalPages; $i++) {
-            $active = $page == $i ? 'active' : '';
-            $data['paginationLinks'] .= "<li class='page-item $active'><a class='page-link' href='/orders/$i'>$i</a></li>";
-        }
-
-        return $this->render('smart_devices/index', $head, $data);
+public function index($page = 0)
+{
+    if (!session()->has('logged_user')) {
+        return redirect()->to(LANG_URL . '/register');
     }
+
+    $head = array();
+    $data = array();
+    $head['title'] = lang_safe('my_acc');
+    $head['description'] = lang_safe('my_acc');
+    $head['keywords'] = str_replace(" ", ",", $head['title']);
+    $data['userInfo'] = $this->Public_model->getUserProfileInfo($_SESSION['logged_user']);
+
+    $userUID = $_SESSION['logged_user']; // Example: Fetch UID from session
+    $rowscount = $this->Public_model->countSmartHomeDevicesByUID($userUID);
+    $totalPages = ceil($rowscount / $this->num_rows); // Calculate total pages
+    $page = max(1, min($page, $totalPages));
+
+    $data['devices'] = $this->Public_model->getSmartHomeDevicesByUID($userUID, $this->num_rows, $page);
+
+    $data['paginationLinks'] = '';
+    for ($i = 1; $i <= $totalPages; $i++) {
+        $active = $page == $i ? 'active' : '';
+        $data['paginationLinks'] .= "<li class='page-item $active'><a class='page-link' href='/orders/$i'>$i</a></li>";
+    }
+
+    return $this->render('smart_devices/index', $head, $data);
+}
+
     public function add()
     {
         if (!session()->has('logged_user')) {
@@ -106,27 +80,29 @@ class SmartDevices extends BaseController
 
         $serial = $this->request->getPost('serial_number');
         $deviceName = $this->request->getPost('device_name');
-
         $uid = $this->request->getPost('uid');
         $password = $this->request->getPost('password');
         $userId = $_SESSION['logged_user'];
 
-        // Endpoint URL
-        $url = 'http://localhost:8012/dashboard/enddevice/Enddevice.php';
+        // Check if the user already has a device with the same serial number
+        $existingDevicesCount = $this->Public_model->countSmartHomeDevicesByUserAndSerial($userId, $serial);
 
-        // Prepare the data
-        $data = [
-            'serial' => $serial,
-            'uid' => $uid,
-            'password' => $password,
-            'api' => 'get_status'
-        ];
-        $response = callAPI('POST', $url, $data);
-        $responseData = json_decode($response, true);
+        if ($existingDevicesCount > 0) {
+            session()->setFlashdata('error', lang_safe('duplicate_device_user','You already have a device with the same credentials.'));
+            return redirect()->back()->withInput(); // Redirect back with input data
+        }
+        // Check if the user already has a device with the same name
+        $existingNameCount = $this->Public_model->countSmartHomeDevicesByUserAndName($userId, $deviceName);
+        if ($existingNameCount > 0) {
+            session()->setFlashdata('error', lang_safe('duplicate_device_user','You already have a device with the same credentials.'));
+            return redirect()->back()->withInput(); // Redirect back with input data
+        }
+        // Endpoint URL
+
 
         $passwordEncrypted=encryptData($password,'@@12@@');
 
-        $uidEncrypted=encryptData($password,'@@12@@');
+        $uidEncrypted=encryptData($uid,'@@12@@');
 
         $deviceData = [
             'device_name'=>$deviceName,
@@ -134,23 +110,11 @@ class SmartDevices extends BaseController
             'UID' => $uidEncrypted,
             'serial_number' => $serial,
             'password' => $passwordEncrypted,
-            'connected' => $responseData['status'] === 0 ? 1 : 0,
-            'state' => $responseData['status'] === 0 ? $responseData['data']['gate_position_desc'] : 'none'
+            'connected' => -2,
+            'state' =>'none'
         ];
-        // Handle API response
-        if ($responseData['status'] === 0) {
-            // Success: Set isConnected = 1 and State = Gate Description
-            $this->Public_model->saveSmartDevice($deviceData);
-            session()->setFlashdata('success', 'Device status retrieved successfully!');
-        } elseif ($responseData['status'] < 100) {
-            // Error: Set isConnected = 0 and State = 'Error'
-            $this->Public_model->saveSmartDevice($deviceData);
-            $errorMessage = isset($responseData['message']) ? $responseData['message'] : 'An error occurred.';
-            session()->setFlashdata('error', $errorMessage);
-        } else {
-            // Other errors
-            session()->setFlashdata('error', 'Unable to add this device');
-        }
+        $this->Public_model->saveSmartDevice($deviceData);
+
 
         // Redirect back to the form
         return redirect()->to('/smart-home');
@@ -168,19 +132,22 @@ class SmartDevices extends BaseController
             'password' => decryptData($device['password'], '@@12@@'),
             'api' => 'get_status'
         ];
-        $response = callAPI('POST', 'http://localhost:8012/dashboard/enddevice/Enddevice.php', $data);
+        $response = callAPI('POST', $this->url, $data);
         $responseData = json_decode($response, true);
-        $updateData = ['device_id' => $deviceId];
-        if ($responseData['status'] === 0) {
-            $updateData['connected'] = 1;
-            $updateData['state'] = $responseData['data']['gate_position_desc'];
-        } else {
-            $updateData['connected'] = 0;
-            $updateData['state'] = 'none';
-        }
+        
+        $updateData = [
+            'device_id' => $deviceId,
+            'connected' => $responseData['status'],
+            'state' => ($responseData['status'] === 0) ? $responseData['data']['gate_position'] : 'unknown',
+            'response'=>$responseData
+        ];
+    
+        // Update the device in the database with the new status
         $this->Public_model->updateSmartDeviceStatus($updateData);
 
-        // Return the updated status
+        $updateData['state'] = lang_safe('gate_position_' . $updateData['state']);
+        $updateData['connection_message']=lang_safe('connection' . $responseData['status']);
+
         return $this->response->setJSON($updateData);
     }
     public function editDevice($deviceId)
@@ -197,6 +164,8 @@ class SmartDevices extends BaseController
         // Fetch device details
         $device = $this->Public_model->getSmartDeviceById($deviceId);
         $device['UID']=decryptData($device['UID'],'@@12@@');
+        $device['password']=decryptData($device['password'],'@@12@@');
+
         $data['device']=$device;
         // Check if device exists
         if (!$data['device']) {
@@ -208,11 +177,78 @@ class SmartDevices extends BaseController
     }
     public function updateDevice()
     {
+        $serial = $this->request->getPost('serial_number');
+        $deviceName = $this->request->getPost('device_name');
+        $uid = $this->request->getPost('uid');
+        $deviceID = $this->request->getPost('device_id');
+        $pwd = $this->request->getPost('password');
+
+        $validation = \Config\Services::validation();
+        $userId = $_SESSION['logged_user'];
+        // Set validation rules
+        $validation->setRules([
+            'device_name' => [
+                'rules' => 'required|max_length[16]',
+                'errors' => [
+                    'required' => lang_safe('validation_deviceName_required'),
+                    'max_length' => lang_safe('validation_deviceName_max_length'),
+                ]
+            ],
+            'serial_number' => [
+                'rules' => 'required|exact_length[16]',
+                'errors' => [
+                    'required' => lang_safe('validation_serialNumber_required'),
+                    'exact_length' => lang_safe('validation_serialNumber_exact_length'),
+                ]
+            ],
+            'uid' => [
+                'rules' => 'required|exact_length[32]',
+                'errors' => [
+                    'required' => lang_safe('validation_uid_required'),
+                    'exact_length' => lang_safe('validation_uid_exact_length'),
+                ]
+            ],
+            'password' => [
+                'rules' => 'required|min_length[4]|max_length[10]',
+                'errors' => [
+                    'required' => lang_safe('validation_password_required'),
+                    'min_length' => lang_safe('validation_password_min_length'),
+                    'max_length' => lang_safe('validation_password_max_length'),
+                ]
+            ],
+        ]);
+        
+    // Check serial number uniqueness
+        if (!$this->Public_model->isSerialNumberUnique($userId, $serial, $deviceID)) {
+            session()->setFlashdata('error', lang_safe('validation_serialNumber_is_unique'));
+            return redirect()->back()->withInput();
+        }
+
+        // Check device name uniqueness
+        if (!$this->Public_model->isDeviceNameUnique($userId, $deviceName, $deviceID)) {
+            session()->setFlashdata('error', lang_safe('validation_deviceName_is_unique'));
+            return redirect()->back()->withInput();
+        }
+        // Check if form data is valid
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+        }
+
+
+
+
+
+        $uidEncrypted=encryptData($uid,'@@12@@');
+        // Check if the user already has a device with the same serial number
+        $pwdEncrypted=encryptData($pwd,'@@12@@');
+
+        
         $deviceData = [
-            'device_id' => $this->request->getPost('device_id'),
-            'device_name' => $this->request->getPost('device_name'),
-            'serial_number' => $this->request->getPost('serial_number'),
-            'uid' => encryptData($this->request->getPost('uid'),'@@12@@'), // Consider encryption if needed
+            'device_id' => $deviceID,
+            'device_name' => $deviceName,
+            'serial_number' => $serial,
+            'uid' => $uidEncrypted,
+            'password'=>$pwdEncrypted // Consider encryption if needed
         ];
 
         if ($this->Public_model->updateSmartDevice($deviceData)) {
@@ -326,4 +362,47 @@ class SmartDevices extends BaseController
 
         return redirect()->back();
     }
+
+    // Add this function to SmartDevices controller
+    public function controlDevice()
+    {
+        $deviceId = $this->request->getPost('deviceId');
+        $action = $this->request->getPost('action');
+
+        // Fetch device data by ID (assuming you have a method like getSmartDeviceById)
+        $device = $this->Public_model->getSmartDeviceById($deviceId);
+        $dataValue = '00';
+
+        // Map the action to the corresponding data value
+        switch ($action) {
+            case 'open':
+                $dataValue = '64';
+                break;
+            case 'stop':
+                $dataValue = 'FF';
+                break;
+            // Add more cases if needed
+            default:
+                // For 'close' action or any other action not specified, keep the default value
+                break;
+        }
+
+        // Prepare data for external API request
+        $apiData = [
+            'serial' => $device['serial_number'],
+            'uid' => decryptData($device['UID'], '@@12@@'),
+            'password' => decryptData($device['password'], '@@12@@'),
+            'api' => 'control', // Change this to the actual API endpoint for device control
+            'action' => '100', // Assuming action 100 is used for control_device
+            'data' => $dataValue,
+        ];
+        // Make the API request
+        $response = callAPI('POST', $this->url, $apiData);
+        // Handle the response as needed
+        $responseData = json_decode($response, true);
+
+        // Send the response back to the client (optional)
+        return $this->response->setJSON(['status' => $responseData['status'] , 'message' => $responseData['message']]);
+    }
+
 }

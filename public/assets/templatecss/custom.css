@@ -2382,15 +2382,61 @@ footer .footer-icon li {
     background: white;
 }
 
-.float_wa {
+#contact_menu {
     position: fixed;
-    bottom: 0px;
-    right: -20px;
+    bottom: 40%;
+    right: 0;
     z-index: 3;
-    transform: scale(0.44);
+    background-color: white;
+    border-radius: 3px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.contact_button {
+    display: block;
+    margin: 5px 0;
+    text-align: center;
+    width: 40px; /* Adjust size as needed */
+    height: 40px;
+    cursor: pointer; /* Default cursor for the button */
+
+}
+#float_wa {
+    background-image: url('../../png/mail_white.svg');
+}
+
+#float_phone {
+    background-image: url('../../png/phone_a.svg'); /* Replace with your phone icon */
+}
+
+#float_mail {
+    background-image: url('../../png/wa_white.svg'); 
+}
+
+
+#float_wa:hover {
+    background-image: url('../../png/mail_blue.svg'); 
+}
+#float_phone:hover {
+    background-image: url('../../png/phone_b.svg'); 
+}
+#float_mail:hover {
+    background-image: url('../../png/wa_green.svg'); 
+}
+@media only screen and (max-width: 1500px) and (max-height: 1000px) {
+    #contact_menu {
+        bottom: 40%;
+        right: 0;
+    }
+}
+
+/* .float_wa {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    z-index: 3;
     animation-name: wa_widget_ani;
     animation-duration: 0.7s;
-    opacity: 0.7;
 }
 
 .float_wa:hover {
@@ -2528,12 +2574,12 @@ footer .footer-icon li {
     }
 
     .float_wa {
-        animation-name: wa_widget_ani_mobile;
-        transform: scale(0.32);
+        /* animation-name: wa_widget_ani_mobile;
+        transform: scale(0.32); */
         bottom: 0px;
-        right: -30px;
+        right: 0px;
     }
-}
+} */
 
 .resize-animation-stopper * {
     animation: none !important;
@@ -2682,7 +2728,15 @@ footer .footer-icon li {
     justify-content: center;
     align-items: center;
 }
-
+@media screen and (max-width: 768px){
+    .table-responsive-xxl table thead {
+        display: none !important;
+    }
+    .checkout-buttons .btn {
+        margin: 10px 0;
+        width: 100% !important;
+    }
+}
 .ml-14 {
     margin-left: 14rem;
 }
@@ -2920,19 +2974,19 @@ a:hover {
 }
 
 @media screen and (max-width: 768px) {
-    thead {
+    /* thead {
         display: none;
-    }
+    } */
 
     tbody {
         width: 100%;
     }
 
-    tr {
+    /* tr {
         display: flex;
         flex-direction: column;
         width: 100%;
-    }
+    } */
 
     table {
         border: none !important;
@@ -3466,9 +3520,9 @@ a:hover {
         transform-origin: initial !important;
     }
 
-    .float_wa:hover {
+    /* .float_wa:hover {
         transform: scale(0.42);
-    }
+    } */
 
     .float_phone:hover {
         transform: scale(0.4);
@@ -3477,6 +3531,7 @@ a:hover {
     .float_mail:hover {
         transform: scale(0.4);
     }
+    
 }
 
 /*Home style*/
@@ -3660,6 +3715,7 @@ a:hover {
     width: 100%;
     min-height: 200px;
 }
+
 .home-container .arrivals-container .panel-body {
     height: 250px;
     overflow-y:hidden;
@@ -3684,11 +3740,53 @@ a:hover {
 
 /* Panel Text Styles */
 .home-container .panel .panel-text {
-    font-size: 18px;
+    font-size: 1.4rem;
     font-weight: 300;
     color: #707070;
 }
+@media (min-width: 400px) {
+    .home-container .panel .panel-text {
+        font-size: 1.6rem; /* Adjust font size for sm */
+    }
+}
+/* Small devices (sm) */
+@media (min-width: 576px) {
+    .home-container .panel .panel-text {
+        font-size: 2rem; /* Adjust font size for sm */
+    }
+}
 
+/* Medium devices (md) */
+@media (min-width: 768px) {
+    .home-container .panel .panel-text {
+        font-size: 1.5rem; /* Adjust font size for md */
+    }
+}
+
+/* Large devices (lg) */
+@media (min-width: 992px) {
+    .home-container .panel .panel-text {
+        font-size: 1.7rem; /* Adjust font size for lg */
+    }
+}
+
+/* Large devices (large desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+    .home-container .panel .panel-text {
+        font-size: 1.4rem; /* Larger font size for large devices */
+    }
+    .home-container .arrivals-container .panel-body {
+        height: 270px;
+    
+    }
+}
+@media only screen and (min-width: 1300px) {
+
+    .home-container .arrivals-container .panel-body {
+        height: 255px;
+    
+    }
+}
 /* Arrivals Title Styles */
 .home-container .arrivals-container .title {
     font-size: 4em;
@@ -3810,6 +3908,18 @@ a:hover {
     .btn-new{
         font-size: 12px;
     }
+    .checkout-buttons .btn-new{
+        font-size: 11.5px;
+    }
+    
+    .checkout-buttons{
+        padding: 0 !important;
+    }
+}
+@media (max-width: 460px) {
+    .checkout-buttons .btn-new{
+        font-size: 11px;
+    }
 }
 .custom-center {
     display: flex;
@@ -3909,8 +4019,8 @@ a:hover {
     }
 
     /* Display dropdown on hover */
-    .dropdown:hover .dropdown-menu,
-    .dropdown.open .dropdown-menu {
+    .dropdown:hover .dropdown-menu:not(.manage-dropdown),
+    .dropdown.open .dropdown-menu:not(.manage-dropdown) {
         display: block;
     }
 
@@ -4101,6 +4211,7 @@ li.login-dropdown-li .login-icon:hover{
         top:0;
         left:0;
     }
+
     .login-nav .dropdown .icon {
         display: inline-block!important; /* Use inline-block to set width and height */
 
@@ -4194,6 +4305,9 @@ li.login-dropdown-li .login-icon:hover{
         padding: 8px 12px !important;
         margin-bottom: 10px !important;
     }
+    #hover-dropdown-menu .account-page-link:first-of-type {
+        padding-top: 0.25rem !important; /* Adjust padding as needed */
+    }
     .account-page-link:hover{
         background: #0399D4;
         background: linear-gradient(top, #EBEBEB, #A1A1A1);
@@ -4233,7 +4347,24 @@ li.login-dropdown-li .login-icon:hover{
 .hidden {
     display: none !important;
 }
-/*@media (max-width: 768px) {*/
+
+.title.alone span h2{
+    margin-top:0 !important;
+}
+.pagination li.active a {
+    background-color: black !important;
+    border-color: #ccc !important;
+    color:white !important;
+}
+.pagination li a {
+    color: #000000 !important;
+}
+@media (max-width: 767px) {
+    .pagination li a {
+        color: #000000 !important;
+        font-size: smaller;
+    }
+}
 /*    !* Adjust dropdown menu styles for mobile *!*/
 
 /*    .dropdown.login-dropdown-li .dropdown-menu {*/

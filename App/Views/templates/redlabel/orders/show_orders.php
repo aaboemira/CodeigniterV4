@@ -3,8 +3,9 @@ $subtotal = 0;
 foreach ($order['products'] as $product) {
     $subtotal += $product['product_quantity'] * $product['product_info']['price'];
 }
+$discountAmount=($subtotal * ($order['discount'] / 100));
 // Calculate the total
-$total = $subtotal - $order['discount'] + $order['shipping_price'];
+$total = $subtotal - $discountAmount + $order['shipping_price'];
 ?>
 <style>
     .details{
@@ -83,6 +84,81 @@ $total = $subtotal - $order['discount'] + $order['shipping_price'];
     .arrow-down-text .fa {
         margin-left: 5px;
     }
+
+    .table-responsive .table th,
+    .table-responsive .table td {
+        /* Reduces padding for table cells */
+        padding: 8px !important;
+        text-align: center;
+        font-size: 1.8rem; /* Adjusts font size */
+        vertical-align: middle;
+    }
+
+    .table-responsive .table th {
+        /* Styling for table headers */
+        background-color: #f0f0f0;
+        padding: 8px !important;
+    }
+
+    .table-responsive .table thead th,
+    .table-responsive .table tfoot td {
+        /* Ensures headers and footers are not too large */
+        font-size: 1.8rem;
+    }
+    .order-top-info .mobile-download{
+        display: none;
+    }
+    /* Reducing font sizes for smaller devices */
+    @media only screen and (max-width: 767px) {
+        
+        .table-responsive .table th, 
+        .table-responsive .table td {
+            font-size: 1.3rem;
+            padding: 5px !important; /* Lesser padding */
+        }
+        .table-responsive .table thead th,
+        .table-responsive .table tfoot td {
+        /* Ensures headers and footers are not too large */
+        font-size: 1.3rem;
+    }
+        .order-top-info .dekstop-download {
+            display: none; /* Stack the download button under the text */
+        }
+        .order-top-info .mobile-download {
+            display: block; /* Stack the download button under the text */
+            float:none;
+            width:250px;
+            margin-bottom: 10px;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        .table-responsive .table th:nth-child(1),
+        .table-responsive .table td:nth-child(1) {
+            display: none;
+        }
+        .table-responsive .table th, 
+        .table-responsive .table td {
+            font-size: 1.2rem; /* Further reduction for very small screens */
+            padding: 4px !important;
+        }
+        .table-responsive .table thead th,
+        .table-responsive .table tfoot td {
+        /* Ensures headers and footers are not too large */
+        font-size: 1.2rem;
+    }
+    .table-responsive .table tfoot tr td{
+        text-align:right;
+        padding-right:4px !important;
+        padding-left:4px !important;
+    }
+    }
+
+    /* Adjusting image sizes in the table */
+    .table-responsive .table td img {
+        max-width: 100%; /* Ensures images are not larger than the cell */
+        height: auto; /* Maintains aspect ratio */
+    }
 </style>
 <div class="container-fluid user-page">
     <div class="row">
@@ -96,10 +172,13 @@ $total = $subtotal - $order['discount'] + $order['shipping_price'];
 
         <div class="col-md-9 details">
             <div class="order-top-info">
-                <div class="arrow-down-text">
+                <div class="arrow-down-text dekstop-download">
                     <a href="<?= site_url('generate-invoice/' . $order['order_id']) ?>" target="_blank"><span><?=lang_safe('download_invoice')?></span> <i class="fa fa-arrow-down"></i></a>
                 </div>
                 <h2><?= lang_safe('order_from') ?> <?= date('d.m.Y', $order['date']) ?></h2>
+                <div class="arrow-down-text mobile-download">
+                    <a href="<?= site_url('generate-invoice/' . $order['order_id']) ?>" target="_blank"><span><?=lang_safe('download_invoice')?></span> <i class="fa fa-arrow-down"></i></a>
+                </div>
                 <p><?= lang_safe('order_number') ?>: <?= lang_safe('shnd') ?><?= $order['order_id'] ?></p>
 
             </div>
@@ -191,26 +270,26 @@ $total = $subtotal - $order['discount'] + $order['shipping_price'];
                     <tfoot>
                     <tr>
                         <td colspan="2" style="border:0;"></td>
-                        <td colspan="3" style="text-align:right;border:0;"><?= lang_safe('sub_total')?> :</td>
+                        <td colspan="3"class=" dynamic-colspan" style=" text-align:right;border:0;"><?= lang_safe('sub_total')?> :</td>
                         <td style="text-align:right;border:0;"><?= number_format($subtotal, 2) .CURRENCY ?></td>
                     </tr>
                     <?php if ($order['discount'] != 0): ?>
                         <tr>
                             <td colspan="2" style="border:0;"></td>
-                            <td colspan="3" style="text-align:right;border:0;">Discount :</td>
-                            <td style="text-align:right;border:0;">-<?= number_format($order['discount'], 2) .CURRENCY ?></td>
+                            <td colspan="3"class=" dynamic-colspan" style="text-align:right;border:0;">Discount :</td>
+                            <td style="text-align:right;border:0;">-<?= number_format($discountAmount, 2) .CURRENCY ?></td>
                         </tr>
                     <?php endif; ?>
                     <?php if ($order['shipping_price'] != 0): ?>
                         <tr>
                             <td colspan="2" style="border:0;"></td>
-                            <td colspan="3" style="text-align:right;border:0;"><?= $order['shipping_type'] ?> :</td>
+                            <td colspan="3" class=" dynamic-colspan" style=" text-align:right;border:0;"><?= $order['shipping_type'] ?> :</td>
                             <td style="text-align:right;border:0;"><?= number_format($order['shipping_price'], 2) .CURRENCY ?></td>
                         </tr>
                     <?php endif; ?>
                     <tr>
                         <td colspan="2" style="border:0;"></td>
-                        <td colspan="3" style="text-align:right;border:0;"><strong><?= lang_safe('total')?> :</strong></td>
+                        <td colspan="3"class=" dynamic-colspan" style="text-align:right;border:0;"><strong><?= lang_safe('total')?> :</strong></td>
                         <td style="text-align:right;border:0;"><strong><?= number_format($total, 2) .CURRENCY ?></strong></td>
                     </tr>
                     </tfoot>
@@ -245,4 +324,22 @@ $total = $subtotal - $order['discount'] + $order['shipping_price'];
         });
     });
 
+</script>
+
+<script>
+    $(document).ready(function() {
+        function adjustColspan() {
+            var screenWidth = $(window).width();
+
+            if (screenWidth <= 480) { // Example breakpoint for mobile devices
+                $('.dynamic-colspan').attr('colspan', '4'); // Adjust as needed for mobile
+            } else {
+                $('.dynamic-colspan').attr('colspan', '3'); // Default colspan for larger screens
+            }
+        }
+
+        // Run on document ready and window resize
+        adjustColspan();
+        $(window).resize(adjustColspan);
+    });
 </script>

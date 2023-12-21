@@ -12,7 +12,17 @@ $lang['Zwischensumme']= 'Zwischensumme';
 $lang['about_us']= 'Über uns';
 $lang['action'] = 'Aktion';
 $lang['account_type']= 'Sie send ein';
+// For the Account Card
+$lang['account_title'] = 'Account'; // Title for the Account card
+$lang['account_info_1'] = 'Manage your personal information and settings.'; // First line of text in the Account card
+$lang['account_info_2'] = 'Additional information about the account.'; // Second line of text in the Account card
+
 $lang['access_control_for']= 'Access Control For';
+
+// For the Address Card
+$lang['address_title'] = 'Address'; // Title for the Address card
+$lang['address_info_1'] = 'Manage your address.'; // First line of text in the Address card
+$lang['address_info_2'] = 'Additional information about addresses.'; // Second line of text in the Address card
 
 $lang['add_to_cart']= 'Zum Warenkorb hinzufügen';
 $lang['add_device']='Add Device';
@@ -92,6 +102,20 @@ $lang['contact_us']= 'Kontakt';
 $lang['contact_us_feel_free']= '';
 $lang['contact_us_text']= 'Haben Sie Fragen oder Anmerkungen? Schreiben Sie uns an, hierzu können Sie das folgende Kontaktformular nutzen, wir werden Ihre Anfrage schnellstmöglich bearbeiten und uns mit Ihnen in Verbindung setzen.';
 $lang['contacts']= 'Kontakt';
+
+$lang['connection0']= 'Connected';
+$lang['connection-1']= 'Service out of order';
+$lang['connection-2']= 'Enddevice not reachable';
+$lang['connection-3']= 'Enddevice not reachable';
+$lang['connection-4']= 'Enddevice wrong password';
+$lang['connection-5']= 'Enddevice wrong UID';
+
+$lang['connection_error_text-1'] = 'Check if there is scheduled maintenance or reported outages for the service.';
+$lang['connection_error_text-2'] = 'Ensure that the end device is powered on and connected to the network.';
+$lang['connection_error_text-3'] = 'Ensure that the end device is powered on and connected to the network.';
+$lang['connection_error_text-4'] = 'Double-check the password you are entering for the end device.';
+$lang['connection_error_text-5'] = 'Verify that the Unique Identifier (UID) you entered for the end device is correct.';
+
 $lang['country']= 'Land / Region';
 $lang['control']= 'Control';
 
@@ -121,6 +145,9 @@ $lang['download_invoice']= 'Download Invoice';
 
 $lang['edit']= 'Bearbeiten';
 $lang['edit_guest']= 'Edit Guest';
+
+$lang['edit_device']= 'Edit Device';
+
 $lang['email']= 'Email';
 $lang['email_added']= 'Ihre Email Adresse wurde hinzugeügt';
 $lang['email_address']= 'E-Mail-Adresse';
@@ -162,8 +189,29 @@ $lang['forget_password']= 'Passwort vergessen?';
 $lang['forgot_pass']= 'Forgot password';
 $lang['freeShipping']= 'Versandkostenfreier Versand ab %price%%currency% ';
 $lang['freeShippingHeader']= 'Bestellen';
-$lang['granted']= 'Granted';
 
+$lang['gate_position_0'] = 'Stopped';
+$lang['gate_position_1'] = 'Opening ';
+$lang['gate_position_2'] = 'Closing ';
+$lang['gate_position_3'] = 'Open';
+$lang['gate_position_4'] = 'Closed ';
+$lang['gate_position_6'] = 'Autoclose';
+$lang['gate_position_7'] = 'Autoclose';
+$lang['gate_position_8'] = 'Middle position';
+$lang['gate_position_10'] = 'Blocked in1';
+$lang['gate_position_11'] = 'Blocked in2';
+$lang['gate_position_12'] = 'Blocked in3';
+$lang['gate_position_13'] = 'Sensing error1';
+$lang['gate_position_14'] = 'Sensing error2';
+$lang['gate_position_15'] = 'Sensing error3';
+$lang['gate_position_18'] = 'Ventilation position';
+$lang['gate_position_19'] = 'Ventilation position';
+$lang['gate_position_20'] = 'Device restarted';
+$lang['gate_position_22'] = 'Relay / Engine error';
+$lang['gate_position_23'] = 'Door blocked';
+$lang['gate_position_unknown'] = 'Unknown';
+
+$lang['granted']= 'Granted';
 $lang['get_angebot']= 'Angebot anfordern';
 $lang['get_angebot_text']= 'Bitte füllen Sie das Formular aus - Sie erhalten nach der Prüfung Ihres Modells schnellstmöglich unser Angebot';
 $lang['guest_email']= ' Guest Email';
@@ -175,12 +223,22 @@ $lang['go_to_paypal']= 'zu Paypal';
 
 $lang['hideXsNav']= 'Kategorien ausblenden';
 $lang['home']= 'Startseite';
-$lang['home_arrivals_text']= '   .';
+$lang['home_arrivals_text']= 'Your arrivals text';
 $lang['home_arrivals_title']= 'Neuheiten 2023';
 $lang['home_headline_text']= 'Licht, Beschattung, Klima,  und Multimedia – . .';
 $lang['home_headline_title']= 'Zukunftsorientierte Geb';
 $lang['home_panel_button']= 'Mehr erfahren ';
-$lang['home_panel_text']= '  ';
+
+$lang['home_panel_header_1']= 'Mehr erfahren ';
+$lang['home_panel_header_2']= 'Mehr erfahren ';
+$lang['home_panel_header_3']= 'Mehr erfahren ';
+$lang['home_panel_header_4']= 'Mehr erfahren ';
+
+$lang['home_panel_text_1']= 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  ';
+$lang['home_panel_text_2']= 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  ';
+$lang['home_panel_text_3']= ' Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ';
+$lang['home_panel_text_4']= 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.   ';
+
 $lang['home_quote_head']= 'Ganz bequem montieren lassen:';
 $lang['home_quote_text']= 'Einfach das Anfrageformular ausfüllen und wir suchen Ihnen einen passenden Montagepartner in Ihrer Nähe, der Ihnen';
 $lang['home_quote_title']= 'Direkt ein Angebot anfordern!';
@@ -250,11 +308,16 @@ $lang['new_password']= 'Neues Passwort';
 $lang['new_products']= 'New Products';
 $lang['newsletter']= 'Newsletter';
 $lang['newsletter_agreement']= 'Ich möchte den Newsletter erhalten';
+// For the Newsletter Card
+$lang['newsletter_title'] = 'Newsletter'; // Title for the Newsletter card
+$lang['newsletter_info_1'] = 'Subscribe to newsletters.'; // First line of text in the Newsletter card
+$lang['newsletter_info_2'] = 'Additional information about newsletters.'; // Second line of text in the Newsletter card
+
 $lang['no_archives']= 'No Archives';
 $lang['no_categories']= 'Keine Kategorien';
 $lang['no_devices_found']= 'No Devices Found';
 $lang['no_guests_found']= 'No Guests Found';
-
+$lang['no_orders_found']= 'No Orders Found';
 $lang['no_posts']= 'No published articles';
 $lang['no_products']= 'Keine Produkte';
 $lang['no_products_in_cart']= 'Es befinden sich noch keine Produkte in Ihrem Einkaufwagen';
@@ -266,7 +329,7 @@ $lang['not_available']= 'Nicht verfügbar';
 $lang['not_selected']= 'Nichts ausgewählt';
 $lang['notes']= 'Sonstige Bemerkungen';
 $lang['not_subscribed_heading'] = 'Subscribe to Our Newsletter';
-$lang['not_subscribed_info'] = 'Be the first to discover our brand new products and features! Our newsletter not only informs you about the latest developments in our “Node Devices Smart Home” app, but also about innovations on our website. Stay informed and be the first to experience the exciting innovations we have in store for you.<br>Also take part in our exclusive discount campaigns and save money. Register now and dont miss any advantages!';
+$lang['not_subscribed_info'] = 'Be the first to discover our brand new products and features! Our newsletter not only informs you about the latest developments in our “Node Devices Smart Home” app, but also about innovations on our website. Stay informed and be the first to experience the exciting innovations we have in store for you.<br><br>Also take part in our exclusive discount campaigns and save money. Register now and dont miss any advantages!';
 $lang['num_added_to_cart']= 'Anzahl Artikel im Warenkorb';
 $lang['oberflaeche']= 'Nachbearbeitung';
 $lang['oder_from_category']= 'Weitere Artikel in dieser Kategorie';
@@ -288,6 +351,11 @@ $lang['order_status_rejected']= 'Order Rejected';
 $lang['order_status_revocation_done']= 'Revocation Completed';
 $lang['order_status_shipped']= 'Order Shipped';
 $lang['order_type']= 'Order type';
+// For the Orders Card
+$lang['orders_title'] = 'Orders'; // Title for the Orders card
+$lang['orders_info_1'] = 'View your recent orders and track shipping.'; // First line of text in the Orders card
+$lang['orders_info_2'] = 'Additional information about orders.'; // Second line of text in the Orders card
+
 $lang['ort']= 'Ort';
 $lang['others']= 'Sonstiges';
 $lang['our_office']= 'Anschrift';
@@ -305,6 +373,11 @@ $lang['password_recover']= 'Passwort Wiederherstellung';
 $lang['password_recover_info']= 'Wir senden Ihnen eine Bestätigungs-E-Mail. Klicken Sie auf den darin enthaltenen Link, um Ihr Passwort zu ändern.';
 $lang['password_repeat']= 'Passwort wiederholen';
 $lang['passwords_dont_match']= '- Die Passwörter stimmen nicht überein';
+// For the Password Card
+$lang['password_title'] = 'Password'; // Title for the Password card
+$lang['password_info_1'] = 'Change your password.'; // First line of text in the Password card
+$lang['password_info_2'] = 'Additional information about passwords.';
+
 $lang['payments-text']= 'Zahlungsarten';
 $lang['payment_type']= 'Payment type';
 
@@ -382,6 +455,11 @@ $lang['shop']= 'Store';
 $lang['shopping_cart']= 'Ihr Warenkorb';
 $lang['shopping_cart_only']= 'Zum Warenkorb ';
 $lang['showXsNav']= 'Kategorien einblenden';
+// For the Smart Home Card
+$lang['smart_home_title'] = 'Smart Home'; // Title for the Smart Home card
+$lang['smart_home_info_1'] = 'Manage your smart home devices.'; // First line of text in the Smart Home card
+$lang['smart_home_info_2'] = 'Additional information about smart home.'; // Second line of text in the Smart Home card
+
 $lang['social']= 'Social media';
 $lang['sold_out']= 'Ausverkauft';
 $lang['sort_by']= 'Sortieren nach';
@@ -416,7 +494,9 @@ $lang['track_shipment']= 'Track Shipment';
 $lang['type_a_number']= 'Bezeichnung';
 $lang['u_login']= 'Einloggen';
 $lang['update']= 'Update';
+$lang['update_addresses']= 'Update Address';
 $lang['update_device']= 'Update Device';
+
 $lang['unsubscribe'] = 'Unsubscribe';
 
 $lang['user_email_is_taken']= '- Diese E-Mail-Adresse wird bereits verwendet';
@@ -433,6 +513,23 @@ $lang['usr_order_date']= 'Datum';
 $lang['usr_order_id']= 'Bestellnummer';
 $lang['usr_order_phone']= 'Telefon ';
 $lang['uid']='UID';
+
+$lang['validation_deviceName_required'] = 'Device name is required.';
+$lang['validation_deviceName_max_length'] = 'Device name must not exceed 16 characters.';
+$lang['validation_deviceName_is_unique'] = 'Device name must be unique';
+
+$lang['validation_serialNumber_required'] = 'Serial Number is required.';
+$lang['validation_serialNumber_exact_length'] = 'Device name must be 16 characters.';
+$lang['validation_serialNumber_is_unique'] = 'Device name must be unique.';
+$lang['validation_uid_required'] = 'UID is required.';
+$lang['validation_uid_exact_length'] = 'UID must be 32 characters.';
+$lang['validation_uid_is_unique'] = 'UID must be unique.';
+
+
+$lang['validation_password_min_length'] = 'Password must be greater than 4 characters.';
+$lang['validation_password_max_length'] = 'Password must max with 8 characters.';
+$lang['validation_password_required'] = 'Password is required.';
+
 $lang['vendor']= 'Vendor';
 $lang['vendor_add_product']= 'Produkt hinzufügen ';
 $lang['vendor_cover_image']= 'Cover image';

@@ -239,9 +239,10 @@ class Public_model extends Model
         }
         return $builder;
     }
-    private function getAllSubcategoryIds($categoryId) {
+    private function getAllSubcategoryIds($categoryId)
+    {
         static $allCategories = []; // Static variable to hold all categories across recursive calls
-    
+
         $query = $this->db->query('SELECT id FROM shop_categories WHERE sub_for = ' . $categoryId);
         foreach ($query->getResultArray() as $row) {
             if (!in_array($row['id'], $allCategories)) {
@@ -249,10 +250,10 @@ class Public_model extends Model
                 $this->getAllSubcategoryIds($row['id']); // Recursive call for each subcategory
             }
         }
-    
+
         return $allCategories;
     }
-    
+
     public function getShopCategories()
     {
         $query = $this->db->table('shop_categories_translations')->select('shop_categories.sub_for, shop_categories.id, shop_categories_translations.name')
@@ -383,55 +384,61 @@ class Public_model extends Model
 
         $this->db->transStart();
         $builder = $this->db->table('orders');
-        if (!$builder->insert(array(
-            'order_id' => $post['order_id'],
-            'products' => $post['products'],
-            'date' => $post['date'],
-            'referrer' => $post['referrer'],
-            'clean_referrer' => $post['clean_referrer'],
-            'payment_type' => $post['payment_type'],
-            'paypal_status' => @$post['paypal_status'],
-            'discount_code' => @$post['discountCode'],
-            'user_id' => $post['user_id'],
-            'shipping_price' => $post['shipping_price'], // Insert shipping price
-            'shipping_type' => $post['shipping_type'],
-            'order_status'=>$post['status'],
-            'discount'=>@$post['discount']
-        ))) {
-//            log_message('error', print_r($builder->error(), true));
+        if (
+            !$builder->insert(array(
+                'order_id' => $post['order_id'],
+                'products' => $post['products'],
+                'date' => $post['date'],
+                'referrer' => $post['referrer'],
+                'clean_referrer' => $post['clean_referrer'],
+                'payment_type' => $post['payment_type'],
+                'paypal_status' => @$post['paypal_status'],
+                'discount_code' => @$post['discountCode'],
+                'user_id' => $post['user_id'],
+                'shipping_price' => $post['shipping_price'], // Insert shipping price
+                'shipping_type' => $post['shipping_type'],
+                'order_status' => $post['status'],
+                'discount' => @$post['discount']
+            ))
+        ) {
+            //            log_message('error', print_r($builder->error(), true));
         }
 
 
         $lastId = $this->db->insertID();
         $builder = $this->db->table('orders_clients');
-        if (!$builder->insert(array(
-            'for_id' => $lastId,
-            'first_name' => $post['billing_address']['billing_first_name'],
-            'last_name' => $post['billing_address']['billing_last_name'],
-            'company' => $post['billing_address']['billing_company'],
-            'email' => $post['email'],
-            'phone' => $post['phone'],
-            'city' => $post['billing_address']['billing_city'],
-            'street' => $post['billing_address']['billing_street'],
-            'housenr' => $post['billing_address']['billing_housenr'],
-            'country' => $post['billing_address']['billing_country'],
-            'post_code' => $post['billing_address']['billing_post_code'],
-            'notes' => $post['notes']
-        ))) {
+        if (
+            !$builder->insert(array(
+                'for_id' => $lastId,
+                'first_name' => $post['billing_address']['billing_first_name'],
+                'last_name' => $post['billing_address']['billing_last_name'],
+                'company' => $post['billing_address']['billing_company'],
+                'email' => $post['email'],
+                'phone' => $post['phone'],
+                'city' => $post['billing_address']['billing_city'],
+                'street' => $post['billing_address']['billing_street'],
+                'housenr' => $post['billing_address']['billing_housenr'],
+                'country' => $post['billing_address']['billing_country'],
+                'post_code' => $post['billing_address']['billing_post_code'],
+                'notes' => $post['notes']
+            ))
+        ) {
             // ///log_message('error', print_r($builder->error(), true));
         }
         $builder = $this->db->table('orders_shipping');
-        if (!$builder->insert(array(
-            'for_id' => $lastId,
-            'first_name' => $post['shipping_address']['shipping_first_name'],
-            'last_name' => $post['shipping_address']['shipping_last_name'],
-            'company' => $post['shipping_address']['shipping_company'],
-            'city' => $post['shipping_address']['shipping_city'],
-            'street' => $post['shipping_address']['shipping_street'],
-            'housenr' => $post['shipping_address']['shipping_housenr'],
-            'country' => $post['shipping_address']['shipping_country'],
-            'post_code' => $post['shipping_address']['shipping_post_code'],
-        ))) {
+        if (
+            !$builder->insert(array(
+                'for_id' => $lastId,
+                'first_name' => $post['shipping_address']['shipping_first_name'],
+                'last_name' => $post['shipping_address']['shipping_last_name'],
+                'company' => $post['shipping_address']['shipping_company'],
+                'city' => $post['shipping_address']['shipping_city'],
+                'street' => $post['shipping_address']['shipping_street'],
+                'housenr' => $post['shipping_address']['shipping_housenr'],
+                'country' => $post['shipping_address']['shipping_country'],
+                'post_code' => $post['shipping_address']['shipping_post_code'],
+            ))
+        ) {
             // ///log_message('error', print_r($builder->error(), true));
         }
         if ($this->db->transStatus() === FALSE) {
@@ -488,36 +495,40 @@ class Public_model extends Model
                 $post['products'] = serialize(array($product_id => $product_quantity));
                 $this->db->transStart();
                 $builder = $this->db->table('vendors_orders');
-                if (!$builder->insert(array(
-                    'order_id' => $post['order_id'],
-                    'products' => $post['products'],
-                    'date' => $post['date'],
-                    'referrer' => $post['referrer'],
-                    'clean_referrer' => $post['clean_referrer'],
-                    'payment_type' => $post['payment_type'],
-                    'paypal_status' => @$post['paypal_status'],
-                    'discount_code' => @$post['discountCode'],
-                    'vendor_id' => $productInfo['vendor_id']
-                ))) {
+                if (
+                    !$builder->insert(array(
+                        'order_id' => $post['order_id'],
+                        'products' => $post['products'],
+                        'date' => $post['date'],
+                        'referrer' => $post['referrer'],
+                        'clean_referrer' => $post['clean_referrer'],
+                        'payment_type' => $post['payment_type'],
+                        'paypal_status' => @$post['paypal_status'],
+                        'discount_code' => @$post['discountCode'],
+                        'vendor_id' => $productInfo['vendor_id']
+                    ))
+                ) {
                     // ///log_message('error', print_r($builder->error(), true));
                 }
                 $lastId = $this->db->insertID();
                 $builder = $this->db->table('vendors_orders_clients');
-                if (!$builder->insert(array(
-                    'for_id' => $lastId,
-                    'first_name' => $post['first_name'],
-                    'last_name' => $post['last_name'],
-                    'company' => $post['company'],
-                    'city' => $post['city'],
-                    'email' => $post['email'],
-                    'phone' => $post['phone'],
-                    'street' => $post['street'],
-                    'housenr' => $post['housenr'],
-                    'country' => $post['country'],
-                    'city' => $post['city'],
-                    'post_code' => $post['post_code'],
-                    'notes' => $post['notes']
-                ))) {
+                if (
+                    !$builder->insert(array(
+                        'for_id' => $lastId,
+                        'first_name' => $post['first_name'],
+                        'last_name' => $post['last_name'],
+                        'company' => $post['company'],
+                        'city' => $post['city'],
+                        'email' => $post['email'],
+                        'phone' => $post['phone'],
+                        'street' => $post['street'],
+                        'housenr' => $post['housenr'],
+                        'country' => $post['country'],
+                        'city' => $post['city'],
+                        'post_code' => $post['post_code'],
+                        'notes' => $post['notes']
+                    ))
+                ) {
                     //  ///log_message('error', print_r($builder->error(), true));
                 }
                 if ($this->db->transStatus() === FALSE) {
@@ -693,10 +704,12 @@ class Public_model extends Model
         }
         $builder = $this->db->table('orders');
         $builder->where('order_id', $order_id);
-        if (!$builder->update(array(
-            'paypal_status' => $status,
-            'processed' => $processed
-        ))) {
+        if (
+            !$builder->update(array(
+                'paypal_status' => $status,
+                'processed' => $processed
+            ))
+        ) {
             //   ///log_message('error', print_r($builder->error(), true));
         }
     }
@@ -971,6 +984,54 @@ class Public_model extends Model
         return $query->getRow();
     }
 
+    public function getUserAddressesByID($id)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->select('billing.first_name as billing_first_name, billing.last_name as billing_last_name, billing.company as billing_company, billing.street as billing_street, billing.post_code as billing_post_code, billing.country as billing_country, billing.city as billing_city, billing.housenr as billing_housenr, shipping.first_name as shipping_first_name, shipping.last_name as shipping_last_name, shipping.company as shipping_company, shipping.street as shipping_street, shipping.post_code as shipping_post_code, shipping.country as shipping_country, shipping.city as shipping_city, shipping.housenr as shipping_housenr');
+        $builder->join('users_billing_addresses as billing', 'users_public.billing_address_id = billing.billing_id', 'left');
+        $builder->join('users_shipping_addresses as shipping', 'users_public.shipping_address_id = shipping.shipping_id', 'left');
+        $builder->where('users_public.id', $id);
+        $query = $builder->get();
+
+        return $query->getRowArray();
+    }
+    public function updateUserAddressesById($userId, $billingAddress, $shippingAddress)
+    {
+        // Start transaction for data integrity
+        $this->db->transStart();
+
+        // Fetch user to get billing and shipping address IDs
+        $userBuilder = $this->db->table('users_public');
+        $userBuilder->select('billing_address_id, shipping_address_id');
+        $userBuilder->where('id', $userId);
+        $user = $userBuilder->get()->getRow();
+
+        if (!$user) {
+            return false;
+        }
+
+        // Update Billing Address
+        $billingBuilder = $this->db->table('users_billing_addresses');
+        $billingBuilder->where('billing_id', $user->billing_address_id);
+        $billingBuilder->update($billingAddress);
+
+        // Update Shipping Address
+        $shippingBuilder = $this->db->table('users_shipping_addresses');
+        $shippingBuilder->where('shipping_id', $user->shipping_address_id);
+        $shippingBuilder->update($shippingAddress);
+
+        // Complete the transaction
+        $this->db->transComplete();
+
+        // Check if transaction was successful
+        if ($this->db->transStatus() === FALSE) {
+            // Handle error
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public function findUserByToken($verificationToken)
     {
         $builder = $this->db->table('users_public');
@@ -1133,12 +1194,42 @@ class Public_model extends Model
         $builder->where('device_name', $name);
         return $builder->countAllResults();
     }
-    public function saveSmartDevice($deviceData) {
+    public function isSerialNumberUnique($userID, $serial, $deviceID = null)
+    {
+        $builder = $this->db->table('smart_devices');
+        $builder->where('user_id', $userID);
+        $builder->where('serial_number', $serial);
+
+        // Exclude the current device if deviceID is provided
+        if ($deviceID !== null) {
+            $builder->where('device_id !=', $deviceID);
+        }
+
+        return $builder->countAllResults() === 0;
+    }
+    public function isDeviceNameUnique($userID, $name, $deviceID = null)
+    {
+        $builder = $this->db->table('smart_devices');
+        $builder->where('user_id', $userID);
+        $builder->where('device_name', $name);
+
+        // Exclude the current device if deviceID is provided
+        if ($deviceID !== null) {
+            $builder->where('device_id !=', $deviceID);
+        }
+
+        // Return true if no records found, false otherwise
+        return $builder->countAllResults() === 0;
+    }
+
+    public function saveSmartDevice($deviceData)
+    {
 
         $builder = $this->db->table('smart_devices');
         return $builder->insert($deviceData);
     }
-    public function updateSmartDeviceStatus($deviceData) {
+    public function updateSmartDeviceStatus($deviceData)
+    {
         // Assuming 'device_id' is the primary key or unique identifier for the devices
         $deviceId = $deviceData['device_id'];
 
@@ -1159,25 +1250,29 @@ class Public_model extends Model
         return $builder->update($deviceData);
     }
 
-    public function deleteSmartDevice($deviceId) {
+    public function deleteSmartDevice($deviceId)
+    {
         $builder = $this->db->table('smart_devices');
         $builder->where('device_id', $deviceId);
         return $builder->delete();
     }
 
-    public function getGuestsForDevice($deviceId) {
+    public function getGuestsForDevice($deviceId)
+    {
         $builder = $this->db->table('smart_devices_guests');
         $builder->select('*');
         $builder->where('device_id', $deviceId);
         $query = $builder->get();
         return $query->getResultArray();
     }
-    public function addGuestToSmartDevice($guestData) {
+    public function addGuestToSmartDevice($guestData)
+    {
         $builder = $this->db->table('smart_devices_guests');
         return $builder->insert($guestData);
     }
 
-    public function isGuestAddedToDevice($email, $deviceId) {
+    public function isGuestAddedToDevice($email, $deviceId)
+    {
         $builder = $this->db->table('smart_devices_guests');
         $builder->where('email', $email);
         $builder->where('device_id', $deviceId);
@@ -1186,7 +1281,8 @@ class Public_model extends Model
         // If the query returns more than 0 rows, the guest is already added
         return $query->getNumRows() > 0;
     }
-    public function deleteGuest($guestId) {
+    public function deleteGuest($guestId)
+    {
         $builder = $this->db->table('smart_devices_guests');
         $builder->where('id', $guestId);
         return $builder->delete();

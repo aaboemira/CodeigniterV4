@@ -43,9 +43,7 @@ class Users extends BaseController
             $password = $_POST['pass'];
             if ($this->performLogin($email, $password)) {
                 return redirect()->to(LANG_URL . '/myaccount');
-            } else {
-                session()->setFlashdata('loginError', lang_safe('wrong_user'));
-            }
+            } 
         }
 
         $head = array();
@@ -88,12 +86,22 @@ class Users extends BaseController
             $this->Public_model->markEmailAsVerified($user->id);
             session()->setFlashdata('success', lang_safe('verify_confirm', 'Email confirmed successfully. Please login now'));
             // Redirect to a success page or show a success message
-            return redirect()->to(LANG_URL . '/register');
+            return redirect()->to(LANG_URL . '/user/successMessage');
         } else {
             session()->setFlashdata('registerError', lang_safe('verify_failed', 'Email is not confirmed'));
             // Invalid or expired token; show an error message
             return redirect()->to(LANG_URL . '/register');
         }
+    }
+    public function showSuccessMessage()
+    {
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('user_register');
+        $head['description'] = lang_safe('user_register');
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        return $this->render('/users/verification_success', $head, $data);
+
     }
 
     public function myaccount($page = 0)
@@ -131,11 +139,15 @@ class Users extends BaseController
             $validation->setRule('current_password', lang_safe('enter_password'), 'required');
             $validation->setRule('pass',lang_safe('enter_password'), 'required|min_length[6]');
             $validation->setRule('pass_repeat',lang_safe('pass_repeat_error', 'Repeat password did not match'), 'matches[pass]');
-            
+            if (!$this->password_check($_POST['pass'])) {
+                session()->setFlashdata('error', lang_safe('invalid_password'));
+                return redirect()->to(current_url())->withInput();
+            }
             if ($validation->run($this->request->getPost()))
             {
                 $_POST['email'] = $_SESSION['email'];
                 $_POST['pass'] = $_POST['current_password'];
+
                 $result = $this->Public_model->checkPublicUserIsValid($_POST);
                 if ($result == false) {
                     session()->setFlashdata('error', lang_safe('wrong_pass', 'Current password is wrong'));
@@ -162,20 +174,7 @@ class Users extends BaseController
         return $this->render('password', $head, $data);
     }
 
-    public function address()
-    {
-        if (!session()->has('logged_user')) {
-            return redirect()->to(LANG_URL . '/register');
-        }
-        $head = array();
-        $data = array();
-        $head['title'] = lang_safe('my_acc');
-        $head['description'] = lang_safe('my_acc');
-        $head['keywords'] = str_replace(" ", ",", $head['title']);
-        return $this->render('address', $head, $data);
-    }
-
-
+ 
     public function newsletter()
     {
         if (!session()->has('logged_user')) {
@@ -217,9 +216,14 @@ class Users extends BaseController
         if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
             $errors[] = lang_safe('email_empty');
         }
-        if (strlen($password) < 8 || !preg_match('/[!@#$%^&*()-_+[\]{};:"\'<>,.?~`]/', $password) || !preg_match('/\d/', $password) || !preg_match('/[a-zA-Z]/', $password)) {
+        if (strlen($password) < 8 ||
+            preg_match('/\s/', $password) ||  // Check for spaces
+            !preg_match('/[#?!@$%^&*-]/', $password) ||
+            !preg_match('/\d/', $password) ||
+            !preg_match('/[a-zA-Z]/', $password)) {
             $errors[] = lang_safe('invalid_password');
         }
+
         if (mb_strlen(trim($_POST['pass_repeat'])) == 0) {
             $errors[] = lang_safe('password_confirm_empty');
         }
@@ -343,27 +347,24 @@ class Users extends BaseController
 
         $token = $this->request->getGet('token');
 
-
         if (isset($_POST['reset_password'])) {
             $password = $_POST['pass'];
             $passwordRepeat = $_POST['pass_repeat'];
             if ($password === $passwordRepeat) {
-                // Passwords match
-                if (
-                    !strlen($password) < 8 &&
-                    preg_match('/[!@#$%^&*()_+[\]{};:"\'<>,.?~`]/', $password) &&
+                // Check if the password is at least 8 characters long, contains no spaces,
+                // and includes at least one special character, one number, and one letter.
+
+                if (strlen($password) >= 8 &&
+                    !preg_match('/\s/', $password) &&  // Check for spaces
+                    preg_match('/[#?!@$%^&*-]/', $password) &&
                     preg_match('/\d/', $password) &&
-                    preg_match('/[a-zA-Z]/', $password)
-                ) {
-                    // Password meets the requirements
+                    preg_match('/[a-zA-Z]/', $password)) {
                     $this->Public_model->updatePassword($_POST);
                     return $this->render('users/forget_success', $head, $data);
                 } else {
-                    // Password does not meet the requirements
                     session()->setFlashdata('error', lang_safe('invalid_password', 'Password must contain at least 1 special character, 1 number, and 1 letter'));
                 }
             } else {
-                // Passwords do not match
                 session()->setFlashdata('error', lang_safe('passwords_dont_match', 'Passwords do not match'));
             }
         }
@@ -389,7 +390,7 @@ class Users extends BaseController
     }
 
     public function captcha() {
-        $code = (string) new Code;
+        $code = (string) new Code(4,4,'23456789ABCDEGHJKMNPQRSTUVXYZ');
         session()->set('code', $code);
         $image = new Image($code);
         $response['image'] = (string)$image;
@@ -418,7 +419,6 @@ class Users extends BaseController
         ];
 
         $result = $this->Public_model->checkPublicUserIsValid($loginData);
-
         if ($result !== false) {
             if ($result['verified'] == 0) {
                 session()->setFlashdata('loginError', lang_safe('verify_first', 'Please verify your email first'));
@@ -432,6 +432,19 @@ class Users extends BaseController
                 return true;
             }
         }
+        session()->setFlashdata('loginError', lang_safe('wrong_user'));
         return false;
     }
+
+    private function password_check($password)
+{
+    if (strlen($password) < 8 ||
+        preg_match('/\s/', $password) ||  // Check for spaces
+        !preg_match('/[#?!@$%^&*-]/', $password) ||
+        !preg_match('/\d/', $password) ||
+        !preg_match('/[a-zA-Z]/', $password)) {
+        return false;
+    }
+    return true;
+}
 }

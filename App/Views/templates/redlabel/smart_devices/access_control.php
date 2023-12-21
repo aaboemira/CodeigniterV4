@@ -141,8 +141,7 @@
                             <input type="hidden" class="form-control" id="device_id" name="device_id" value="<?=$device['device_id']?>">
 
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= lang_safe('close') ?></button>
-                                <button type="submit" class="btn btn-primary"><?= lang_safe('save_changes') ?></button>
+                                <button type="submit" class="btn btn-new"><?= lang_safe('save_changes') ?></button>
                             </div>
                         </form>
                     </div>

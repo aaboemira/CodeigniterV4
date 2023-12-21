@@ -109,6 +109,7 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+            
 </head>
 
 <?php if (isset($_GET['ID'])) {
@@ -128,17 +129,15 @@
 ?>
 
 <body>
-<a id="float_wa" class="float_wa " href="https://wa.me/+4971125286437">
-    <img class="wa_widget_img" alt="WhatsApp us" src="<?= base_url('png/wa_widget.png') ?>"/>
-</a>
-<a id="float_phone" class="float_phone" href="tel:+4971125286437">
-    <img class="phone_widget_img" alt="Call us" src="<?= base_url('png/phone_widget.png') ?>"/>
-</a>
-<a id="float_mail" class="float_mail" href="mailto:kontakt@nodedevices.de">
-    <img class="mail_widget_img" alt="Mail us" src="<?= base_url('png/mail_widget.png') ?>"/>
-</a>
 
-<div id="contactModal" class="modal" role="dialog">
+<div id="contact_menu">
+    <a id="float_wa" class="contact_button" href="https://wa.me/+4971125286437"></a>
+    <a id="float_phone" class="contact_button" href="tel:+4971125286437"></a>
+    <a id="float_mail" class="contact_button" href="mailto:kontakt@nodedevices.de"></a>
+</div>
+
+
+<div id="contactModal" class="modal" role="dialog" style="overflow-y:hidden;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -152,7 +151,7 @@
                 <div class="row" style="padding: 5px;">
                     <!-- Add a checkbox for policy acceptance -->
 
-                    <div class="col-md-12" style="text-align:left; margin-bottom: 15px;">
+                    <!-- <div class="col-md-12" style="text-align:left; margin-bottom: 15px;">
                         <p style="text-align:left;"><?= lang_safe('contact_policy') ?></p>
                         <label style="text-align:left;" for="acceptPolicyCheckbox">
                             <?= lang_safe('dataprotection_contact_accept1') ?>
@@ -163,7 +162,7 @@
                             </sup>
                         </label>
                         <input type="checkbox" id="acceptPolicyCheckbox">
-                    </div>
+                    </div> -->
 
                     <ul id="contactOptionsList" style="list-style: none; font-size: large;">
                         <li>
@@ -278,10 +277,14 @@
                                                 <?= lang_safe('modal_show_cart') ?>
                                             </a>
                                         </div>
+                                        <?php
+                                        // Determine the URL based on whether the user is logged in or not
+                                        $url = session()->has('logged_user') ? LANG_URL . '/checkout1' : LANG_URL . '/checkout0';
+                                        ?>
                                         <div class="col-12" style="text-align: center;">
                                             <a class="btn btn-primary btn-new go-checkout"
                                                style="margin-top: 5px; width:80%;"
-                                               href="<?= LANG_URL . '/checkout1' ?>">
+                                               href="<?= $url ?>">
                                                 <?= lang_safe('modal_checkout') ?>
                                             </a>
                                         </div>
@@ -316,7 +319,7 @@
                         <li class="dropdown login-dropdown-li">
 
                             <a id="myAccountLink" class="icon login-icon" href="#" data-toggle="dropdown" role="button"
-                               aria-haspopup="true" aria-expanded="false">
+                               aria-haspopup="true" >
                                 <img src="<?= base_url('png/myaccount_white.png') ?>" alt="login" class="dropdown-image"
                                     >
                                 <?php if (isset($_SESSION['logged_user'])) { ?>
@@ -391,12 +394,12 @@
                                     <?php
                                     $accountPages = array(
                                         array('title' => 'Overview', 'url' => base_url('myaccount'), 'icon' => 'fa fa-th'),
-                                        array('title' => 'Address', 'url' => base_url('address'), 'icon' => 'fa fa-address-book'),
-                                        array('title' => 'Orders', 'url' => base_url('orders'), 'icon' => 'fa fa-shopping-bag'),
-                                        array('title' => 'Smart Home', 'url' => base_url('smart-home'), 'icon' => 'fa fa-h-square'),
-                                        array('title' => 'Newsletter', 'url' => base_url('newsletter'), 'icon' => 'fa fa-newspaper-o'),
                                         array('title' => 'Account', 'url' => base_url('account'), 'icon' => 'fa fa-user'),
+                                        array('title' => 'Orders', 'url' => base_url('orders'), 'icon' => 'fa fa-shopping-bag'),
+                                        array('title' => 'Address', 'url' => base_url('address'), 'icon' => 'fa fa-address-book'),
+                                        array('title' => 'Smart Home', 'url' => base_url('smart-home'), 'icon' => 'fa fa-h-square'),
                                         array('title' => 'Password', 'url' => base_url('password'), 'icon' => 'fa fa-key'),
+                                        array('title' => 'Newsletter', 'url' => base_url('newsletter'), 'icon' => 'fa fa-newspaper-o'),
                                     );
 
 

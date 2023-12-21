@@ -46,7 +46,7 @@
                                         <?= lang_safe('password', 'Enter new password') ?>
                                     </label>
                                     <div class="input-group">
-                                        <input type="password" name="pass" class="form-control" id="password" required="required" autocomplete />
+                                        <input type="password" name="pass" class="form-control" id="password" required="required" autocomplete="new-password" oninput="removeTrailingSpaces(this)" />
                                         <span class="input-group-btn">
                                                 <button class="btn btn-default toggle-password" type="button"
                                                         data-target="password">
@@ -62,7 +62,7 @@
                                         <?= lang_safe('password_repeat', 'Repeat new password') ?>
                                     </label>
                                     <div class="input-group">
-                                    <input type="password" name="pass_repeat" class="form-control" id="password_repeat" required="required" autocomplete />
+                                    <input type="password" name="pass_repeat" class="form-control" id="password_repeat" required="required" autocomplete="new-password" oninput="removeTrailingSpaces(this)" />
                                         <span class="input-group-btn">
                                             <button class="btn btn-default toggle-password" type="button"
                                                     data-target="password_repeat">

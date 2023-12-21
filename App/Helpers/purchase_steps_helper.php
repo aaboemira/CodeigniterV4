@@ -49,7 +49,7 @@ function purchase_steps($step0=null,$step1 = null, $step2 = null, $step3 = null,
     } 
     ?>
     <div class="row steps">
-        <div class="col-sm-2 step <?= $class0 ?>" onclick="location.href='<?= LANG_URL . '/checkout1'?>';">
+        <div class="col-sm-2 step <?= $class0 ?>" onclick="location.href='<?= LANG_URL . (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] ? '/checkout1' : '/checkout0')?>';">
             <span class="step"> <?= lang_safe('checkout0')?>
         </div>
         <div class="col-sm-2 step <?= $class1 ?>" onclick="location.href='<?= LANG_URL . '/checkout1'?>';">

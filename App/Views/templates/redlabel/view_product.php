@@ -1,3 +1,65 @@
+<style>
+/* Base styles for the table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 5px; /* Reduced padding */
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* Styles for mobile devices */
+@media only screen and (max-width: 767px) {
+    table{
+        width: 100% !important; /* Fixed width for mobile */
+        display: block !important;
+    }
+    th, td {
+        min-width: auto !important;
+        font-size: 14px; /* Smaller font size for mobile */
+        padding: 12px 4px  !important; /* Even smaller padding for mobile */
+        word-wrap: break-word; /* Breaks words to next line */
+    }
+    th span , td span{
+        font-size: 14px !important; /* Smaller font size for mobile */
+
+    }
+
+    th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+        /* Assign percentage widths to specific columns if needed */
+    th:nth-child(1), td:nth-child(1) { width: 25%; } /* Example for first column */
+    th:nth-child(2), td:nth-child(2) { width: 25%; } /* Example for second column */
+    th:nth-child(3), td:nth-child(3) { width: 25%; } /* Example for first column */
+    th:nth-child(4), td:nth-child(4) { width: 25%; } /* Example for second column */
+    /* Continue as needed for each column */
+}
+
+/* Additional styles for very small screens */
+@media only screen and (max-width: 350px) {
+    th span, td span {
+        font-size: 12px !important; /* Smaller font size for very small screens */
+        padding: 2px; /* Minimal padding for very small screens */
+    }
+}
+@media only screen and (max-width: 330px) {
+    th span, td span {
+        font-size: 11px !important; /* Smaller font size for very small screens */
+    }
+}
+</style>
+<script src="https://www.paypal.com/sdk/js?client-id=AQvAWM7JQeF03Wt7ah6AbQgg5KcaFSmCtRtLs0mXVEBYgJlM9kQHN6LJ1g1XE5iz6EXz4zeKuD4o01KI"></script>
+
 <div class="container" id="view-product">
     <div class="row">
         <div class="col-sm-6">
@@ -188,6 +250,8 @@
                                     </span>
                                 </a>
                             </div>
+                            <div id="paypal-button-container"></div>
+
                             <!-- <div>
                         <a href="javascript:void(0);" data-id="<?= $product['id'] ?>"
                             data-goto="<?= LANG_URL . '/shopping-cart' ?>" class="add-to-cart btn-add">
@@ -416,4 +480,53 @@
             </div>
         </div>
     </div>
-    
+    <script>
+   paypal.Buttons({
+    createOrder: function(data, actions) {
+        // Set up the transaction
+        return fetch('<?= base_url('create-paypal-order') ?>', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                items: [
+                    // Include any additional order information like product ids
+                    {
+                        id: "<?= $product['id'] ?>",
+                        quantity: "1", // Assuming a quantity of 1 for simplicity
+                        price: "<?= $product['price'] ?>"
+                    }
+                ],
+                // Add any other required fields according to your business logic
+            })
+        }).then(function(res) {
+            return res.json();
+        }).then(function(orderData) {
+            return orderData.id; // Use the order ID from your response
+        });
+    },
+    onApprove: function(data, actions) {
+        return fetch('<?= base_url('capture-paypal-order') ?>', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                orderID: data.orderID // Pass the order ID for capturing payment
+            })
+        }).then(function(res) {
+            return res.json();
+        }).then(function(orderData) {
+            // Handle the response from your backend
+            alert('Transaction completed!');
+        });
+    },
+    onError: function(err) {
+        // Handle errors here
+        console.error('PayPal error', err);
+    }
+}).render('#paypal-button-container');
+
+</script>
+

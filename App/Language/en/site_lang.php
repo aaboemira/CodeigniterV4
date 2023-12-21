@@ -168,7 +168,26 @@ $lang['password_email_msg']='Überprüfen Sie Ihren Posteingang';
 $lang['my_account']='mein Benutzerkonto';
 $lang['ort'] = 'Ort';
 $lang['account_type'] = 'Account Type';
-
+$lang['gate_position_0'] = 'Stopped';
+$lang['gate_position_1'] = 'Opening ';
+$lang['gate_position_2'] = 'Closing ';
+$lang['gate_position_3'] = 'Open';
+$lang['gate_position_4'] = 'Closed ';
+$lang['gate_position_6'] = 'Autoclose';
+$lang['gate_position_7'] = 'Autoclose';
+$lang['gate_position_8'] = 'Middle position';
+$lang['gate_position_10'] = 'Blocked in1';
+$lang['gate_position_11'] = 'Blocked in2';
+$lang['gate_position_12'] = 'Blocked in3';
+$lang['gate_position_13'] = 'Sensing error1';
+$lang['gate_position_14'] = 'Sensing error2';
+$lang['gate_position_15'] = 'Sensing error3';
+$lang['gate_position_18'] = 'Ventilation position';
+$lang['gate_position_19'] = 'Ventilation position';
+$lang['gate_position_20'] = 'Device restarted';
+$lang['gate_position_22'] = 'Relay / Engine error';
+$lang['gate_position_23'] = 'Door blocked';
+$lang['gate_position_unknown'] = 'Unknown';
 
 $lang['remember_me'] = 'Remember me';
 $lang['u_login'] = 'Login';

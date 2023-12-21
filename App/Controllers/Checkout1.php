@@ -37,7 +37,6 @@ class Checkout1 extends BaseController
             }
         }
         if (isset($_POST['user_status'])) {
-            // Process the form data
 
             $formDataValid = $this->processFormData($this->request->getPost());
             if ($formDataValid) {
@@ -48,20 +47,15 @@ class Checkout1 extends BaseController
             }
         }
         if (isset($_POST['guest_checkout'])) {
-            session()->set('guest_user', true);
             return redirect()->to(LANG_URL . '/checkout1');
         }
 
-        if (session()->get('guest_user')) {
-            return $this->render('checkout1', $head, $data);
-        }
-        elseif (session()->has('logged_user')) {
+        if (session()->has('logged_user')) {
             helper('form'); // This loads your custom form helper
             return $this->render('checkout1/logged_checkout1', $head, $data);
         }
-        else {
-            return $this->render('checkout1/unauth_checkout1', $head, $data);
-        }
+        return $this->render('checkout1', $head, $data);
+
     }
     public function processFormData($postData)
     {
@@ -348,7 +342,20 @@ class Checkout1 extends BaseController
                 return redirect()->to(LANG_URL . '/checkout1')->withInput();
             }
     }
+    public function guestCheckout()
+    {
+        $head = array();
+        $data = array();
+        $arrSeo = $this->Public_model->getSeo('checkout0');
+        $head['title'] = @$arrSeo['title'];
+        $head['description'] = @$arrSeo['description'];
+        $head['keywords'] = str_replace(" ", ",", $head['title']);
+        if (session()->has('logged_user')) {
+            return redirect()->to(LANG_URL . '/checkout1');
+        }
 
+        return $this->render('checkout1/unauth_checkout1', $head, $data); // Update with the correct view path
+    }
     public function getCountries()
     {
         return $countries = [

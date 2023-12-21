@@ -1,0 +1,7 @@
+<svg id="SocialItem_Facebook_Enabled" data-name="SocialItem / Facebook / Enabled" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <rect id="SocialItem_Facebook_Enabled_background" data-name="SocialItem / Facebook / Enabled background" width="40" height="40" fill="none"/>
+  <rect id="Background" width="40" height="40" rx="20" fill="#fff"/>
+  <g id="Icon_20_Social_Facebook" data-name="Icon / 20 / Social / Facebook" transform="translate(10 10)">
+    <path id="Icon" d="M2.241,15.906V8.581H0V5.947H2.241V4.015S2.08,0,5.353,0H8V2.684H6.35a1.164,1.164,0,0,0-1.227,1.26v2H7.792L7.407,8.581H5.1V16H2.241Z" transform="translate(6 2)" fill="#555"/>
+  </g>
+</svg>

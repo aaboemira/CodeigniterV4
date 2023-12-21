@@ -1,11 +1,17 @@
 
 
 <style>
+	.panel-header {
+		font-size: 1.9rem; 
+		color: #707070;
+		font-weight: bold;
+	}
+
 	#content {
-    margin-top: 138px !important;
-    padding: 0px !important;
-    position: relative;
-    overflow-x: hidden;
+		margin-top: 138px !important;
+		padding: 0px !important;
+		position: relative;
+		overflow-x: hidden;
 	}
 	@media (max-width: 772px) {
     #content {
@@ -149,8 +155,11 @@
 						</a>
 					</div>
                     <div class="panel-body">
+						<p class="panel-header">
+							<?=lang_safe('home_panel_header_1')?>
+						</p>	
 						<p class="panel-text">
-							<?=lang_safe('home_panel_text')?>
+							<?=lang_safe('home_panel_text_1')?>
 						</p>						
 						<a href="#" class="panel-button">
 							<span class="button-text"><?=lang_safe('home_panel_button')?></span>
@@ -169,8 +178,11 @@
 						</a>
 					</div>
                     <div class="panel-body">
+						<p class="panel-header">
+							<?=lang_safe('home_panel_header_2')?>
+						</p>	
 						<p class="panel-text">
-							<?=lang_safe('home_panel_text')?>
+							<?=lang_safe('home_panel_text_2')?>
 						</p>
 						<a href="#" class="panel-button">
 							<span class="button-text"><?=lang_safe('home_panel_button')?></span>
@@ -189,8 +201,11 @@
 						</a>
 					</div>
                     <div class="panel-body">
+						<p class="panel-header">
+							<?=lang_safe('home_panel_header_3')?>
+						</p>	
 						<p class="panel-text">
-							<?=lang_safe('home_panel_text')?>
+							<?=lang_safe('home_panel_text_3')?>
 						</p>
 						<a href="#" class="panel-button">
 							<span class="button-text"><?=lang_safe('home_panel_button')?></span>
@@ -209,8 +224,11 @@
 						</a>
 					</div>
                     <div class="panel-body">
-					<p class="panel-text">
-							<?=lang_safe('home_panel_text')?>
+						<p class="panel-header">
+							<?=lang_safe('home_panel_header_4')?>
+						</p>	
+						<p class="panel-text">
+							<?=lang_safe('home_panel_text_4')?>
 						</p>							
 						<a href="#" class="panel-button">
 							<span class="button-text"><?=lang_safe('home_panel_button')?></span>

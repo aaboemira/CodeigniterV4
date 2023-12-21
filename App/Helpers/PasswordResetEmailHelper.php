@@ -228,7 +228,7 @@ class PasswordResetEmailHelper
                 <hr style="margin-top: 5px;">
                     <h1>Hello ' . $data->first_name .' '.$data->last_name .',</h1>
                     <p>Someone has requested a password reset for your account. If this was not you, you can safely ignore this email.</p>
-                    <p>Aktuelles Datum: '.$data->expirationTime.'</p>
+                    <p>Expiration Date: '.$data->expirationTime.'</p>
                     <p>Click on the following link to reset your password:</p>
                     <a style="font-size:12px;" href="' . $resetLink . '">'.$resetLink.'</a>
                     <p>If you do not use this link within 2 hours, it will expire for security reasons.</p>

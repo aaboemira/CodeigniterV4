@@ -145,7 +145,7 @@
                 </ul>
                 <div class="btn-container">
                     <a class="btn btn-primary btn-new " href="<?= base_url('/register') ?>">Create Account</a>
-                    <form method="post" action="" style="width:48%;">
+                    <form method="post" action="<?= base_url('/checkout1') ?>" style="width:48%;">
                         <button style="width: 100%;" type="submit" name="guest_checkout" class="btn btn-default btn-new">Shop as Guest</button>
                     </form>
 
