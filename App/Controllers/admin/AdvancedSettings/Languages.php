@@ -25,9 +25,9 @@ class Languages extends ADMIN_Controller
             $result = $this->Languages_model->deleteLanguage($_GET['delete']);
             if ($result == true) {
                 $this->saveHistory('Delete language id - ' . $_GET['delete']);
-                session()->setFlashdata('result_delete', 'Language is deleted!');
+                session()->setFlashdata('result_delete', lang_safe('lang_delete_success'));
             } else {
-                session()->setFlashdata('result_delete', 'Problem with language delete!');
+                session()->setFlashdata('result_delete', lang_safe('lang_delete_error'));
             }
             return redirect()->to('admin/languages');
         }

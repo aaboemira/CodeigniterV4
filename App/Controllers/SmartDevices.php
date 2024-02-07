@@ -35,8 +35,25 @@ public function index($page = 0)
     $totalPages = ceil($rowscount / $this->num_rows); // Calculate total pages
     $page = max(1, min($page, $totalPages));
 
-    $data['devices'] = $this->Public_model->getSmartHomeDevicesByUID($userUID, $this->num_rows, $page);
+    $userUID = $_SESSION['logged_user']; // Fetch UID from session
+    $ownedDevices = $this->Public_model->getSmartHomeDevicesByUID($userUID, $this->num_rows, $page);
+    $guestDevices = $this->Public_model->getGuestDevicesByUserId($userUID);
 
+    foreach ($ownedDevices as &$device) {
+        $device['is_guest'] = false; // Non-guest (owner) devices
+        $device['can_control'] = 1; // Add a flag to indicate guest devices
+
+    }
+    unset($device); // Break the reference
+
+    // Merge and mark the devices to distinguish between owned and guest devices
+    foreach ($guestDevices as &$device) {
+        $device['is_guest'] = true; // Add a flag to indicate guest devices
+    }
+    unset($device); // Break the reference
+
+    // You might need to merge and sort $ownedDevices and $guestDevices here
+    $data['devices'] = array_merge($ownedDevices, $guestDevices);
     $data['paginationLinks'] = '';
     for ($i = 1; $i <= $totalPages; $i++) {
         $active = $page == $i ? 'active' : '';
@@ -67,10 +84,35 @@ public function index($page = 0)
 
         // Set validation rules
         $validation->setRules([
-            'device_name' => 'required|max_length[16]',
-            'serial_number' => 'required|exact_length[16]',
-            'uid' => 'required|exact_length[32]',
-            'password' => 'required|min_length[4]|max_length[10]'
+            'device_name' => [
+                'rules' => 'required|max_length[16]',
+                'errors' => [
+                    'required' => lang_safe('validation_deviceName_required'),
+                    'max_length' => lang_safe('validation_deviceName_max_length'),
+                ]
+            ],
+            'serial_number' => [
+                'rules' => 'required|exact_length[16]',
+                'errors' => [
+                    'required' => lang_safe('validation_serialNumber_required'),
+                    'exact_length' => lang_safe('validation_serialNumber_exact_length'),
+                ]
+            ],
+            'uid' => [
+                'rules' => 'required|exact_length[32]',
+                'errors' => [
+                    'required' => lang_safe('validation_uid_required'),
+                    'exact_length' => lang_safe('validation_uid_exact_length'),
+                ]
+            ],
+            'password' => [
+                'rules' => 'required|min_length[4]|max_length[10]',
+                'errors' => [
+                    'required' => lang_safe('validation_password_required'),
+                    'min_length' => lang_safe('validation_password_min_length'),
+                    'max_length' => lang_safe('validation_password_max_length'),
+                ]
+            ],
         ]);
 
         // Check if form data is valid
@@ -125,11 +167,25 @@ public function index($page = 0)
     {
         $deviceId = $this->request->getPost('deviceId');
         $device = $this->Public_model->getSmartDeviceById($deviceId);
+
+        $guestId = $this->request->getPost('guestID');
+
+        $devicePassword = decryptData($device['password'], '@@12@@');
+
+        // Default password is the device password
+        $password = $devicePassword;
+        // Use guest password if guestId is provided and valid
+        if (!empty($guestId)) {
+            $guestPassword = $this->Public_model->getGuestPasswordById($guestId);
+            if (!empty($guestPassword)) {
+                $password = decryptData($guestPassword, '@@12@@');
+            }
+        }
         // Call the 'get status' API
         $data = [
             'serial' => $device['serial_number'],
             'uid' => decryptData($device['UID'], '@@12@@'),
-            'password' => decryptData($device['password'], '@@12@@'),
+            'password' => $password,
             'api' => 'get_status'
         ];
         $response = callAPI('POST', $this->url, $data);
@@ -161,15 +217,22 @@ public function index($page = 0)
         $head['description'] = lang_safe('edit_device_details');
         $head['keywords'] = '';
 
+
+        if (!$this->isUserDeviceOwner($deviceId)) {
+            session()->setFlashdata('error', lang_safe('unauthorized_user'));
+            return redirect()->to('/smart-home');
+        }
         // Fetch device details
         $device = $this->Public_model->getSmartDeviceById($deviceId);
+
+    
         $device['UID']=decryptData($device['UID'],'@@12@@');
         $device['password']=decryptData($device['password'],'@@12@@');
 
         $data['device']=$device;
         // Check if device exists
         if (!$data['device']) {
-            session()->setFlashdata('error', 'Device not found.');
+            session()->setFlashdata('error', lang_safe('device_not_found'));
             return redirect()->to('/smart-home');
         }
 
@@ -235,9 +298,6 @@ public function index($page = 0)
         }
 
 
-
-
-
         $uidEncrypted=encryptData($uid,'@@12@@');
         // Check if the user already has a device with the same serial number
         $pwdEncrypted=encryptData($pwd,'@@12@@');
@@ -252,9 +312,9 @@ public function index($page = 0)
         ];
 
         if ($this->Public_model->updateSmartDevice($deviceData)) {
-            session()->setFlashdata('success', 'Device updated successfully.');
+            session()->setFlashdata('success', lang_safe('device_update_success'));
         } else {
-            session()->setFlashdata('error', 'Failed to update device.');
+            session()->setFlashdata('error', lang_safe('device_update_error'));
         }
 
         return redirect()->to('/smart-home');
@@ -262,12 +322,17 @@ public function index($page = 0)
 
     public function deleteDevice($deviceId)
     {
+
+        if (!$this->isUserDeviceOwner($deviceId)) {
+            session()->setFlashdata('error', lang_safe('unauthorized_user'));
+            return redirect()->to('/smart-home');
+        }
         if ($this->Public_model->deleteSmartDevice($deviceId)) {
             // Device deleted successfully
-            session()->setFlashdata('success', 'Device deleted successfully.');
+            session()->setFlashdata('success', lang_safe('device_delete_success'));
         } else {
             // Error in deletion
-            session()->setFlashdata('error', 'Error deleting device.');
+            session()->setFlashdata('error', lang_safe('device_delete_error'));
         }
 
         // Redirect to the devices page or another appropriate page
@@ -291,42 +356,94 @@ public function index($page = 0)
         $head['description'] = lang_safe('manage_access');
         $head['keywords'] = '';
 
+
+
+        // Fetch device details
+        $device = $this->Public_model->getSmartDeviceById($deviceId);
+    
+        if (!$this->isUserDeviceOwner($deviceId)) {
+            session()->setFlashdata('error', lang_safe('unauthorized_user'));
+            return redirect()->to('/smart-home');
+        }
         // Fetch device details (Optional)
-        $data['device'] = $this->Public_model->getSmartDeviceById($deviceId);
+        $data['device'] = $device;
 
         // Fetch guests and their permissions for the device
-        $data['guests'] = $this->Public_model->getGuestsForDevice($deviceId);
+        $guests  = $this->Public_model->getGuestsForDevice($deviceId);
+        foreach ($guests as $key => $guest) {
+            // Decrypt the guest password
+            $guests[$key]['guest_password'] = decryptData($guest['guest_password'], '@@12@@');
+        }
+        $data['guests'] = $guests;
         // Load the view and pass data for the device and guests
         return $this->render('smart_devices/access_control', $head, $data);
     }
     public function addGuest()
     {
+        $validation = \Config\Services::validation();
+
         $guestEmail = $this->request->getPost('user_email');
         $canControl = $this->request->getPost('can_control') == '1' ? true : false;
         $deviceId = $this->request->getPost('device_id');
+        $password = $this->request->getPost('password');
+        $pwdEncrypted=encryptData($password,'@@12@@');
+        $currentUserEmail = session()->get('email'); // Adjust this line based on your session structure
 
-        // Check if guest email exists in users_public table
-        $existingUser = $this->Public_model->countPublicUsersWithEmail($guestEmail);
-        if ($existingUser==0) {
-            session()->setFlashdata('error', 'User with this email does not exist.');
+        $validation->setRules([
+            'user_email' => [
+                'rules' => 'required|valid_email',
+                'errors' => [
+                    'required' => lang_safe('validation_email_required'),
+                    'valid_email' => lang_safe('validation_email'),
+                ]
+            ],
+            'password' => [
+                'rules' => 'required|min_length[4]|max_length[10]',
+                'errors' => [
+                    'required' => lang_safe('validation_password_required'),
+                    'min_length' => lang_safe('validation_password_min_length'),
+                    'max_length' => lang_safe('validation_password_max_length'),
+                ]
+            ],
+        ]);
+    
+        // Check if form data is valid
+        if (!$validation->withRequest($this->request)->run()) {
+            // Validation failed
+            return redirect()->withInput()->back()->with('errors', $validation->getErrors());
+        }
+        $currentUserEmail = session()->get('email'); // Adjust based on your session structure
+        // Check if the current user's email is the same as the guest's email
+        if ($currentUserEmail == $guestEmail) {
+            session()->setFlashdata('error', lang_safe('validation_same_email'));
             return redirect()->back();
         }
+        $userData = $this->Public_model->getUserProfileInfoByEmail($guestEmail);
+        if (!$userData) {
+            session()->setFlashdata('error', lang_safe('validation_guest_not_exist'));
+            return redirect()->back();
+        }
+        
+        $userId = $userData->id; // Assuming 'id' is the user ID column in your 'users_public' table
+    
         // Check if the guest is already added to this device
         $isGuestAdded = $this->Public_model->isGuestAddedToDevice($guestEmail, $deviceId);
         if ($isGuestAdded) {
-            session()->setFlashdata('error', 'Guest is already added to this device.');
+            session()->setFlashdata('error', lang_safe('validation_guest_exist'));
             return redirect()->back();
         }
         // Add guest to smart_devices_guests table
         $guestData = [
             'device_id' => $deviceId,
             'email' => $guestEmail,
-            'can_control' => $canControl
+            'can_control' => $canControl,
+            'guest_password'=>$pwdEncrypted,
+            'guest_id'=>$userId
         ];
         if ($this->Public_model->addGuestToSmartDevice($guestData)) {
-            session()->setFlashdata('success', 'Guest added successfully.');
+            session()->setFlashdata('success', lang_safe('guest_add_success'));
         } else {
-            session()->setFlashdata('error', 'Failed to add guest.');
+            session()->setFlashdata('error', lang_safe('guest_add_error'));
         }
 
         return redirect()->back();
@@ -340,24 +457,68 @@ public function index($page = 0)
         }
         return redirect()->back();
     }
+
+
+    public function deleteGuestDevice($deviceId)
+    {
+        if ($this->Public_model->deleteGuestDevice($deviceId)) {
+            session()->setFlashdata('success', lang_safe('device_removed_successfully'));
+        } else {
+            session()->setFlashdata('error', lang_safe('error_deleting_guest'));
+        }
+        return redirect()->back();
+    }
     public function updateGuest()
     {
+        $validation = \Config\Services::validation();
+
         $guestId = $this->request->getPost('guest_id');
         $guestEmail = $this->request->getPost('user_email');
+        $deviceId= $this->request->getPost('device_id');
 
         $canControl = $this->request->getPost('can_control') === '1';
-
-        $existingUser = $this->Public_model->countPublicUsersWithEmail($guestEmail);
-        if ($existingUser==0) {
-            session()->setFlashdata('error', 'User with this email does not exist.');
+        $guestPassword = $this->request->getPost('password');
+        $guestPassword=encryptData($guestPassword,'@@12@@');
+        $validation->setRules([
+            'user_email' => [
+                'rules' => 'required|valid_email',
+                'errors' => [
+                    'required' => lang_safe('validation_email_required'),
+                    'valid_email' => lang_safe('validation_email'),
+                ]
+            ],
+            'password' => [
+                'rules' => 'required|min_length[4]|max_length[10]',
+                'errors' => [
+                    'required' => lang_safe('validation_password_required'),
+                    'min_length' => lang_safe('validation_password_min_length'),
+                    'max_length' => lang_safe('validation_password_max_length'),
+                ]
+            ],
+        ]);
+    
+        // Check if form data is valid
+        if (!$validation->withRequest($this->request)->run()) {
+            // Validation failed
+            return redirect()->back()->with('errors', $validation->getErrors());
+        }
+        $userData = $this->Public_model->getUserProfileInfoByEmail($guestEmail);
+        if (!$userData) {
+            session()->setFlashdata('error', lang_safe('guest_email_not_exist'));
             return redirect()->back();
         }
-
+        
+        $userId = $userData->id; // Assuming 'id' is the user ID column in your 'users_public' table
+        $isGuestAdded = $this->Public_model->isGuestAddedToDevice($guestEmail, $deviceId,$guestId,);
+        if ($isGuestAdded) {
+            session()->setFlashdata('error', lang_safe('guest_device_duplicate'));
+            return redirect()->back();
+        }
         // Update the guest information in the database
-        if ($this->Public_model->updateGuest($guestId, $guestEmail, $canControl)) {
-            session()->setFlashdata('success', 'Guest updated successfully.');
+        if ($this->Public_model->updateGuest($guestId, $guestEmail, $canControl,$guestPassword,$userId)) {
+            session()->setFlashdata('success', lang_safe('guest_update_success'));
         } else {
-            session()->setFlashdata('error', 'Failed to update guest.');
+            session()->setFlashdata('error', lang_safe('guest_update_error'));
         }
 
         return redirect()->back();
@@ -368,9 +529,23 @@ public function index($page = 0)
     {
         $deviceId = $this->request->getPost('deviceId');
         $action = $this->request->getPost('action');
+        $guestId = $this->request->getPost('guestID');
 
         // Fetch device data by ID (assuming you have a method like getSmartDeviceById)
         $device = $this->Public_model->getSmartDeviceById($deviceId);
+
+        $devicePassword = decryptData($device['password'], '@@12@@');
+
+        // Default password is the device password
+        $password = $devicePassword;
+    
+        // Use guest password if guestId is provided and valid
+        if (!empty($guestId)) {
+            $guestPassword = $this->Public_model->getGuestPasswordById($guestId);
+            if (!empty($guestPassword)) {
+                $password = decryptData($guestPassword, '@@12@@');
+            }
+        }
         $dataValue = '00';
 
         // Map the action to the corresponding data value
@@ -386,12 +561,11 @@ public function index($page = 0)
                 // For 'close' action or any other action not specified, keep the default value
                 break;
         }
-
         // Prepare data for external API request
         $apiData = [
             'serial' => $device['serial_number'],
             'uid' => decryptData($device['UID'], '@@12@@'),
-            'password' => decryptData($device['password'], '@@12@@'),
+            'password' => $password,
             'api' => 'control', // Change this to the actual API endpoint for device control
             'action' => '100', // Assuming action 100 is used for control_device
             'data' => $dataValue,
@@ -403,6 +577,19 @@ public function index($page = 0)
 
         // Send the response back to the client (optional)
         return $this->response->setJSON(['status' => $responseData['status'] , 'message' => $responseData['message']]);
+    }
+
+
+
+    private function isUserDeviceOwner($deviceId) {
+        if (!session()->has('logged_user')) {
+            return false;
+        }
+
+        $userId = $_SESSION['logged_user']; // Fetch the logged-in user's ID from session
+        $device = $this->Public_model->getSmartDeviceById($deviceId); // Fetch device details
+
+        return $device && $device['user_id'] == $userId; // Check if user is owner
     }
 
 }

@@ -14,6 +14,7 @@ class Public_model extends Model
     private $multiVendor;
 
     protected $db;
+    protected $logger;
 
     public function __construct()
     {
@@ -21,6 +22,8 @@ class Public_model extends Model
         $this->showOutOfStock = (new Home_admin_model())->getValueStore('outOfStock');
         $this->showInSliderProducts = (new Home_admin_model())->getValueStore('showInSlider');
         $this->multiVendor = (new Home_admin_model())->getValueStore('multiVendor');
+        $this->logger = service('logger');        ;
+
     }
 
     public function productsCount($big_get)
@@ -126,7 +129,30 @@ class Public_model extends Model
         $query = $builder->get();
         return $query->getResultArray();
     }
+    public function getMinimalProductDetailsById($productId)
+    {
+    
+        $builder = $this->db->table('products');
+    
+        // Select only the necessary fields: id, price, and title
+        $builder->select('products.id, products_translations.title, products_translations.price');
+    
+        // Join with the translations table to get the title
+        $builder->join('products_translations', 'products_translations.for_id = products.id', 'left');
+    
+        // Filter based on language
+        $builder->where('products_translations.abbr', MY_LANGUAGE_ABBR);
+    
+        // Filter products based on the provided IDs
+        $builder->where('products.id', $productId);
+    
+        // Execute the query
+        $query = $builder->get();
 
+
+        return $query->getRowArray();
+    }
+    
     public function getVariants($variant_id)
     {
         $builder = $this->db->table('products');
@@ -388,16 +414,16 @@ class Public_model extends Model
             !$builder->insert(array(
                 'order_id' => $post['order_id'],
                 'products' => $post['products'],
-                'date' => $post['date'],
-                'referrer' => $post['referrer'],
-                'clean_referrer' => $post['clean_referrer'],
-                'payment_type' => $post['payment_type'],
+                'date' => @$post['date'],
+                'referrer' =>$post['referrer'],
+                'clean_referrer' => @$post['clean_referrer'],
+                'payment_type' => @$post['payment_type'],
                 'paypal_status' => @$post['paypal_status'],
                 'discount_code' => @$post['discountCode'],
-                'user_id' => $post['user_id'],
-                'shipping_price' => $post['shipping_price'], // Insert shipping price
-                'shipping_type' => $post['shipping_type'],
-                'order_status' => $post['status'],
+                'user_id' => @$post['user_id'],
+                'shipping_price' => @$post['shipping_price'], // Insert shipping price
+                'shipping_type' => @$post['shipping_type'],
+                'order_status' => @$post['status'],
                 'discount' => @$post['discount']
             ))
         ) {
@@ -414,13 +440,13 @@ class Public_model extends Model
                 'last_name' => $post['billing_address']['billing_last_name'],
                 'company' => $post['billing_address']['billing_company'],
                 'email' => $post['email'],
-                'phone' => $post['phone'],
+                'phone' => @$post['phone'],
                 'city' => $post['billing_address']['billing_city'],
                 'street' => $post['billing_address']['billing_street'],
                 'housenr' => $post['billing_address']['billing_housenr'],
                 'country' => $post['billing_address']['billing_country'],
                 'post_code' => $post['billing_address']['billing_post_code'],
-                'notes' => $post['notes']
+                'notes' => @$post['notes']
             ))
         ) {
             // ///log_message('error', print_r($builder->error(), true));
@@ -465,7 +491,33 @@ class Public_model extends Model
             return false;
         }
     }
-
+    public function updateOrderStatus($orderId, $status)
+    {
+        $builder = $this->db->table('orders');
+    
+        // Start a transaction for safety
+        $this->db->transStart();
+    
+        // Prepare the data for updating
+        $data = [
+            'order_status' => $status
+        ];
+    
+        // Execute the update
+        $builder->where('order_id', $orderId);
+        $result = $builder->update($data);
+    
+        // End the transaction
+        if ($result) {
+            $this->db->transRollback();
+            return false;
+        } else {
+            $this->db->transCommit();
+            return true;
+        }
+    }
+    
+    
     public function setVendorOrder($post)
     {
         $i = 0;
@@ -524,7 +576,6 @@ class Public_model extends Model
                         'street' => $post['street'],
                         'housenr' => $post['housenr'],
                         'country' => $post['country'],
-                        'city' => $post['city'],
                         'post_code' => $post['post_code'],
                         'notes' => $post['notes']
                     ))
@@ -787,6 +838,10 @@ class Public_model extends Model
             'account_type' => $post['account_type'],
             'verify_token' => $post['verify_token']
         ];
+            // Add company to user data if it's set
+        if (isset($post['company'])) {
+            $userData['company'] = $post['company'];
+        }
         $this->db->table('users_public')->insert($userData);
         $userId = $this->db->insertID();
 
@@ -819,7 +874,7 @@ class Public_model extends Model
         $this->db->transComplete();
 
         if ($this->db->transStatus() === FALSE) {
-            // generate an error... or use the log_message() function to log your error
+
             return false;
         }
 
@@ -870,6 +925,9 @@ class Public_model extends Model
             'mobile' => $userData['mobile'],
             'lang' => $userData['language'],
         ];
+        if (isset($userData['company'])) {
+            $publicData['company'] = $userData['company'];
+        }
         $this->db->table('users_public')->where('id', $userId)->update($publicData);
         $billingAddressData = [
             'first_name' => $userData['first_name'],
@@ -1173,7 +1231,25 @@ class Public_model extends Model
         $query = $builder->get();
         return $query->getResultArray();
     }
-
+    public function getGuestDevicesByUserId($userId)
+    {
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->join('smart_devices', 'smart_devices.device_id = smart_devices_guests.device_id');
+        $builder->where('smart_devices_guests.guest_id', $userId);
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+    public function getGuestPasswordById($guestId)
+    {
+        $builder = $this->db->table('smart_devices_guests');
+        // Assuming the password is stored in the 'smart_devices_guests' table
+        $builder->select('guest_password');
+        $builder->where('id', $guestId);
+        $query = $builder->get();
+        // Assuming there's only one record for each guest ID
+        $result = $query->getRowArray();
+        return $result['guest_password'];
+    }
     public function countSmartHomeDevicesByUID($uid)
     {
         $builder = $this->db->table('smart_devices');
@@ -1271,27 +1347,41 @@ class Public_model extends Model
         return $builder->insert($guestData);
     }
 
-    public function isGuestAddedToDevice($email, $deviceId)
+    public function isGuestAddedToDevice($email, $deviceId, $excludeGuestId = null)
     {
         $builder = $this->db->table('smart_devices_guests');
         $builder->where('email', $email);
         $builder->where('device_id', $deviceId);
+    
+        // Exclude the current guest if $excludeGuestId is provided
+        if ($excludeGuestId !== null) {
+            $builder->where('id !=', $excludeGuestId);
+        }
+    
         $query = $builder->get();
-
         // If the query returns more than 0 rows, the guest is already added
         return $query->getNumRows() > 0;
     }
+    
     public function deleteGuest($guestId)
     {
         $builder = $this->db->table('smart_devices_guests');
         $builder->where('id', $guestId);
         return $builder->delete();
     }
-    public function updateGuest($guestId, $guestEmail, $canControl)
+    public function deleteGuestDevice($deviceId)
+    {
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->where('device_id', $deviceId);
+        return $builder->delete();
+    }
+    public function updateGuest($guestId, $guestEmail, $canControl,$password,$userid)
     {
         $data = [
             'email' => $guestEmail,
-            'can_control' => $canControl
+            'can_control' => $canControl,
+            'guest_password'=>$password,
+            'guest_id'=>$userid
         ];
 
         $builder = $this->db->table('smart_devices_guests');

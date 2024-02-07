@@ -26,9 +26,9 @@ class About extends BaseController
         if (isset($_POST['message'])) {
             $result = $this->sendEmail();
             if ($result) {
-                session()->setFlashdata('resultSend', 'Email is sent!');
+                session()->setFlashdata('resultSend', lang_safe('about_email_success'));
             } else {
-                session()->setFlashdata('resultSend', 'Email send error!');
+                session()->setFlashdata('resultSend', lang_safe('about_email_error'));
             }
             redirect('about');
         }

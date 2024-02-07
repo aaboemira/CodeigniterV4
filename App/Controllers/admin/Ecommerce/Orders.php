@@ -56,29 +56,29 @@ class Orders extends ADMIN_Controller
         if (isset($_POST['paypal_sandbox'])) {
             $this->Home_admin_model->setValueStore('paypal_sandbox', $_POST['paypal_sandbox']);
             if ($_POST['paypal_sandbox'] == 1) {
-                $msg = 'Paypal sandbox mode activated';
+                $msgKey = 'paypal_sandbox_enabled';
             } else {
-                $msg = 'Paypal sandbox mode disabled';
+                $msgKey = 'paypal_sandbox_disabled';
             }
-            session()->setFlashdata('paypal_sandbox', $msg);
-            $this->saveHistory($msg);
+            session()->setFlashdata('paypal_sandbox', lang_safe($msgKey));
+            $this->saveHistory(lang_safe($msgKey));
             return redirect()->to('admin/orders?settings');
         }
         if (isset($_POST['paypal_email'])) {
             $this->Home_admin_model->setValueStore('paypal_email', $_POST['paypal_email']);
-            session()->setFlashdata('paypal_email', 'Public quantity visibility changed');
+            session()->setFlashdata('paypal_email', lang_safe('paypal_email_change_success'));
             $this->saveHistory('Change paypal business email to: ' . $_POST['paypal_email']);
             return redirect()->to('admin/orders?settings');
         }
         if (isset($_POST['cashondelivery_visibility'])) {
             $this->Home_admin_model->setValueStore('cashondelivery_visibility', $_POST['cashondelivery_visibility']);
-            session()->setFlashdata('cashondelivery_visibility', 'Cash On Delivery Visibility Changed');
+            session()->setFlashdata('cashondelivery_visibility', lang_safe('cashondelivery_visibility_change_success'));
             $this->saveHistory('Change Cash On Delivery Visibility - ' . $_POST['cashondelivery_visibility']);
             return redirect()->to('admin/orders?settings');
         }
         if (isset($_POST['iban'])) {
             $this->Orders_model->setBankAccountSettings($_POST);
-            session()->setFlashdata('bank_account', 'Bank account settings saved');
+            session()->setFlashdata('bank_account', lang_safe('bank_account_settings_save_success'));
             $this->saveHistory('Bank account settings saved for : ' . $_POST['name']);
             return redirect()->to('admin/orders?settings');
         }

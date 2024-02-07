@@ -210,7 +210,7 @@
                     ?>
 									<li <?= $i == $num_langs ? 'class="last-item"' : '' ?>>
 										<img src="<?= base_url('attachments/lang_flags/' . $lang['flag']) ?>"
-											alt="Language-<?= MY_LANGUAGE_ABBR ?>"><a href="<?= base_url($key_lang) ?>/shop"><?= $lang['name'] ?></a>
+											alt="Language-<?= MY_LANGUAGE_ABBR ?>"><a href="<?= LANG_URL .($key_lang) ?>/shop"><?= $lang['name'] ?></a>
 									</li>
 									<?php
                     $i++;
@@ -342,7 +342,7 @@
 
                             <div class="dropdown-menu" id="hover-dropdown-menu">
                                 <?php if (!isset($_SESSION['logged_user'])) { ?>
-                                    <a class="btn btn-primary btn-new " href="<?= base_url("/register") ?>"
+                                    <a class="btn btn-primary btn-new " href="<?= LANG_URL . '/register' ?>"
                                        title="nodematic Login">
 
                                         <?= lang_safe('nodematic_login') ?>
@@ -350,7 +350,7 @@
                                     <hr class="no-hover" style="margin:10px;">
                                     <div class="account-menu-register">
                                         <a class=" register-link" style="margin-top: 10px;"
-                                           href="<?= base_url("/register") ?>" title="<?= lang_safe('register') ?>">
+                                           href="<?= LANG_URL . '/register' ?>" title="<?= lang_safe('register') ?>">
                                             <span><?= lang_safe('register') ?></span>
                                             <span class="icon icon-arrow-right ">
                                                             <svg viewBox="0 0 24 24" version="1.1"
@@ -392,16 +392,15 @@
                                     </div>
                                     <!-- Display links for managing the account -->
                                     <?php
-                                    $accountPages = array(
-                                        array('title' => 'Overview', 'url' => base_url('myaccount'), 'icon' => 'fa fa-th'),
-                                        array('title' => 'Account', 'url' => base_url('account'), 'icon' => 'fa fa-user'),
-                                        array('title' => 'Orders', 'url' => base_url('orders'), 'icon' => 'fa fa-shopping-bag'),
-                                        array('title' => 'Address', 'url' => base_url('address'), 'icon' => 'fa fa-address-book'),
-                                        array('title' => 'Smart Home', 'url' => base_url('smart-home'), 'icon' => 'fa fa-h-square'),
-                                        array('title' => 'Password', 'url' => base_url('password'), 'icon' => 'fa fa-key'),
-                                        array('title' => 'Newsletter', 'url' => base_url('newsletter'), 'icon' => 'fa fa-newspaper-o'),
-                                    );
-
+                                        $accountPages = array(
+                                            array('title' => lang_safe('overview'), 'url' => LANG_URL . '/myaccount', 'icon' => 'fa fa-th'),
+                                            array('title' => lang_safe('account'), 'url' => LANG_URL . '/account', 'icon' => 'fa fa-user'),
+                                            array('title' => lang_safe('orders'), 'url' => LANG_URL . '/orders', 'icon' => 'fa fa-shopping-bag'),
+                                            array('title' => lang_safe('address'), 'url' => LANG_URL . '/address', 'icon' => 'fa fa-address-book'),
+                                            array('title' => lang_safe('smart_home'), 'url' => LANG_URL . '/smart-home', 'icon' => 'fa fa-h-square'),
+                                            array('title' => lang_safe('password'), 'url' => LANG_URL . '/password', 'icon' => 'fa fa-key'),
+                                            array('title' => lang_safe('newsletter'), 'url' => LANG_URL . '/newsletter', 'icon' => 'fa fa-newspaper-o'),
+                                        );
 
                                     foreach ($accountPages as $page) { ?>
                                         <a class="account-page-link dropdown-item  " href="<?php echo $page['url']; ?>">
@@ -413,7 +412,7 @@
                                         <hr class="account-divider hr-2 no-hover">
                                     </div>
                                     <a class=" btn btn-primary btn-new  logout-button" style="text-align: center"
-                                       href="<?= base_url('logout') ?>">
+                                       href="<?= LANG_URL . '/logout' ?>">
                                         Logout
                                     </a>
                                 <?php } ?>

@@ -42,7 +42,7 @@ class Publish extends ADMIN_Controller
             }
             $_POST['image'] = $this->uploadImage();
             $this->Products_model->setProduct($_POST, $id);
-            session()->setFlashdata('result_publish', 'Product is published!');
+            session()->setFlashdata('result_publish', lang_safe('product_publish_success'));
             if ($id == 0) {
                 $this->saveHistory('Success published product');
             } else {

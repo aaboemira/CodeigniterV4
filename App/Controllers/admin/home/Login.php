@@ -36,7 +36,7 @@ class Login extends ADMIN_Controller
                     return redirect()->to('admin/home');
                 } else {
                     $this->saveHistory('Cant login with - User: ' . $_POST['username'] . ' and Pass: ' . $_POST['username']);
-                    session()->setFlashdata('err_login', 'Wrong username or password!');
+                    session()->setFlashdata('err_login', lang_safe('login_error_message'));
                     return redirect()->to('admin');
                 }
             }

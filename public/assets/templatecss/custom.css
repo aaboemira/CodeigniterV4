@@ -3737,13 +3737,28 @@ a:hover {
     border: 0;
     position: relative;
 }
-
+.home-container .panel-body {
+    position: relative;
+    display: flex; /* Enable flex layout */
+    flex-direction: column; /* Stack children vertically */
+}
 /* Panel Text Styles */
 .home-container .panel .panel-text {
     font-size: 1.4rem;
     font-weight: 300;
     color: #707070;
 }
+.home-container .panel-text-container {
+    flex: 0 0 80%; /* Allocate 80% of the height to the text container */
+    overflow-y: auto; /* Add scroll for overflow text */
+}
+
+.home-container .panel-button-container {
+    flex: 0 0 20%; /* Allocate 20% of the height to the button container */
+    display: flex;
+    align-items: center;
+}
+
 @media (min-width: 400px) {
     .home-container .panel .panel-text {
         font-size: 1.6rem; /* Adjust font size for sm */
@@ -3783,8 +3798,14 @@ a:hover {
 @media only screen and (min-width: 1300px) {
 
     .home-container .arrivals-container .panel-body {
-        height: 255px;
+        height: 270px;
     
+    }
+    .col-lg-5{
+        width:35.5% !important;
+    }
+    .col-lg-1{
+        width: 14%;
     }
 }
 /* Arrivals Title Styles */
@@ -3805,6 +3826,7 @@ a:hover {
     color: #707070;
     text-decoration: none;
     transition: all 0.2s ease-in-out;
+    
 }
 
 /* Panel Button Text Styles */

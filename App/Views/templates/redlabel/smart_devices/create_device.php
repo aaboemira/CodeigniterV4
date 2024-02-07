@@ -21,12 +21,12 @@
                     </h2>
                 </span>
             </div>
-            <?php
-            if (session('errors')) {
+            <?php if (session('errors')) {
                 ?>
-                <hr>
-                <div class="row">
                     <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                         <h4><span class="glyphicon glyphicon-alert"></span>
                             <?= lang_safe('finded_errors') ?>
                         </h4>
@@ -36,8 +36,6 @@
                         }
                         ?>
                     </div>
-                </div>
-                <hr>
                 <?php
             }
             ?>
@@ -65,7 +63,7 @@
                                 <?= lang_safe('device_name') ?>
                             </label>
                             <input type="text" class="form-control" id="device_name" name="device_name" maxlength="16"
-                                value="<?= old('device_name') ?>" required>
+                                value="<?= old('device_name') ?>"  placeholder="<?= lang_safe('enter_name') ?>">
                         </div>
                     </div>
                 </div>
@@ -76,7 +74,7 @@
                             <?= lang_safe('serial_number') ?>
                         </label>
                         <input type="text" class="form-control" id="serialNumber" name="serial_number" maxlength="16"
-                            value="<?= old('serial_number') ?>" required>
+                            value="<?= old('serial_number') ?>"  placeholder="<?= lang_safe('enter_serial_number') ?>">
                     </div>
                 </div>
 
@@ -87,7 +85,7 @@
                             <?= lang_safe('uid') ?>
                         </label>
                         <input type="text" class="form-control" id="uid" name="uid" maxlength="32"
-                            value="<?= old('uid') ?>" required>
+                            value="<?= old('uid') ?>" placeholder="<?= lang_safe('enter_uid') ?>" >
                     </div>
                 </div>
                 <!-- Password Field -->
@@ -96,8 +94,16 @@
                         <label for="password">
                             <?= lang_safe('password') ?>
                         </label>
-                        <input type="password" class="form-control" id="password" name="password" required
-                            oninput="removeTrailingSpaces(this)">
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password" required
+                            oninput="removeTrailingSpaces(this)" placeholder="<?= lang_safe('enter_password') ?>">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default toggle-password"
+                                        data-target="password">
+                                    <i class="fa fa-eye" id="eye-icon-repeat"></i>
+                                </button>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-12">

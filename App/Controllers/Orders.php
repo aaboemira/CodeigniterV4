@@ -92,7 +92,7 @@ class Orders extends BaseController
         }
         // Unserialize products data
         $orderDetails['products'] = unserialize($orderDetails['products']);
-
+        
         $data = [
             'order' => $orderDetails,
         ];

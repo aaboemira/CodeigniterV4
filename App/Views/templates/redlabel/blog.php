@@ -38,7 +38,8 @@
                 <div class="col-md-6 blog-col">
                     <div class="thumbnail blog-list">
                         <a href="<?= LANG_URL . '/blog/' . $post['url'] ?>" class="img-container">
-                            <img src="<?= base_url('attachments/blog_images/' . $post['image']) ?>"
+                            <img src="<?=LANG_URL.'attachments/blog_images/' . $post['image']  ?>"
+
                                 alt="<?= $post['title'] ?>">
                         </a>
                         <div class="caption">

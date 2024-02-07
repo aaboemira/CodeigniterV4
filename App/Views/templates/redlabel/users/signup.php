@@ -200,6 +200,17 @@ $languages = [
                                                    value="<?= set_value('last_name') ?>"
                                                    placeholder="<?= lang_safe('last_name') ?>">
                                         </div>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                                <label for="company"><?=lang_safe('company')?> *</label>
+                                                <input type="text" name="company" id="company" class="form-control"
+                                                        value="<?= set_value('company') ?>"
+                                                        placeholder="<?= lang_safe('company') ?>">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -249,9 +260,10 @@ $languages = [
                                 <div class="form-group">
                                     <label for="adresse">Adresse</label>
                                     <div class="row">
+
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="strasse">Straße *</label>
+                                                <label for="strasse"><?=lang_safe('street')?> *</label>
                                                 <input type="text" name="street" id="street" class="form-control"
                                                        value="<?= set_value('street') ?>"
                                                        placeholder="<?= lang_safe('street') ?>">
@@ -268,7 +280,7 @@ $languages = [
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="country"><?= lang_safe('country') ?> *</label>
-                                                <select size="1" id="country" name="country" class="form-control">
+                                                <select size="1" id="country" name="country" class="form-control" style="height:34px !important;">
                                                     <?php
                                                     foreach ($countries as $countryName) {
                                                         echo "<option value=\"$countryName\" >$countryName</option>";
@@ -364,7 +376,10 @@ $languages = [
                                     <label>
                                         <input type="checkbox"
                                                name="data_processing_agreement" <?php if (isset($_POST['data_processing_agreement']) && $_POST['data_processing_agreement'] == 'on') echo 'checked'; ?>>
-                                        <?= lang_safe('data_process_agreement') ?>
+                                        <?= lang_safe('data_process_agreement1') ?>
+                                        <a href="<?= LANG_URL . '/page/' . "Datenschutz" ?>"><?= lang_safe('dataprotection_contact_accept2') ?></a>
+
+                                        <?= lang_safe('data_process_agreement2') ?>
                                     </label>
                                 </div>
 

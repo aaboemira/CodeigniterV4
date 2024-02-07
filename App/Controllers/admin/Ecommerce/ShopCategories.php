@@ -49,21 +49,21 @@ class ShopCategories extends ADMIN_Controller
         if (isset($_GET['delete'])) {
             $this->saveHistory('Delete a shop categorie');
             $this->Categories_model->deleteShopCategorie($_GET['delete']);
-            session()->setFlashdata('result_delete', 'Shop Categorie is deleted!');
+            session()->setFlashdata('result_delete', lang_safe('shop_category_delete_success'));
             return redirect()->to('admin/shopcategories');
         }
         if (isset($_POST['submit'])) {
             $this->Categories_model->setShopCategorie($_POST);
-            session()->setFlashdata('result_add', 'Shop categorie is added!');
+            session()->setFlashdata('result_add', lang_safe('shop_category_add_success'));
             return redirect()->to('admin/shopcategories');
         }
         if (isset($_POST['editSubId'])) {
             $result = $this->Categories_model->editShopCategorieSub($_POST);
             if ($result === true) {
-                session()->setFlashdata('result_add', 'Subcategory changed!');
+                session()->setFlashdata('result_add', lang_safe('subcategory_change_success'));
                 $this->saveHistory('Change subcategory for category id - ' . $_POST['editSubId']);
             } else {
-                session()->setFlashdata('result_add', 'Problem with Shop category change!');
+                session()->setFlashdata('result_add', lang_safe('shop_category_change_problem'));
             }
             return redirect()->to('admin/shopcategories');
         }

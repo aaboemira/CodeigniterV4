@@ -1,11 +1,13 @@
 <?php
 $subtotal = 0;
 foreach ($order['products'] as $product) {
-    $subtotal += $product['product_quantity'] * $product['product_info']['price'];
+    $productTotal = round($product['product_quantity'] * $product['product_info']['price'], 2);
+    $subtotal += $productTotal;
 }
-$discountAmount=($subtotal * ($order['discount'] / 100));
-// Calculate the total
-$total = $subtotal - $discountAmount + $order['shipping_price'];
+$discountAmount = round($subtotal * ($order['discount'] / 100), 2);
+$total = round($subtotal - $discountAmount, 2);
+$total += $order['shipping_price']; // Assuming shipping price is already rounded to 2 decimal places
+
 ?>
 <style>
     .details{

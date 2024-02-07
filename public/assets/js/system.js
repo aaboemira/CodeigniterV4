@@ -128,7 +128,6 @@ function manageShoppingCart(action, article_id, reload) {
     if (action == 'remove'||action == 'removeProduct') {
         var action_success_msg = lang.remove_from_cart;
     }
-    console.log(action)
     $.ajax({
         type: "POST",
         url: variable.manageShoppingCartUrl,

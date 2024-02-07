@@ -96,6 +96,19 @@ function generateEmailHTML($orderData) {
                         font-size:10px !important;
                     }
                 }
+                @media (max-width: 450px) {
+                    .container table th,.container table td {
+                        padding:3px 0 !important;
+                    }
+                }
+                @media (max-width: 380px) {
+                    .container table th,.container table td {
+                        padding:2px 0 !important;
+                    }
+                    .container table th,.container table td {
+                        font-size:8px !important;
+                    }
+                }
             </style>
         </head>
         <body>
@@ -332,6 +345,20 @@ function generateEmailHTML_en($orderData) {
                         font-size:10px !important;
                     }
                 }
+                @media (max-width: 450px) {
+                    .container table th,.container table td {
+                        padding:3px 0 !important;
+                    }
+
+                }
+                @media (max-width: 380px) {
+                    .container table th,.container table td {
+                        padding:2px 0 !important;
+                    }
+                    .container table th,.container table td {
+                        font-size:4px !important;
+                    }
+                }
 
             </style>
         </head>
@@ -348,16 +375,15 @@ function generateEmailHTML_en($orderData) {
             <p>
                 We hereby confirm your order, your order number: SHND'.$orderData['order_id'].'.
                 <br>
-                Your invoice is attached to this email.
             </p>
             <p>We will review your order and get back to you via email shortly.</p>
             <p>Order Date: '.$orderData['order_date'].'</p>
 
-            <table style="font-size: 12px !important;">
+            <table style="font-size: 12px ">
             <col width=10 />
             <col width=20 />
-            <col width=30 />
-            <col width=10 />
+            <col width=28 />
+            <col width=12 />
             <col width=15 />
             <col width=15 />
                 <thead>
@@ -365,7 +391,7 @@ function generateEmailHTML_en($orderData) {
                     <th>POS</th>
                     <th>Product</th>
                     <th>Name</th>
-                    <th>Quantity</th>
+                    <th>Qty</th>
                     <th>Price</th>
                     <th>Total</th>
                 </tr>

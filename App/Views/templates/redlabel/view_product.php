@@ -58,7 +58,6 @@ th {
     }
 }
 </style>
-<script src="https://www.paypal.com/sdk/js?client-id=AQvAWM7JQeF03Wt7ah6AbQgg5KcaFSmCtRtLs0mXVEBYgJlM9kQHN6LJ1g1XE5iz6EXz4zeKuD4o01KI"></script>
 
 <div class="container" id="view-product">
     <div class="row">
@@ -250,8 +249,14 @@ th {
                                     </span>
                                 </a>
                             </div>
-                            <div id="paypal-button-container"></div>
+                            <div id="paypal-button-container1" style="position:relative;z-index:0; width: 266px;margin-top:6px;"></div>
+                            <div
+                                data-pp-message
+                                data-pp-placement="product"
+                                data-pp-amount="<?=$product['price']?>"
+                                data-pp-style-text-color="black"
 
+                                ></div>
                             <!-- <div>
                         <a href="javascript:void(0);" data-id="<?= $product['id'] ?>"
                             data-goto="<?= LANG_URL . '/shopping-cart' ?>" class="add-to-cart btn-add">
@@ -403,6 +408,7 @@ th {
         </div>
         <a href="javascript:void(0);" class="inner-next"></a>
         <a href="javascript:void(0);" class="inner-prev"></a>
+                            
     </div>
     <div id="caption"></div>
 </div>
@@ -458,15 +464,19 @@ th {
                                     </p>
                                     <?php } ?>
                             </div>
+
                             <div class="col-12">
                                 <a class="btn btn-primary btn-new go-shop" style="margin-top: 10px; width:80%;" href="<?= LANG_URL . '/shopping-cart' ?>">
                                     <?= lang_safe('modal_show_cart') ?>
                                 </a>
 							</div>
 							<div class="col-12">
-								<a class="btn btn-primary btn-new go-checkout" style="margin-top: 5px; width:80%;" href="<?= LANG_URL . '/checkout1' ?>">
+								<a class="btn btn-primary btn-new go-checkout" style="margin-top: 10px; width:80%;" href="<?= LANG_URL . '/checkout1' ?>">
                                     <?= lang_safe('modal_checkout') ?>
                                 </a>
+                            </div>
+                            <div class="col-12" style="margin-top:11px;">
+                                <div id="paypal-button-container2" style="margin: auto;position:relative;z-index:0; width:80%;"></div>
                             </div>
                         </div>
                     </div>
@@ -480,53 +490,307 @@ th {
             </div>
         </div>
     </div>
-    <script>
-   paypal.Buttons({
-    createOrder: function(data, actions) {
-        // Set up the transaction
-        return fetch('<?= base_url('create-paypal-order') ?>', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                items: [
-                    // Include any additional order information like product ids
-                    {
-                        id: "<?= $product['id'] ?>",
-                        quantity: "1", // Assuming a quantity of 1 for simplicity
-                        price: "<?= $product['price'] ?>"
-                    }
-                ],
-                // Add any other required fields according to your business logic
-            })
-        }).then(function(res) {
-            return res.json();
-        }).then(function(orderData) {
-            return orderData.id; // Use the order ID from your response
-        });
-    },
-    onApprove: function(data, actions) {
-        return fetch('<?= base_url('capture-paypal-order') ?>', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                orderID: data.orderID // Pass the order ID for capturing payment
-            })
-        }).then(function(res) {
-            return res.json();
-        }).then(function(orderData) {
-            // Handle the response from your backend
-            alert('Transaction completed!');
-        });
-    },
-    onError: function(err) {
-        // Handle errors here
-        console.error('PayPal error', err);
-    }
-}).render('#paypal-button-container');
+</div>
 
+    <script src="https://www.paypal.com/sdk/js?client-id=ASTEf-iIF0JeRpMAPTfUOSdumIWKWcHnMpdjDSFCxodtXstVStSyUvdzpBXwnKvVVKUbe2V-wlKMuDf1&currency=EUR&components=buttons,messages,applepay&enable-funding=paylater&disable-funding=card,giropay,sepa,sofort&buyer-country=DE" data-sdk-integration-source="integrationbuilder_sc"></script>
+    <script>
+        let currentOrderId = null; // Variable to store the order ID
+        let currentTotalAmount = 0; // Variable to store
+
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            return fetch('<?= site_url('/paypal/create-order') ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    products: [{ id: '<?= $product['id'] ?>', price: '<?= $product['price'] ?>', name: '<?= $product['title'] ?>', quantity: 1 }]
+                })
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not OK');
+                }
+                return response.json();
+            })
+            .then(function(orderData) {
+                if (orderData.error) {
+                    throw new Error(orderData.error);
+                }
+                console.log(orderData)
+                console.log('-----------------------1')
+                currentTotalAmount = orderData.purchase_units[0].amount.value;
+
+                // Extract and store the total amount from the response
+                if (orderData.purchase_units && orderData.purchase_units[0].amount) {
+                    currentTotalAmount = orderData.purchase_units[0].amount.value;
+                }
+
+                return orderData.id;
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                ShowNotificator('alert-danger', 'There was an error processing your request ') ;
+            });
+        },
+        onApprove: function(data, actions) {
+            return fetch('<?= site_url('/paypal/capture-order') ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    orderID: data.orderID
+                })
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not OK');
+                }
+
+                return response.json();
+            })
+            .then(function(orderData) {
+                if (orderData.error) {
+                    throw new Error(orderData.error);
+                }
+                console.log(orderData)
+                // Call the server endpoint to save the order
+                return fetch('<?= site_url('/paypal/save-order') ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData) // send the order data received from PayPal
+                });
+            })
+            .then(function(saveOrderResponse) {
+                if (!saveOrderResponse.ok) {
+                    throw new Error('Network response was not OK');
+                }
+                return saveOrderResponse.json();
+            })
+            .then(function(saveOrderData) {
+                console.log('Order saved successfully', saveOrderData);
+                currentOrderId = saveOrderData.order_id; // Store the saved order ID
+                // Call the server endpoint for post-payment processing
+                return fetch('<?= site_url('/paypal/postPayment') ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type:"product",
+                        orderID: currentOrderId // Sending the saved order ID
+                    })
+                });
+            })
+            .then(function(postPaymentResponse) {
+                if (!postPaymentResponse.ok) {
+                    throw new Error('Network response was not OK during post payment processing');
+                }
+                return postPaymentResponse.json();
+            })
+            .then(function(postPaymentData) {
+                console.log('Post-payment processing completed', postPaymentData);
+                window.location.href = '<?= base_url('/paypal/success') ?>';
+
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                ShowNotificator('alert-danger', 'There was an error processing your request ') ;
+            });
+        },
+        onShippingChange: function(data, actions) {
+        return fetch('<?= site_url('/paypal/calculate-shipping') ?>', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                shippingAddress: data.shipping_address
+            })
+        }).then(function(res) {
+            return res.json();
+        }).then(function(shippingData) {
+            
+            let newTotalAmount = parseFloat(currentTotalAmount) + parseFloat(shippingData.shipping_cost);
+
+            // Update the order with the new shipping cost
+            return fetch('<?= site_url('/paypal/update-paypal-order') ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    orderID: data.orderID,
+                    shippingCost: shippingData.shipping_cost,
+                    shippingTitle: shippingData.shipping_title,
+                    total_amount:newTotalAmount
+                })
+            });
+        }).catch(function(err) {
+            console.error('Shipping calculation or update failed', err);
+
+        });
+    },
+        
+    }).render('#paypal-button-container1');
 </script>
+
+   <script>
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            // First call to prepare-cart endpoint
+            return fetch('<?= site_url('/paypal/prepare-cart') ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not OK');
+                }
+                return response.json();
+            })
+            .then(function(preparedData) {
+                if (preparedData.error) {
+                    throw new Error(preparedData.error);
+                }
+                // Now call the create-order endpoint with the prepared data
+                return fetch('<?= site_url('/paypal/create-order') ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(preparedData)
+                })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Network response was not OK');
+                    }
+
+                    return response.json();
+                })
+                .then(function(orderData) {
+                    if (orderData.error) {
+                        throw new Error(orderData.error);
+                    }
+                    currentTotalAmount = orderData.purchase_units[0].amount.value;
+
+                    return orderData.id;
+                });
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                ShowNotificator('alert-danger', 'There was an error processing your request ') ;
+            });
+        },
+        onApprove: function(data, actions) {
+            return fetch('<?= site_url('/paypal/capture-order') ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    orderID: data.orderID
+                })
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not OK');
+                }
+                return response.json();
+            })
+            .then(function(orderData) {
+                if (orderData.error) {
+                    throw new Error(orderData.error);
+                }
+                return fetch('<?= site_url('/paypal/save-order') ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData) // send the order data received from PayPal
+                });
+            })
+            .then(function(saveOrderResponse) {
+                if (!saveOrderResponse.ok) {
+                    throw new Error('Network response was not OK');
+                }
+                return saveOrderResponse.json();
+            })
+            .then(function(saveOrderData) {
+
+                // Call the server endpoint for post-payment processing
+                return fetch('<?= site_url('/paypal/postPayment') ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type:"shopping_cart",
+                        orderID: saveOrderData.orderID // Sending the saved order ID
+                    })
+                });
+            })
+            .then(function(postPaymentResponse) {
+                if (!postPaymentResponse.ok) {
+                    throw new Error('Network response was not OK during post payment processing');
+                }
+                return postPaymentResponse.json();
+            })
+            .then(function(postPaymentData) {
+                console.log('Post-payment processing completed', postPaymentData);
+                window.location.href = '<?= base_url('/paypal/success') ?>';
+
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                ShowNotificator('alert-danger', 'There was an error processing your request ') ;
+            });
+        },
+        onShippingChange: function(data, actions) {
+        return fetch('<?= site_url('/paypal/calculate-shipping') ?>', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                shippingAddress: data.shipping_address
+            })
+        }).then(function(res) {
+            return res.json();
+        }).then(function(shippingData) {
+            
+            let newTotalAmount = parseFloat(currentTotalAmount) + parseFloat(shippingData.shipping_cost);
+
+            // Update the order with the new shipping cost
+            return fetch('<?= site_url('/paypal/update-paypal-order') ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    orderID: data.orderID,
+                    shippingCost: shippingData.shipping_cost,
+                    shippingTitle: shippingData.shipping_title,
+                    total_amount:newTotalAmount
+                })
+            });
+        }).catch(function(err) {
+            console.error('Shipping calculation or update failed', err);
+
+        });
+    },
+    }).render('#paypal-button-container2');
+    // Function to add custom text to the PayPal button
+
+
+// Attempt to add custom text when the script loads
+</script>
+
+
 

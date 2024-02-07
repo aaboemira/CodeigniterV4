@@ -127,8 +127,6 @@
                     </div>
                 </form>
             </div>
-
-
         </div>
 
         <div class="col-md-6 registration-section">
@@ -148,7 +146,6 @@
                     <form method="post" action="<?= base_url('/checkout1') ?>" style="width:48%;">
                         <button style="width: 100%;" type="submit" name="guest_checkout" class="btn btn-default btn-new">Shop as Guest</button>
                     </form>
-
                 </div>
             </div>
         </div>

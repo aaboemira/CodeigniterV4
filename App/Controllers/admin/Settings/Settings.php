@@ -85,9 +85,9 @@ class Settings extends ADMIN_Controller
                     if($file->hasMoved()) {
                         $this->Home_admin_model->setValueStore('sitelogo', $newName);
                         $this->saveHistory('Change site logo');
-                        session()->setFlashdata('resultSiteLogoPublish', 'New logo is set!');
+                        session()->setFlashdata('resultSiteLogoPublish', lang_safe('site_logo_change_success'));
                     } else {
-                        session()->setFlashdata('resultSiteLogoPublish', 'Failed to upload');
+                        session()->setFlashdata('resultSiteLogoPublish', lang_safe('site_logo_change_failed'));
                     }
                 }
             }
@@ -97,19 +97,19 @@ class Settings extends ADMIN_Controller
         }
         if (isset($_POST['naviText'])) {
             $this->Home_admin_model->setValueStore('navitext', $_POST['naviText']);
-            session()->setFlashdata('resultNaviText', 'New navigation text is set!');
+            session()->setFlashdata('resultNaviText', lang_safe('navigation_text_change_success'));
             $this->saveHistory('Change navigation text');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['footerCopyright'])) {
             $this->Home_admin_model->setValueStore('footercopyright', $_POST['footerCopyright']);
-            session()->setFlashdata('resultFooterCopyright', 'New navigation text is set!');
+            session()->setFlashdata('resultFooterCopyright', lang_safe('footer_copyright_change_success'));
             $this->saveHistory('Change footer copyright');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['contactsPage'])) {
             $this->Home_admin_model->setValueStore('contactspage', $_POST['contactsPage']);
-            session()->setFlashdata('resultContactspage', 'Contacts page is updated!');
+            session()->setFlashdata('resultContactspage', lang_safe('contacts_page_update_success'));
             $this->saveHistory('Change contacts page');
             return redirect()->to('admin/settings');
         }
@@ -117,7 +117,7 @@ class Settings extends ADMIN_Controller
             $this->Home_admin_model->setValueStore('footerContactAddr', $_POST['footerContactAddr']);
             $this->Home_admin_model->setValueStore('footerContactPhone', $_POST['footerContactPhone']);
             $this->Home_admin_model->setValueStore('footerContactEmail', $_POST['footerContactEmail']);
-            session()->setFlashdata('resultfooterContacts', 'Contacts on footer are updated!');
+            session()->setFlashdata('resultfooterContacts', lang_safe('footer_contacts_update_success'));
             $this->saveHistory('Change footer contacts');
             return redirect()->to('admin/settings');
         }
@@ -127,104 +127,106 @@ class Settings extends ADMIN_Controller
             $this->Home_admin_model->setValueStore('footerSocialGooglePlus', $_POST['footerSocialGooglePlus']);
             $this->Home_admin_model->setValueStore('footerSocialPinterest', $_POST['footerSocialPinterest']);
             $this->Home_admin_model->setValueStore('footerSocialYoutube', $_POST['footerSocialYoutube']);
-            session()->setFlashdata('resultfooterSocial', 'Social on footer are updated!');
+            session()->setFlashdata('resultfooterSocial', lang_safe('footer_social_links_update_success'));
             $this->saveHistory('Change footer contacts');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['googleMaps'])) {
             $this->Home_admin_model->setValueStore('googleMaps', $_POST['googleMaps']);
             $this->Home_admin_model->setValueStore('googleApi', $_POST['googleApi']);
-            session()->setFlashdata('resultGoogleMaps', 'Google maps coordinates and api key are updated!');
+            session()->setFlashdata('resultGoogleMaps', lang_safe('google_maps_update_success'));
             $this->saveHistory('Update Google Maps Coordinates and Api Key');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['footerAboutUs'])) {
             $this->Home_admin_model->setValueStore('footerAboutUs', $_POST['footerAboutUs']);
-            session()->setFlashdata('resultFooterAboutUs', 'Footer about us text changed!');
+            session()->setFlashdata('resultFooterAboutUs', lang_safe('footer_about_us_change_success'));
             $this->saveHistory('Change footer about us info');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['contactsEmailTo'])) {
             $this->Home_admin_model->setValueStore('contactsEmailTo', $_POST['contactsEmailTo']);
-            session()->setFlashdata('resultEmailTo', 'Email changed!');
+            session()->setFlashdata('resultEmailTo', lang_safe('contact_email_to_change_success'));
             $this->saveHistory('Change where going emails from contact form');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['shippingOrder'])) {
             $this->Home_admin_model->setValueStore('shippingOrder', $_POST['shippingOrder']);
-            session()->setFlashdata('shippingOrder', 'Shipping Order price chagned!');
+            session()->setFlashdata('shippingOrder', lang_safe('shipping_order_change_success'));
             $this->saveHistory('Change Shipping free for order more than ' . $_POST['shippingOrder']);
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['addJs'])) {
             $this->Home_admin_model->setValueStore('addJs', $_POST['addJs']);
-            session()->setFlashdata('addJs', 'JavaScript code is added');
+            session()->setFlashdata('addJs', lang_safe('additional_js_code_success'));
             $this->saveHistory('Add JS to website');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['publicQuantity'])) {
             $this->Home_admin_model->setValueStore('publicQuantity', $_POST['publicQuantity']);
-            session()->setFlashdata('publicQuantity', 'Public quantity visibility changed');
+            session()->setFlashdata('publicQuantity', lang_safe('public_quantity_visibility_change_success'));
             $this->saveHistory('Change publicQuantity visibility');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['publicDateAdded'])) {
             $this->Home_admin_model->setValueStore('publicDateAdded', $_POST['publicDateAdded']);
-            session()->setFlashdata('publicDateAdded', 'Public date added visibility changed');
+            session()->setFlashdata('publicDateAdded', lang_safe('public_date_added_visibility_change_success'));
             $this->saveHistory('Change public date added visibility');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['outOfStock'])) {
             $this->Home_admin_model->setValueStore('outOfStock', $_POST['outOfStock']);
-            session()->setFlashdata('outOfStock', 'Out of stock settings visibility change');
+            session()->setFlashdata('outOfStock', lang_safe('out_of_stock_visibility_change_success'));
             $this->saveHistory('Change visibility of final checkout page');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['moreInfoBtn'])) {
             $this->Home_admin_model->setValueStore('moreInfoBtn', $_POST['moreInfoBtn']);
-            session()->setFlashdata('moreInfoBtn', 'Button More Information visibility is changed');
+            session()->setFlashdata('moreInfoBtn', lang_safe('more_info_button_visibility_change_success'));
             $this->saveHistory('Change visibility of More Information button in products list');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['showBrands'])) {
             $this->Home_admin_model->setValueStore('showBrands', $_POST['showBrands']);
-            session()->setFlashdata('showBrands', 'Brands visibility changed');
+            session()->setFlashdata('showBrands', lang_safe('brands_visibility_change_success'));
             $this->saveHistory('Brands visibility changed');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['virtualProducts'])) {
             $this->Home_admin_model->setValueStore('virtualProducts', $_POST['virtualProducts']);
-            session()->setFlashdata('virtualProducts', 'Virtual products visibility changed');
+            session()->setFlashdata('virtualProducts', lang_safe('virtual_products_visibility_change_success'));
             $this->saveHistory('Virtual products visibility changed');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['showInSlider'])) {
             $this->Home_admin_model->setValueStore('showInSlider', $_POST['showInSlider']);
-            session()->setFlashdata('showInSlider', 'In Slider products visibility changed');
+            session()->setFlashdata('showInSlider', lang_safe('show_in_slider_change_success'));
             $this->saveHistory('In Slider products visibility changed');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['multiVendor'])) {
             $this->Home_admin_model->setValueStore('multiVendor', $_POST['multiVendor']);
-            session()->setFlashdata('multiVendor', 'Multi Vendor Support changed');
+            session()->setFlashdata('multiVendor', lang_safe('multi_vendor_support_change_success'));
             $this->saveHistory('Multi Vendor Support changed');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['setCookieLaw'])) {
             unset($_POST['setCookieLaw']);
             $this->setCookieLaw($_POST);
+            session()->setFlashdata('setCookieLaw', lang_safe('cookie_law_info_change_success'));
+
             $this->saveHistory('Cookie law information changed');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['hideBuyButtonsOfOutOfStock'])) {
             $this->Home_admin_model->setValueStore('hideBuyButtonsOfOutOfStock', $_POST['hideBuyButtonsOfOutOfStock']);
-            session()->setFlashdata('hideBuyButtonsOfOutOfStock', 'Buy buttons of Out of stock products visibility changed');
+            session()->setFlashdata('hideBuyButtonsOfOutOfStock', lang_safe('hide_buy_buttons_of_out_of_stock_change_success'));
             $this->saveHistory('Buy buttons visibility changed for out of stock products');
             return redirect()->to('admin/settings');
         }
         if (isset($_POST['refreshAfterAddToCart'])) {
             $this->Home_admin_model->setValueStore('refreshAfterAddToCart', $_POST['refreshAfterAddToCart']);
-            session()->setFlashdata('refreshAfterAddToCart', 'Saved');
+            session()->setFlashdata('refreshAfterAddToCart', lang_safe('refresh_after_add_to_cart_change_success'));
             $this->saveHistory('Option to open shopping cart after click add to cart button changed');
             return redirect()->to('admin/settings');
         }

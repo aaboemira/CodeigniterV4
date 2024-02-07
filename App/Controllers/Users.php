@@ -88,8 +88,7 @@ class Users extends BaseController
             // Redirect to a success page or show a success message
             return redirect()->to(LANG_URL . '/user/successMessage');
         } else {
-            session()->setFlashdata('registerError', lang_safe('verify_failed', 'Email is not confirmed'));
-            // Invalid or expired token; show an error message
+            session()->setFlashdata('error', lang_safe('verify_failed', 'Email is not confirmed'));
             return redirect()->to(LANG_URL . '/register');
         }
     }
@@ -155,7 +154,7 @@ class Users extends BaseController
                     $_POST['id'] = $_SESSION['logged_user'];
                     $_POST['pass'] = $_POST['pass_repeat'];
                     $this->Public_model->updatePassword($_POST);
-                    session()->setFlashdata('success', 'Success');
+                    session()->setFlashdata('success', lang_safe('password_update_success'));
                     return redirect()->to(current_url());
                 }
                 
@@ -325,7 +324,7 @@ class Users extends BaseController
                 if ($emailSent) {
                     session()->setFlashdata('success', lang_safe('password_email_msg'));
                 } else {
-                    session()->setFlashdata('error', 'Failed to send the password reset email. Please try again later.');
+                    session()->setFlashdata('error', lang_safe('password_email_error'));
                 }
             }else if(!($this->validateCaptcha($result,$session))){
                 session()->setFlashdata('error', lang_safe('captcha_wrong','hello'));

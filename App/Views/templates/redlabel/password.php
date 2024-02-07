@@ -36,7 +36,7 @@
                 <div class="well well-sm">
                     <form method="POST" action="">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="enter_current_password">
                                         <?= lang_safe('current_password','Cuurent Password') ?>
@@ -52,6 +52,10 @@
                                     </span>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="password">
                                         <?= lang_safe('password') ?>
@@ -68,6 +72,10 @@
                                     </div>
 
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="password_repeat">
                                         <?= lang_safe('password_repeat') ?>

@@ -736,7 +736,7 @@ class GenerateInvoice
     </html>';
     $filename='Invoice_NO'.$order['order_id'];
 
-        return $this->generatePdf($html);
+        return $this->generatePdf($html,$filename);
     }
 
 

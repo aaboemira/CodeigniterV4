@@ -104,10 +104,10 @@ class Address extends BaseController
 
         if ($result) {
             // Set a success message in session and redirect
-            session()->setFlashdata('success', 'Addresses updated successfully');
+            session()->setFlashdata('success', lang_safe('address_update_success'));
         } else {
             // Set an error message in session and redirect
-            session()->setFlashdata('error', 'Failed to update addresses');
+            session()->setFlashdata('error', lang_safe('address_update_error'));
         }
 
         return redirect()->to(LANG_URL . '/address');

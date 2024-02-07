@@ -247,7 +247,11 @@
     th {
         background-color: #f2f2f2;
     }
-
+    .guest-indicator {
+        color: #f65d55; /* Subtle grey color */
+        font-style: italic; /* Italicize to indicate secondary information */
+        margin-top: 5px; /* Space between the device name and guest indicator */
+    }
  
     .add-refresh-buttons {
         display: flex;
@@ -259,12 +263,12 @@
         right: 10%;
         top:90%;
     }
-    .dropdown-menu li a{
-        font-size: 1.7rem;
-    }
-    .dropdown-menu li {
-        padding: 3px 3px;
-    }
+        .dropdown-menu li a{
+            font-size: 1.7rem;
+        }
+        .dropdown-menu li {
+            padding: 3px 3px;
+        }
         .table-responsive .table th:nth-child(1),
         .table-responsive .table td:nth-child(1) {
             width: 7%;
@@ -297,7 +301,17 @@
     .btn-device-action i, .position-btn i {
         margin-right: 10px; /* Space between icon and text */
     }
+    @media (min-width: 768px) and (max-width: 1082px) {
 
+        .table-responsive .table th:nth-child(3),
+        .table-responsive .table td:nth-child(3) {
+            width: 20%;
+        }
+        .table-responsive .table th:nth-child(4),
+        .table-responsive .table td:nth-child(4) {
+            width:40% ;
+        }
+    }
          /* Styles for mobile devices */
     @media only screen and (max-width: 767px) {
         table {
@@ -502,14 +516,16 @@
                                     <tr>
                                         <div id="loading-indicator-<?= $device['device_id'] ?>" style="display: none;">
                                             <!-- Your loading spinner here -->
-                                            <input type="hidden" id="device-id-input" value="<?=$device['device_id']?>">
-
                                         </div>
                                         <td>
                                             <?= $pos++; ?>
+                                            <input type="hidden" class="device-id-input" data-guest="<?= $device['is_guest'] ? $device['id'] : 'false' ?>" value="<?=$device['device_id']?>">
                                         </td>
                                         <td>
                                             <?= $device['device_name'] ?>
+                                            <?php if ($device['is_guest']): ?>
+                                                <div class="guest-indicator">(Guest)</div>
+                                            <?php endif; ?>
                                         </td>
 
                                         <td id="state-<?= $device['device_id'] ?>">
@@ -559,46 +575,71 @@
                                                      <?=lang_safe('manage','Manage')?> 
                                                     </button>
                                                     <ul class="dropdown-menu manage-dropdown">
+                                                    <?php if (!$device['is_guest']): ?>
                                                         <li>
                                                             <a
                                                                 href="<?= base_url('/smartdevices/editDevice/' . $device['device_id']) ?>">
                                                                 <i class="fa fa-pencil"></i> Edit Device
                                                             </a>
                                                         </li>
-                                                        <li>
-                                                            <a href="<?= base_url('/smartdevices/deleteDevice/' . $device['device_id']) ?>"
+                                                    <?php endif;  ?>
+                                                    <?php
+                                                        // Check if the user is a guest
+                                                        if ($device['is_guest']) {
+                                                            // Provide a different link for guests
+                                                            ?>
+                                                            <li>
+                                                                <a href="<?= base_url('/smartdevices/deleteGuestDevice/' . $device['device_id']) ?>"
+                                                                onclick="return confirm('Are you sure you want to remove this device from your guest list?');">
+                                                                    <i class="fa fa-trash"></i> Remove Device
+                                                                </a>
+                                                            </li>
+                                                            <?php
+                                                        } else {
+                                                            // Provide the regular delete link for device owners
+                                                            ?>
+                                                            <li>
+                                                                <a href="<?= base_url('/smartdevices/deleteDevice/' . $device['device_id']) ?>"
                                                                 onclick="return confirm('Are you sure you want to delete this device?');">
-                                                                <i class="fa fa-trash"></i> Delete Device
-                                                            </a>
-                                                        </li>
+                                                                    <i class="fa fa-trash"></i> Delete Device
+                                                                </a>
+                                                            </li>
+                                                            <?php
+                                                        }
+                                                    ?>
+                                                    <?php if (!$device['is_guest']): ?>
                                                         <li>
                                                             <a
                                                                 href="<?= base_url('/smartdevices/accessControl/' . $device['device_id']) ?>">
                                                                 <i class="fa fa-users"></i> Access Control
                                                             </a>
                                                         </li>
+                                                    <?php endif;  ?>
                                                     </ul>
                                                 </div>
-                                                <!-- Control Icon Button -->
-                                                <button class="btn btn-default position-btn" type="button" data-toggle="modal" data-target="#manageDeviceModal-<?= $device['device_id'] ?>">
-                                                <img src="<?= base_url('png/control.svg') ?>" alt="Manage" >
-                                                 <?= lang_safe('control','Control')?>
-                                            </button>
+                                                <?php if ($device['can_control']==1): ?>
+                                                    <!-- Control Icon Button -->
+                                                    <button class="btn btn-default position-btn" type="button" data-toggle="modal" data-is-guest="<?= $device['is_guest'] ? '1' : '0' ?>" data-target="#manageDeviceModal-<?= $device['device_id'] ?>">
+                                                        <img src="<?= base_url('png/control.svg') ?>" alt="Manage" >
+                                                    <?= lang_safe('control','Control')?>
+                                                    </button>
+                                                <?php endif;  ?>
                                             </div>
                                         </td>
 
                                     </tr>
+
                                     <div class="modal" id="manageDeviceModal-<?= $device['device_id'] ?>" tabindex="-1"
                                         role="dialog" aria-labelledby="manageDeviceModalLabel-<?= $device['device_id'] ?>"
                                         aria-hidden="true">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
                                                 <button type="button"  class="close" data-dismiss="modal" aria-label="Close" >
-                                                    <span aria-hidden="true" >&times;</span>
+                                                    <span aria-hidden="true" > &times;</span>
                                                 </button>
                                                 <div class="modal-header">
                                                     <h4 class="modal-title" id="deviceManagementModalLabel">Controlpanel:
-                                                        <?= $device['device_name'] ?>
+                                                        <?= $device['device_name']?>
                                                     </h4>
                                                 </div>
 
@@ -620,7 +661,7 @@
                                                     <div class="device-control-buttons">
                                                         <button class="btn btn-device-action" data-action="open"
                                                             data-device-id="<?= $device['device_id'] ?>"
-                                                            onclick="controlDevice('open', <?= $device['device_id'] ?>)">
+                                                            onclick="controlDevice('open', <?= $device['device_id'] ?>,<?= $device['is_guest'] ? $device['id'] : 'false' ?>)">
                                                             <div class="icon-wrapper">
                                                                 ▲
                                                             </div>
@@ -628,7 +669,7 @@
 
                                                         <button class="btn btn-device-action stop-button" data-action="stop"
                                                             data-device-id="<?= $device['device_id'] ?>"
-                                                            onclick="controlDevice('stop', <?= $device['device_id'] ?>)">
+                                                            onclick="controlDevice('stop', <?= $device['device_id'] ?>,<?= $device['is_guest'] ? $device['id'] : 'false' ?>)">
                                                             <div class="icon-wrapper">
                                                                 ∎
                                                             </div>
@@ -636,7 +677,7 @@
 
                                                         <button class="btn btn-device-action" data-action="close"
                                                             data-device-id="<?= $device['device_id'] ?>"
-                                                            onclick="controlDevice('close', <?= $device['device_id'] ?>)">
+                                                            onclick="controlDevice('close', <?= $device['device_id'] ?>,<?= $device['is_guest'] ? $device['id'] : 'false' ?>)">
                                                             <div class="icon-wrapper">
                                                                 ▼
                                                             </div>
@@ -735,16 +776,17 @@
 
 
     var currentDeviceId;
-    function controlDevice(action, deviceId) {
+    function controlDevice(action, deviceId, guestID) {
         $('.btn-device-action').prop('disabled', true);
         $('#status-message-' + deviceId + ' .loading-text').show();
         $('#status-message-' + deviceId + ' .result').hide();
-
         var data = {
             action: action,
             deviceId: deviceId,
         };
-
+        if (guestID !== false) {
+            data.guestID = guestID;
+        }
         $.ajax({
             url: '<?= base_url('/smartdevices/controlDevice') ?>',
             type: 'POST',
@@ -769,10 +811,14 @@
     function refreshAllDevices() {
     var refreshRequests = [];
 
-    $('#device-id-input').each(function () {
+    $('.device-id-input').each(function () {
         var deviceId = $(this).val();
+        var isGuest = $(this).data('guest');
+        console.log("------")
+        console.log(isGuest) // Assuming each device has a data attribute indicating if it's a guest device
+ // Assuming each device has a data attribute indicating if it's a guest device
         showSpinnerInConnectedCell(deviceId);
-        var request = createRefreshRequest(deviceId);
+        var request = createRefreshRequest(deviceId,isGuest);
         refreshRequests.push(request);
     });
 
@@ -795,11 +841,18 @@
         });
     }
 
-    function createRefreshRequest(deviceId) {
+    function createRefreshRequest(deviceId,guestID) {
+        var data = {
+            deviceId: deviceId,
+        };
+        console.log(guestID)
+        if (guestID !== false) {
+            data.guestID = guestID; // Include guestID in the request if it's a guest device
+        }
     return $.ajax({
         url: '<?= base_url('/smartdevices/refreshDeviceStatus') ?>',
         type: 'POST',
-        data: { deviceId: deviceId },
+        data:data,
         success: function (response) {
             updateUIWithDeviceStatus(deviceId, response);
         },

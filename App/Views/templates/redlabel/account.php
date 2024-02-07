@@ -128,7 +128,16 @@ $languages = [
                                     </div>
                                 </div>
                             </div>
-
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                            <label for="company"><?=lang_safe('company')?> *</label>
+                                            <input type="text" name="company" id="company" class="form-control"
+                                                    value="<?= set_value('company', $userInfo['company']) ?>"
+                                                    placeholder="<?= lang_safe('company') ?>">
+                                    </div>
+                                </div>
+                            </div>
                             <!-- Email Field -->
                             <div class="form-group">
                                 <label for="email">
@@ -277,11 +286,13 @@ $languages = [
                                     </div>
                                 </div>
                             </div>
-
                             <div class="form-group">
-                                <p>To close your account and delete your data, please
-                                <a href="<?= base_url('/account/delete'); ?>"  onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">click here</a>
-                                .
+                                <p>
+                                    <?= lang_safe('delete_account_message') ?>
+                                    <a href="<?= LANG_URL . '/account/delete' ?>" onclick="return confirm('<?= lang_safe('delete_account_confirmation') ?>');">
+                                        <?= lang_safe('click_here') ?>
+                                    </a>
+                                    .
                                 </p>
                             </div>
 

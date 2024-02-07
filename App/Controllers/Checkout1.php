@@ -47,6 +47,7 @@ class Checkout1 extends BaseController
             }
         }
         if (isset($_POST['guest_checkout'])) {
+            if(isset($_POST['logout_guest']))session()->destroy();
             return redirect()->to(LANG_URL . '/checkout1');
         }
 
@@ -120,7 +121,7 @@ class Checkout1 extends BaseController
                 $updateBillingResult = $this->Public_model->updateBillingAddress($userId, $billingData);
                 if ($updateBillingResult === false) {
                     // Handle error
-                    session()->setFlashdata('submit_error', 'Failed to update billing address.');
+                    session()->setFlashdata('submit_error', lang_safe('update_billing_addr_error'));
                     return false;
                 }
             }
@@ -129,7 +130,7 @@ class Checkout1 extends BaseController
                 $updateShippingResult = $this->Public_model->updateShippingAddress($userId, $shippingData);
                 if ($updateShippingResult === false) {
                     // Handle error
-                    session()->setFlashdata('submit_error', 'Failed to update shipping address.');
+                    session()->setFlashdata('submit_error', lang_safe('update_shipping_addr_error'));
                     return false;
                 }
             }
@@ -222,12 +223,10 @@ class Checkout1 extends BaseController
             $updateBillingResult = $this->Public_model->updateBillingAddress($userId, $billingData);
 
             if ($updateShippingResult === false || $updateBillingResult === false) {
-                session()->setFlashdata('submit_error', 'Failed to update addresses.');
+                session()->setFlashdata('submit_error', lang_safe('update_addrs_error'));
                 return false;
             }
 
-
-        // ... Additional processing and validation ...
 
         return true; // or false based on validation
     }
@@ -339,7 +338,7 @@ class Checkout1 extends BaseController
                 return redirect()->to(LANG_URL . '/checkout1');
             } else {
                 session()->setFlashdata('loginError', lang_safe('wrong_user'));
-                return redirect()->to(LANG_URL . '/checkout1')->withInput();
+                return redirect()->to(LANG_URL . '/checkout0')->withInput();
             }
     }
     public function guestCheckout()
@@ -351,10 +350,10 @@ class Checkout1 extends BaseController
         $head['description'] = @$arrSeo['description'];
         $head['keywords'] = str_replace(" ", ",", $head['title']);
         if (session()->has('logged_user')) {
-            return redirect()->to(LANG_URL . '/checkout1');
+            return $this->render('checkout1/auth_checkout0', $head, $data); // Update with the correct view path
         }
 
-        return $this->render('checkout1/unauth_checkout1', $head, $data); // Update with the correct view path
+        return $this->render('checkout1/unauth_checkout0', $head, $data); // Update with the correct view path
     }
     public function getCountries()
     {

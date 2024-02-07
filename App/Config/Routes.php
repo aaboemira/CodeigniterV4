@@ -135,6 +135,8 @@ $routes->get('/smartdevices/add', 'SmartDevices::add');
 $routes->post('/smartdevices/store', 'SmartDevices::store');
 $routes->post('/smartdevices/refreshDeviceStatus', 'SmartDevices::refreshDeviceStatus');
 $routes->get('/smartdevices/deleteDevice/(:num)', 'SmartDevices::deleteDevice/$1');
+$routes->get('/smartdevices/deleteGuestDevice/(:num)', 'SmartDevices::deleteGuestDevice/$1');
+
 $routes->get('/smartdevices/editDevice/(:num)', 'SmartDevices::editDevice/$1');
 $routes->post('/smartdevices/updateDevice', 'SmartDevices::updateDevice');
 $routes->post('smartdevices/controlDevice', 'SmartDevices::controlDevice');
@@ -158,6 +160,24 @@ $routes->get('orders/(:num)', 'Orders::orders/$1');
 $routes->add('(\w{2})/orders', "Orders::orders");
 $routes->get('/orders/show/(:num)', 'Orders::showOrder/$1');
 $routes->get('/generate-invoice/(:num)', 'Orders::generateInvoice/$1');
+$routes->post('/paypal/create-order', 'PaypalController::createPaypalOrder');
+$routes->post('/paypal/capture-order', 'PaypalController::capturePaypalOrder');
+$routes->post('/paypal/save-order', 'PaypalController::saveOrder');
+$routes->post('/paypal/prepare-cart', 'PaypalController::prepareOrderData');
+$routes->post('/paypal/cancel-order', 'PaypalController::cancelOrder');
+$routes->post('/paypal/postPayment', 'PaypalController::postPayment');
+$routes->get('/paypal/success', 'PaypalController::paymentSuccess');
+$routes->post('/paypal/calculate-shipping', 'PaypalController::calculateShipping');
+$routes->post('/paypal/update-paypal-order', 'PaypalController::updatePaypalOrderWithShipping');
+
+
+
+$routes->get('/oauth/authorize', 'OAuthController::showAuthorize');
+$routes->post('/oauth/authorize', 'OAuthController::authorize');
+$routes->post('/oauth/changeAccount', 'OAuthController::changeAccount');
+
+$routes->post('/oauth/token', 'OAuthController::token');
+$routes->get('/oauth/userinfo', 'OAuthController::userInfo');
 
 
 $routes->add('account', "Account::account");

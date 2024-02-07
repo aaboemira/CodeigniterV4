@@ -25,7 +25,7 @@ if (count($sliderProducts) > 0) {
                 <div class="row">
                     <div class="col-sm-6 left-side">
                         <a href="<?= LANG_URL . '/' . $article['url'] ?>">
-                            <img src="<?= base_url('attachments/shop_images/' . $article['image']) ?>"
+                            <img src="<?= LANG_URL .('attachments/shop_images/' . $article['image']) ?>"
                                 class="img-responsive" alt="">
                         </a>
                     </div>
@@ -41,14 +41,14 @@ if (count($sliderProducts) > 0) {
                         <div class="price text-right"><?= $article['price'] . CURRENCY ?></div>
                         <div class="xs-center">
                             <?php if ($hideBuyButtonsOfOutOfStock == 0 || (int)$article['quantity'] > 0) { ?>
-                            <a class="option add-to-cart" data-goto="<?= base_url('checkout') ?>"
+                            <a class="option add-to-cart" data-goto="<?=LANG_URL .'/checkout' ?>"
                                 href="javascript:void(0);" data-id="<?= $article['id'] ?>">
-                                <img src="<?= base_url('template/imgs/shopping-cart-icon-515.png') ?>" alt="">
+                                <img src="<?= LANG_URL .('template/imgs/shopping-cart-icon-515.png') ?>" alt="">
                                 <?= lang_safe('buy_now') ?>
                             </a>
                             <?php } ?>
                             <a class="option right-5" href="<?= LANG_URL . '/' . $article['url'] ?>">
-                                <img src="<?= base_url('template/imgs/info.png') ?>" alt="">
+                                <img src="<?= LANG_URL .('template/imgs/info.png') ?>" alt="">
                                 <?= lang_safe('details') ?>
                             </a>
                         </div>
@@ -167,7 +167,7 @@ if (count($sliderProducts) > 0) {
                                 </div>
                             </div>
                             <button type="button" onclick="submitForm()" class="btn-go-search mine-color">
-                                <img src="<?= base_url('template/imgs/search-ico.png') ?>" alt="Search">
+                                <img src="<?= LANG_URL .('template/imgs/search-ico.png') ?>" alt="Search">
                             </button>
                         </div>
                     </div>

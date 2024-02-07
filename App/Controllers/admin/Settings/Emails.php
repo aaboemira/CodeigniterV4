@@ -32,7 +32,7 @@ class Emails extends ADMIN_Controller
         }
         if (isset($_GET['delete'])) {
             $data = $this->Emails_model->deleteEmail($_GET['delete']);
-            session()->setFlashdata('emailDeleted', 'Email addres is deleted!');
+            session()->setFlashdata('emailDeleted', lang_safe('email_address_delete_success'));
             return redirect()->to('admin/emails');
         }
         $data = array();

@@ -309,9 +309,9 @@
                         <?= lang_safe('to_checkout2') ?>
                         <i class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></i>
                     </a>
-                    <a href="<?= LANG_URL . '/shop' ?>" class="btn btn-primary btn-new go-shop">
+                    <a href="<?= LANG_URL . '/checkout0' ?>" class="btn btn-primary btn-new go-shop">
                         <span class="glyphicon glyphicon-circle-arrow-left"></span>
-                        <?= lang_safe('back_to_shop') ?>
+                        <?= lang_safe('back_to_register') ?>
                     </a>
                 </div>
             </div>

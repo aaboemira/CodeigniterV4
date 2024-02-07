@@ -19,7 +19,7 @@ class App extends BaseConfig
      */
     //public string $baseURL = 'https://nodematic.store/';
 	//public string $baseURL = 'https://www.nodedevices.de/';
-	public string $baseURL = 'http://localhost:8080/';
+	public string $baseURL = 'http://localhost:8081/';
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
      * If you want to accept multiple Hostnames, set this.

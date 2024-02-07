@@ -28,7 +28,7 @@ class Account extends BaseController
                 $hashedCurrentPassword = hash('sha256', $_POST['current_password']);
                 // Compare with the stored password
                 if ($hashedCurrentPassword != $userInfo['password']) {
-                    session()->setFlashdata('error', 'Current password does not match');
+                    session()->setFlashdata('error', lang_safe('invalid_password'));
                     return redirect()->to(current_url());
                 }
                 if (!$this->password_check($_POST['new_password'])) {
@@ -56,10 +56,13 @@ class Account extends BaseController
                     'city' => $this->request->getPost('city'),
                     'billing_id' => $userInfo['billing_address_id']
                 ];
-
+                $company =$this->request->getPost('company');
+                if (isset($company)) {
+                    $userData['company'] = $company;
+                }
                 $this->Public_model->updateProfile($userId, $userData);
 
-                session()->setFlashdata('success', 'Success');
+                session()->setFlashdata('success', lang_safe('account_update_success'));
                 return redirect()->to(current_url());
         }
 
@@ -85,17 +88,17 @@ class Account extends BaseController
                 session()->destroy();
 
                 // Redirect to the homepage with a success message
-                session()->setFlashdata('account_deleted', 'Your account has been successfully deleted.');
+                session()->setFlashdata('account_deleted',lang_safe('account_delete_success'));
                 return redirect()->to(LANG_URL);
             } else {
                 // If deletion fails, do not destroy the session and return back with an error message
-                session()->setFlashdata('error', 'There was a problem deleting your account.');
+                session()->setFlashdata('error', lang_safe('account_delete_error'));
                 return redirect()->back(); // This will redirect the user to the previous page
             }
         }
 
         // If the user is not logged in or there's another error, handle accordingly
-        session()->setFlashdata('error', 'You must be logged in to delete your account.');
+        session()->setFlashdata('error', lang_safe('account_delete_unauthorized'));
         return redirect()->to(LANG_URL . '/login');
     }
     private function password_check($password)

@@ -32,7 +32,7 @@ class BlogPublish extends ADMIN_Controller
         if (isset($_POST['submit'])) {
             $_POST['image'] = $this->uploadImage();
             $this->Blog_model->setPost($_POST, $id);
-            session()->setFlashdata('result_publish', 'Successful published!');
+            session()->setFlashdata('result_publish', lang_safe('blog_publish_success'));
             return redirect()->to('admin/blog');
         }
         $data = array();

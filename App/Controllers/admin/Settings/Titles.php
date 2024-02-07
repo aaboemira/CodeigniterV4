@@ -32,7 +32,7 @@ class Titles extends ADMIN_Controller
         if (isset($_POST['save'])) {
             $this->Titles_model->setSeoPageTranslations($_POST);
             $this->saveHistory('Changed Titles / Descriptions');
-            session()->setFlashdata('result_publish', 'Saved successful!');
+            session()->setFlashdata('result_publish', lang_safe('titles_descriptions_saved_success'));
             return redirect()->to('admin/titles');
         }
 

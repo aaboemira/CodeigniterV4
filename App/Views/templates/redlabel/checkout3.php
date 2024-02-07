@@ -131,7 +131,7 @@
                                                 <div class="relative max-675-img-counter">
                                                     <div>
                                                         <img class="max-675-w-100 prod-img"
-                                                             src="<?= base_url('/attachments/shop_images/' . $item['image']) ?>"
+                                                             src="<?= LANG_URL .'/attachments/shop_images/' . $item['image'] ?>"
                                                              alt="">
                                                         <a onclick="removeProduct(<?= $item['id'] ?>, true,true)"
                                                            class="btn btn-xs btn-danger remove-product rounded-xl color-white bg-black border-black">

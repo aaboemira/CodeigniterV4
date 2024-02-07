@@ -292,7 +292,6 @@ function redirectToGoogleMaps() {
 
         // Get the current source of the image
         var currentSrc = $(imgSelector).attr("src");
-        console.log(currentSrc);
         // Determine the new source based on the current one
         var newSrc = currentSrc.includes(imageName + "_white.png") ?
             "<?= base_url('png/') ?>" + imageName + "_black.png" :
@@ -335,8 +334,14 @@ function redirectToGoogleMaps() {
         } else {
             // Desktop: Apply hover effect to the link
             $("#myAccountLink").hover(
-                function() { handleHover('#myAccountLink img', 'myaccount'); },
-                function() { handleHover('#myAccountLink img', 'myaccount'); }
+                function() {
+            // Mouse enter event
+                toggleImageColor('#myAccountLink img', 'myaccount')
+                },
+                function() {
+                    // Mouse leave event
+                    toggleImageColor('#myAccountLink img', 'myaccount')
+                }
             );
         }
     }
@@ -462,6 +467,17 @@ $(document).ready(function() {
                 e.preventDefault(); // Prevent the default action
                 e.stopPropagation();
             }
+        });
+
+
+        $('.dropdown').on('click', function(event) {
+            if (isMobile()) {
+            // Check if the clicked element is within the dropdown menu
+            if ($(event.target).closest('.dropdown-menu').length) {
+                // Prevent closing the dropdown menu
+                event.stopPropagation();
+            }
+        }
         });
     }
 });

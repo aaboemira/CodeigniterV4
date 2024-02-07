@@ -74,7 +74,7 @@ class Discounts extends ADMIN_Controller
             } else {
                 $this->Discounts_model->updateDiscountCode($_POST);
             }
-            session()->setFlashdata('success', 'Changes are saved');
+            session()->setFlashdata('success', lang_safe('discount_changes_success'));
         } else {
             session()->setFlashdata('error', $isValid);
             session()->setFlashdata('post', $_POST);

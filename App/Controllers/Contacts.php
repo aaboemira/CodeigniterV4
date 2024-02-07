@@ -26,9 +26,9 @@ class Contacts extends BaseController
             
                 $result = $this->sendEmail();
                 if ($result) {
-                    session()->setFlashdata('resultSend', 'Ihre Nachricht wurde erfolgreich an uns übermittelt.');
+                    session()->setFlashdata('resultSend', lang_safe('contacts_email_success'));
                 } else {
-                    session()->setFlashdata('resultSend', 'Fehler bei der Übertragung. Entschuldigung - Bitte verwenden Sie eine andere Kontaktmöglichkeit.');
+                    session()->setFlashdata('resultSend', lang_safe('contacts_email_error'));
                 }
                 return redirect()->to('contacts');
         }

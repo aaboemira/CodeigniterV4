@@ -15,21 +15,21 @@
                     </h2>
                 </span>
             </div>
-            <?php
-            if (session('errors')) {
+            <?php if (session('errors')) {
                 ?>
-                <hr>
-                <div class="row">
                     <div class="alert alert-danger">
-                        <h4><span class="glyphicon glyphicon-alert"></span> <?= lang_safe('finded_errors') ?></h4>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4><span class="glyphicon glyphicon-alert"></span>
+                            <?= lang_safe('finded_errors') ?>
+                        </h4>
                         <?php
                         foreach (session('errors') as $error) {
                             echo htmlspecialchars($error) . '<br>';
                         }
                         ?>
                     </div>
-                </div>
-                <hr>
                 <?php
             }
             ?>
@@ -46,7 +46,7 @@
                     <div class="form-group">
                         <label for="device_name"><?= lang_safe('device_name') ?></label>
                         <input type="text" class="form-control" id="device_name" name="device_name"
-                               value="<?= $device['device_name'] ?>"  maxlength="16" required>
+                               value="<?= $device['device_name'] ?>"  maxlength="16" placeholder="<?= lang_safe('enter_name') ?>">
                     </div>
                 </div>
 
@@ -54,7 +54,7 @@
                     <div class="form-group">
                         <label for="serialNumber"><?= lang_safe('serial_number') ?></label>
                         <input type="text" class="form-control" id="serialNumber" maxlength="16" name="serial_number"
-                               value="<?= $device['serial_number'] ?>" required>
+                               value="<?= $device['serial_number'] ?>" placeholder="<?= lang_safe('enter_serial_number') ?>">
                     </div>
                 </div>
 
@@ -62,7 +62,7 @@
                     <div class="form-group">
                         <label for="uid"><?= lang_safe('uid') ?></label>
                         <input type="text" class="form-control" id="uid" maxlength="32" name="uid" value="<?= $device['UID'] ?>"
-                               required>
+                        placeholder="<?= lang_safe('enter_uid') ?>">
                     </div>
                 </div>
                 <div class="col-md-8">
@@ -70,7 +70,6 @@
                         <label for="password">
                             <?= lang_safe('password') ?>
                         </label>
-
                         <div class="input-group">
                             <input type="password" class="form-control" id="password" name="password"  value="<?= $device['password'] ?>"
                                 oninput="removeTrailingSpaces(this)">
