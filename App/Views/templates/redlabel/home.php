@@ -34,32 +34,32 @@
 
 		<div class="carousel-inner" role="listbox">
 			<div class="item active">
-				<a href="<?= LANG_URL .('Touch-Funk-Wandsender-2-Kanal-433-MHz-ND-TXCW-2S-75') ?>">
+				<a href="<?= LANG_URL .'/Touch-Funk-Wandsender-2-Kanal-433-MHz-ND-TXCW-2S-75' ?>">
 					<picture>
 					<!-- Small image for screens with a max-width of 768px -->
-					<source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-TXCW-2S-mobile.png' ?>" media="(max-width: 768px)" >
+					<source srcset="<?= base_url('/png/Slider/Slider-ND-TXCW-2S-mobile.png') ?>" media="(max-width: 768px)" >
 					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
-					<!-- <source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-TXCW-2S.png' ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
+					<!-- <source srcset="<?= base_url('/png/Slider/Slider-ND-TXCW-2S.png') ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
 					<!-- Large image for screens with a min-width of 1201px -->
-					<source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-TXCW-2S.png' ?>" media="(min-width: 1201px)">
+					<source srcset="<?= base_url('/png/Slider/Slider-ND-TXCW-2S.png') ?>" media="(min-width: 1201px)">
 
 					<!-- Fallback image for browsers that don't support srcset -->
-					<img src="<?= LANG_URL .'/png/Slider/Slider-ND-TXCW-2S.png' ?>" alt="Fifth slide" width="100%">
+					<img src="<?= base_url('/png/Slider/Slider-ND-TXCW-2S.png') ?>" alt="Fifth slide" width="100%">
 					</picture>
 				</a>
 			</div>
 			<div class="item">
-				<a href="<?= LANG_URL .('shop') ?>">
+				<a href="<?= LANG_URL .('/shop') ?>">
 					<picture>
 					<!-- Small image for screens with a max-width of 768px -->
-					<source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-FC-A-2S-mobile.png' ?>" media="(max-width: 768px)" >
+					<source srcset="<?= base_url('/png/Slider/Slider-ND-FC-A-2S-mobile.png') ?>" media="(max-width: 768px)" >
 					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
-					<!-- <source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-FC-A-2S-mobile.png' ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
+					<!-- <source srcset="<?= base_url('/png/Slider/Slider-ND-FC-A-2S-mobile.png')  ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
 					<!-- Large image for screens with a min-width of 1201px -->
-					<source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-FC-A-2S.png' ?>" media="(min-width: 1201px)">
+					<source srcset="<?= base_url('/png/Slider/Slider-ND-FC-A-2S.png') ?>" media="(min-width: 1201px)">
 
 					<!-- Fallback image for browsers that don't support srcset -->
-					<img src="<?= LANG_URL .'/png/Slider/Slider-ND-FC-A-2S.png' ?>" alt="Fifth slide" width="100%">
+					<img src="<?= base_url('/png/Slider/Slider-ND-FC-A-2S.png') ?>" alt="Fifth slide" width="100%">
 					</picture>
 				</a>
 			</div>
@@ -67,14 +67,29 @@
 				<a href="https://onelink.to/q7zjvn">
 					<picture>
 					<!-- Small image for screens with a max-width of 768px -->
-					<source srcset="<?= LANG_URL .'png/Slider/Slider-App-5-mobile.png' ?>" media="(max-width: 768px)" >
+					<source srcset="<?= base_url('png/Slider/Slider-App-5-mobile.png') ?>" media="(max-width: 768px)" >
 					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
-					<!-- <source srcset="<?= LANG_URL .'/png/Slider/Slider-App-5-mobile.png' ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
+					<!-- <source srcset="<?= base_url('/png/Slider/Slider-App-5-mobile.png') ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
 					<!-- Large image for screens with a min-width of 1201px -->
-					<source srcset="<?= LANG_URL .'/png/Slider/Slider-App-5.png' ?>" media="(min-width: 1201px)">
+					<source srcset="<?= base_url('/png/Slider/Slider-App-5.png') ?>" media="(min-width: 1201px)">
 
 					<!-- Fallback image for browsers that don't support srcset -->
-					<img src="<?= LANG_URL .'/png/Slider/Slider-App-5.png' ?>" alt="Fifth slide" width="100%">
+					<img src="<?= base_url('/png/Slider/Slider-App-5.png') ?>" alt="Fifth slide" width="100%">
+					</picture>
+				</a>
+			</div>
+			<div class="item">
+				<a href="<?= LANG_URL .('/ND-HRC-2S-37') ?>">
+					<picture>
+					<!-- Small image for screens with a max-width of 768px -->
+					<source srcset="<?= base_url('/png/Slider/Slider-ND-HXC-2S-mobile.png')  ?>" media="(max-width: 768px)" >
+					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
+					<!-- <source srcset="<?= base_url('/png/Slider/Slider-ND-HXC-2S-mobile.png') ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
+					<!-- Large image for screens with a min-width of 1201px -->
+					<source srcset="<?= base_url('/png/Slider/Slider-ND-HXC-2S.png') ?>" media="(min-width: 1201px)">
+
+					<!-- Fallback image for browsers that don't support srcset -->
+					<img src="<?= base_url('/png/Slider/Slider-ND-HXC-2S.png') ?>" alt="Fifth slide" width="100%">
 					</picture>
 				</a>
 			</div>
@@ -82,29 +97,14 @@
 				<a href="<?= LANG_URL .('ND-HRC-2S-37') ?>">
 					<picture>
 					<!-- Small image for screens with a max-width of 768px -->
-					<source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-HXC-2S-mobile.png' ?>" media="(max-width: 768px)" >
+					<source srcset="<?= base_url('/png/Slider/Slider-ND-HXCE-2S-mobile2.png') ?>" media="(max-width: 768px)" >
 					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
-					<!-- <source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-HXC-2S-mobile.png' ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
+					<!-- <source srcset="<?= base_url('/png/Slider/Slider-ND-HXCE-2S-mobile2.png') ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
 					<!-- Large image for screens with a min-width of 1201px -->
-					<source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-HXC-2S.png' ?>" media="(min-width: 1201px)">
+					<source srcset="<?= base_url('/png/Slider/Slider-ND-HXCE-2S2.png') ?>" media="(min-width: 1201px)">
 
 					<!-- Fallback image for browsers that don't support srcset -->
-					<img src="<?= LANG_URL .'/png/Slider/Slider-ND-HXC-2S.png' ?>" alt="Fifth slide" width="100%">
-					</picture>
-				</a>
-			</div>
-			<div class="item">
-				<a href="<?= LANG_URL .('ND-HRC-2S-37') ?>">
-					<picture>
-					<!-- Small image for screens with a max-width of 768px -->
-					<source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-HXCE-2S-mobile2.png' ?>" media="(max-width: 768px)" >
-					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
-					<!-- <source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-HXCE-2S-mobile2.png' ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
-					<!-- Large image for screens with a min-width of 1201px -->
-					<source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-HXCE-2S2.png' ?>" media="(min-width: 1201px)">
-
-					<!-- Fallback image for browsers that don't support srcset -->
-					<img src="<?= LANG_URL .'/png/Slider/Slider-ND-HXCE-2S2.png' ?>" alt="Fifth slide" width="100%">
+					<img src="<?= base_url('/png/Slider/Slider-ND-HXCE-2S2.png') ?>" alt="Fifth slide" width="100%">
 					</picture>
 				</a>
 			</div>
@@ -112,14 +112,14 @@
 				<a href="<?= LANG_URL .('Touch-Funk-Wandsender-2-Kanal-433-MHz-ND-TXCW-2S-75') ?>">
 					<picture>
 					<!-- Small image for screens with a max-width of 768px -->
-					<source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-TXCW-2S-BK-mobile.png' ?>" media="(max-width: 768px)" >
+					<source srcset="<?= base_url('/png/Slider/Slider-ND-TXCW-2S-BK-mobile.png') ?>" media="(max-width: 768px)" >
 					<!-- Medium image for screens with a min-width of 769px and max-width of 1200px -->
 					<!-- <source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-TXCW-2S-BK-mobile.png' ?>" media="(min-width: 769px) and (max-width: 1200px)"> -->
 					<!-- Large image for screens with a min-width of 1201px -->
-					<source srcset="<?= LANG_URL .'/png/Slider/Slider-ND-TXCW-2S-BK.png' ?>" media="(min-width: 1201px)">
+					<source srcset="<?= base_url('/png/Slider/Slider-ND-TXCW-2S-BK.png') ?>" media="(min-width: 1201px)">
 
 					<!-- Fallback image for browsers that don't support srcset -->
-					<img src="<?= LANG_URL .'/png/Slider/Slider-ND-TXCW-2S-BK.png' ?>" alt="Fifth slide" width="100%">
+					<img src="<?= base_url('/png/Slider/Slider-ND-TXCW-2S-BK.png') ?>" alt="Fifth slide" width="100%">
 					</picture>
 				</a>
 			</div>
@@ -152,7 +152,7 @@
                 <div class="panel panel-default">
 					<div class="panel-heading">
 						<a href="#">
-							<img src="<?=  LANG_URL . '/attachments/shop_images/arrival.jpg' ?>" class="img-responsive" alt="Card Image">
+							<img src="<?=  base_url('/attachments/shop_images/arrival.jpg') ?>" class="img-responsive" alt="Card Image">
 						</a>
 					</div>
                     <div class="panel-body">
@@ -179,7 +179,7 @@
                 <div class="panel panel-default">
 					<div class="panel-heading">
 						<a href="#">
-							<img src="<?= LANG_URL . '/attachments/shop_images/arrival.jpg' ?>" class="img-responsive" alt="Card Image">
+							<img src="<?= base_url('/attachments/shop_images/arrival.jpg')  ?>" class="img-responsive" alt="Card Image">
 						</a>
 					</div>
                     <div class="panel-body">
@@ -215,7 +215,7 @@
 			</div>
 			<div class="col-xs-2 col-sm-3">
 				<div class="d-flex justify-content-center align-items-end h-100">
-					<a href="<?= LANG_URL .('contacts'); ?>">
+					<a href="<?= LANG_URL .('/contacts'); ?>">
 						<svg class="svg-custom-style" fill="currentColor" viewBox="0 0 600 1100" width="600" height="1100"
 							xmlns="http://www.w3.org/2000/svg">
 							<path

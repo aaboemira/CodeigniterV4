@@ -10,7 +10,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <a href="<?= base_url('register') ?>" type="submit" name="forget_password" class="btn btn-primary btn-new pull-left" id="btnContactUs">
+            <a href="<?= LANG_URL.'/register' ?>" type="submit" name="forget_password" class="btn btn-primary btn-new pull-left" id="btnContactUs">
                 <?= lang_safe('login') ?>
             </a>
         </div>

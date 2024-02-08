@@ -715,7 +715,7 @@ th {
                     },
                     body: JSON.stringify(orderData) // send the order data received from PayPal
                 });
-            })
+230            })
             .then(function(saveOrderResponse) {
                 if (!saveOrderResponse.ok) {
                     throw new Error('Network response was not OK');

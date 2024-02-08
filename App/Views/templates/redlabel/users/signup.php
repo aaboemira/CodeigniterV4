@@ -206,7 +206,7 @@ $languages = [
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-6">
-                                                <label for="company"><?=lang_safe('company')?> *</label>
+                                                <label for="company"><?=lang_safe('company')?> </label>
                                                 <input type="text" name="company" id="company" class="form-control"
                                                         value="<?= set_value('company') ?>"
                                                         placeholder="<?= lang_safe('company') ?>">
@@ -223,7 +223,7 @@ $languages = [
                                         </span>
                                         <input type="text" name="email" class="form-control_email" id="email_register"
                                                value="<?= set_value('email') ?>"
-                                               placeholder="<?= lang_safe('enter_email') ?>" =""
+                                               placeholder="<?= lang_safe('enter_email') ?>" 
                                         style="width: 100%"/>
                                     </div>
                                 </div>
@@ -292,7 +292,7 @@ $languages = [
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="language"><?= lang_safe('lang') ?> *</label>
-                                                <select size="1" id="language" name="language" class="form-control">
+                                                <select size="1" id="language" name="language" class="form-control" style="height:34px !important;">
                                                     <?php
                                                         foreach ($languages as $languageKey => $languageName) {
                                                             echo "<option value=\"$languageKey\">$languageName</option>";

@@ -80,7 +80,7 @@
                         </div>
                         <div class="flex-address" >
                             <?= $userAddresses['billing_first_name'] . ' ' . $userAddresses['billing_last_name'] ?>
-                                <a href="<?= base_url('address/edit') ?>" class="change_address">
+                                <a href="<?= LANG_URL.'/address/edit' ?>" class="change_address">
                                     <?= lang_safe('change_address') ?>
                                 </a>
                         </div>
@@ -109,7 +109,7 @@
                         </div>
                         <div class="flex-address">
                             <?= $userAddresses['shipping_first_name'] . ' ' . $userAddresses['shipping_last_name'] ?>
-                            <a href="<?= base_url('address/edit') ?>" class="change_address">
+                            <a href="<?= LANG_URL.'/address/edit' ?>" class="change_address">
                                 <?= lang_safe('change_address') ?>
                             </a>
                         </div>

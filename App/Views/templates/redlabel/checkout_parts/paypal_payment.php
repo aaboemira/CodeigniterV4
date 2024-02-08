@@ -54,9 +54,9 @@
         <input type="hidden" name="currency_code" value="<?= CURRENCY_KEY ?>">
         <input type="hidden" value="utf-8" name="charset">
         <input type="hidden" value="<?= base_url('checkout/paypal_success') ?>" name="return">
-        <input type="hidden" value="<?= base_url('checkout') ?>" name="cancel_return">
+        <input type="hidden" value="<?= LANG_URL.'/checkout' ?>" name="cancel_return">
         <input type="hidden" value="authorization" name="paymentaction">
-        <a href="<?= base_url('checkout3') ?>" class="btn btn-lg btn-danger btm-10"><?= lang_safe('cancel_payment') ?></a>
+        <a href="<?= LANG_URL.'/checkout3' ?>" class="btn btn-lg btn-danger btm-10"><?= lang_safe('cancel_payment') ?></a>
         <button type="submit" class="btn btn-lg btn-success btm-10"><?= lang_safe('go_to_paypal') ?> <i
                 class="fa fa-cc-paypal" aria-hidden="true"></i></button>
     </form>
@@ -65,7 +65,7 @@
     <div style="margin-top:70px"></div>
     <?php
     } else {
-        redirect(base_url('shop'));
+        redirect(LANG_URL.'/shop');
     }
     ?>
 </div>

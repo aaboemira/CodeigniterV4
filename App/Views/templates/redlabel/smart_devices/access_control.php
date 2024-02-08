@@ -204,7 +204,7 @@
                                 <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editGuestModal" data-device-id data-guest-id="<?= $guest['id'] ?>" data-guest-email="<?= $guest['email'] ?>" data-guest-password="<?= $guest['guest_password'] ?>" data-can-control="<?= $guest['can_control'] ?>">
                                     <i class="fa fa-pencil"></i> <?= lang_safe('edit') ?>
                                 </button>
-                                <a href="<?= base_url('/smartdevices/deleteGuest/' . $guest['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('<?= lang_safe('confirm_delete_guest') ?>');">
+                                <a href="<?= LANG_URL.'/smartdevices/deleteGuest/' . $guest['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('<?= lang_safe('confirm_delete_guest') ?>');">
                                     <i class="fa fa-trash"></i> <?= lang_safe('delete') ?>
                                 </a>
                             </td>

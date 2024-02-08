@@ -168,7 +168,7 @@
             <!-- Cards with Icons -->
             <div class="row placeholders">
                 <!-- User Profile Card -->
-                <a href="<?=base_url("/account")?>">
+                <a href="<?=LANG_URL."/account"?>">
                     <div class="col-xs-12 col-sm-6 col-md-4 placeholder">
                         <div class="panel panel-default dashboard-card">
                             <div class="dashboard-card-header">
@@ -184,7 +184,7 @@
                     </div>
                 </a>
                 <!-- Orders Card -->
-                <a href="<?= base_url("/orders") ?>">
+                <a href="<?= LANG_URL."/orders" ?>">
                 <div class="col-xs-12 col-sm-6 col-md-4 placeholder">
                     <div class="panel panel-default dashboard-card">
                         <div class="dashboard-card-header">
@@ -200,7 +200,7 @@
                 </a>
 
                 <!-- Smart Home Card -->
-                <a href="<?= base_url("/smart-home") ?>">
+                <a href="<?= LANG_URL."/smart-home" ?>">
                     <div class="col-xs-12 col-sm-6 col-md-4 placeholder">
                         <div class="panel panel-default dashboard-card">
                             <div class="dashboard-card-header">
@@ -216,7 +216,7 @@
                 </a>
 
                 <!-- Address Card -->
-                <a href="<?= base_url("/address") ?>">
+                <a href="<?= LANG_URL."/address" ?>">
                     <div class="col-xs-12 col-sm-6 col-md-4 placeholder">
                         <div class="panel panel-default dashboard-card">
                             <div class="dashboard-card-header">
@@ -233,7 +233,7 @@
                 </a>
 
                 <!-- Newsletter Card -->
-                <a href="<?= base_url("/newsletter") ?>">
+                <a href="<?= LANG_URL."/newsletter" ?>">
                     <div class="col-xs-12 col-sm-6 col-md-4 placeholder">
                         <div class="panel panel-default dashboard-card">
                             <div class="dashboard-card-header">
@@ -249,7 +249,7 @@
                 </a>
 
                 <!-- Password Card -->
-                <a href="<?= base_url("/password") ?>">
+                <a href="<?= LANG_URL."/password" ?>">
                     <div class="col-xs-12 col-sm-6 col-md-4 placeholder">
                         <div class="panel panel-default dashboard-card">
                             <div class="dashboard-card-header">

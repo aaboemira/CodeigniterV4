@@ -184,7 +184,7 @@
                             <button type="submit" class="btn btn-primary"><?=lang_safe('oauth_authorize_button')?></button>
                         <?php else: ?>
                             <button type="submit" class=" login-btn btn btn-primary"><?=lang_safe('oauth_login_button') ?></button>
-                            <p><?=lang_safe('oauth_register')?><a href='<?=base_url('register')?>' target='_blank'> <?=lang_safe('oauth_register_link')?></a></p>
+                            <p><?=lang_safe('oauth_register')?><a href='<?=LANG_URL.'/register'?>' target='_blank'> <?=lang_safe('oauth_register_link')?></a></p>
                         <?php endif; ?>
                     </div>
                     <?php if ($isLoggedIn): ?>

@@ -215,7 +215,7 @@
                     <p class="email">
                     <?= session()->get('email') ?>
                     </p>
-                    <a class="logout" href="<?= base_url('/logout') ?>">Logout</a>
+                    <a class="logout" href="<?= LANG_URL.'/logout' ?>">Logout</a>
                 </div>
             </div>
         </div>
@@ -382,7 +382,7 @@
             })
             .then(function(postPaymentData) {
                 console.log('Post-payment processing completed', postPaymentData);
-                window.location.href = '<?= base_url('/paypal/success') ?>';
+                window.location.href = '<?= LANG_URL.'/paypal/success' ?>';
 
             })
             .catch(function(error) {

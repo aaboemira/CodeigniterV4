@@ -13,7 +13,7 @@
                 </button>
             </div>
             <div>
-                <a href="<?= base_url('/register') ?>" class="btn btn-new">
+                <a href="<?= LANG_URL.'/register' ?>" class="btn btn-new">
                     <?= lang_safe('login') ?> <!-- Replace with your language label for 'Login' -->
                 </a>
             </div>

@@ -447,7 +447,7 @@
             </div>
             <div class="add-refresh-buttons">
                 <div class="add-device-button">
-                        <a href="<?= base_url('/smartdevices/add') ?>" class="btn btn-new">
+                        <a href="<?= LANG_URL.'/smartdevices/add' ?>" class="btn btn-new">
                             <?= lang_safe('add_device') ?>
                         </a>
                     </div>
@@ -578,7 +578,7 @@
                                                     <?php if (!$device['is_guest']): ?>
                                                         <li>
                                                             <a
-                                                                href="<?= base_url('/smartdevices/editDevice/' . $device['device_id']) ?>">
+                                                                href="<?= LANG_URL.'/smartdevices/editDevice/' . $device['device_id'] ?>">
                                                                 <i class="fa fa-pencil"></i> Edit Device
                                                             </a>
                                                         </li>
@@ -589,7 +589,7 @@
                                                             // Provide a different link for guests
                                                             ?>
                                                             <li>
-                                                                <a href="<?= base_url('/smartdevices/deleteGuestDevice/' . $device['device_id']) ?>"
+                                                                <a href="<?= LANG_URL.'/smartdevices/deleteGuestDevice/' . $device['device_id'] ?>"
                                                                 onclick="return confirm('Are you sure you want to remove this device from your guest list?');">
                                                                     <i class="fa fa-trash"></i> Remove Device
                                                                 </a>
@@ -599,7 +599,7 @@
                                                             // Provide the regular delete link for device owners
                                                             ?>
                                                             <li>
-                                                                <a href="<?= base_url('/smartdevices/deleteDevice/' . $device['device_id']) ?>"
+                                                                <a href="<?= LANG_URL.'/smartdevices/deleteDevice/' . $device['device_id'] ?>"
                                                                 onclick="return confirm('Are you sure you want to delete this device?');">
                                                                     <i class="fa fa-trash"></i> Delete Device
                                                                 </a>
@@ -610,7 +610,7 @@
                                                     <?php if (!$device['is_guest']): ?>
                                                         <li>
                                                             <a
-                                                                href="<?= base_url('/smartdevices/accessControl/' . $device['device_id']) ?>">
+                                                                href="<?= LANG_URL.'/smartdevices/accessControl/' . $device['device_id'] ?>">
                                                                 <i class="fa fa-users"></i> Access Control
                                                             </a>
                                                         </li>

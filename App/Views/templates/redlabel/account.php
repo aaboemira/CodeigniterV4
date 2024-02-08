@@ -131,7 +131,7 @@ $languages = [
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-6">
-                                            <label for="company"><?=lang_safe('company')?> *</label>
+                                            <label for="company"><?=lang_safe('company')?> </label>
                                             <input type="text" name="company" id="company" class="form-control"
                                                     value="<?= set_value('company', $userInfo['company']) ?>"
                                                     placeholder="<?= lang_safe('company') ?>">
@@ -200,7 +200,7 @@ $languages = [
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="country"><?= lang_safe('country') ?> *</label>
-                                            <select size="1" id="country" name="country" class="form-control">
+                                            <select size="1" id="country" name="country" class="form-control" style="height:34px !important;">
                                                 <?php
                                                 foreach ($countries as $countryName) {
                                                     $selected = ($countryName == $userInfo['billing_country']) ? 'selected' : '';
@@ -213,7 +213,7 @@ $languages = [
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="language"><?= lang_safe('lang') ?> *</label>
-                                            <select size="1" id="language" name="language" class="form-control">
+                                            <select size="1" id="language" name="language" class="form-control" style="height:34px !important;">
                                                 <?php
                                                 foreach ($languages as $languageKey => $languageName) {
                                                     $selected = ($languageKey == $userInfo['lang']) ? 'selected' : '';
