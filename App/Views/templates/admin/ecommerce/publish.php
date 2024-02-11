@@ -23,6 +23,7 @@ if (session('result_publish')) {
 <form method="POST" action="" enctype="multipart/form-data">
     <input type="hidden" value="<?= isset($_POST['folder']) ? htmlspecialchars($_POST['folder']) : $timeNow ?>"
         name="folder">
+
     <div class="form-group available-translations">
         <b>Languages</b>
         <?php foreach ($languages as $language) { ?>
@@ -171,11 +172,20 @@ if (session('result_publish')) {
                 value="<?= $trans_load != null && isset($trans_load[$language->abbr]['delivery_status']) ? $trans_load[$language->abbr]['delivery_status'] : '' ?>"
                 class="form-control">
         </div>
+        <div class="form-group for-shop">
+        <label >image_name (<?= $language->name ?><img
+                    src="<?= base_url('attachments/lang_flags/' . $language->flag) ?>" alt="">)</label>
+        <input type="text" id="imageName" name="image_name[]" placeholder="image_name text" class="form-control"
+        value="<?= $trans_load != null && isset($trans_load[$language->abbr]['image']) ? $trans_load[$language->abbr]['image'] : '' ?>"
+        >
     </div>
+    </div>
+
     <?php
         $i++;
     }
     ?>
+
     <div class="form-group bordered-group">
         <?php
         if (isset($_POST['image']) && $_POST['image'] != null) {
@@ -329,6 +339,8 @@ if (session('result_publish')) {
                     <input type="hidden"
                         value="<?= isset($_POST['folder']) ? htmlspecialchars($_POST['folder']) : $timeNow ?>"
                         name="folder">
+                        <input type="hidden" id="hiddenImageName" name="image_name">
+
                     <label for="others">Select images</label>
                     <input type="file" name="others[]" id="others" multiple />
                 </form>
@@ -366,3 +378,13 @@ if (session('result_publish')) {
         </div>
     </div>
 </div>
+<script>
+$('#imageName').change(function () {
+    // Copy the value from the imageText input to the hiddenImageName input
+    var imageTextValue = document.getElementById('imageName').value;
+    console.log("iam here")
+    console.log("=====")
+
+    document.getElementById('hiddenImageName').value = imageTextValue;
+});
+</script>

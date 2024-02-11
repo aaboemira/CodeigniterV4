@@ -32,6 +32,7 @@ class Publish extends ADMIN_Controller
         $this->login_check();
         $is_update = false;
         $trans_load = null;
+
         if ($id > 0 && $_POST == null) {
             $_POST = $this->Products_model->getOneProduct($id);
             $trans_load = $this->Products_model->getTranslations($id);
@@ -80,75 +81,95 @@ class Publish extends ADMIN_Controller
 
     private function uploadImage()
     {
-        $newName = '';
         $file = $this->request->getFile('userfile');
-        // Check if a file was uploaded
-        if ($file->isValid()) {
-            // Validate file type using finfo
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $fileMimeType = finfo_file($finfo, $file->getPathName());
-            // Set allowed file types
-            $allowedMimeTypes = ['image/jpg', 'image/jpeg','image/png']; // Specify allowed MIME types
-            if (in_array($fileMimeType, $allowedMimeTypes)) {
-                // Set the target directory for file upload
-                $newName = $file->getRandomName();
-                $uploadPath = './attachments/shop_images/';
-                $file->move($uploadPath, $newName);
-                if(!$file->hasMoved()) {
-                    $newName = '';
-                }
+        $newName = '';
+        // Check if a file was uploaded and is valid
+        if ($file->isValid() && !$file->hasMoved()) {
+            // Validate MIME type
+            $allowedMimeTypes = ['image/jpeg', 'image/png'];
+            $this->logger->info($file->getMimeType());
+            
+            
+            if (in_array($file->getMimeType(), $allowedMimeTypes)) {
+                $uploadPath = './attachments/shop_images/'; // Ensure this path is correct and writable
+                $extension = $file->getClientExtension(); // Extract the file extension
+                if((!empty($_POST['image_name'][0])))
+                $originalName = $_POST['image_name'][0] . '.' . $extension;
+                else $originalName = $file->getRandomName(); // Append the extension to the provided name
+                // Move the original file
+                $file->move($uploadPath, $originalName);
+                $newName = $originalName; // Keep track of the new name
+                
+                // Proceed to create resized versions
+                $this->resizeAndSaveImage($uploadPath, $originalName, 380, 380);
+                $this->resizeAndSaveImage($uploadPath, $originalName, 1200, 1200);
+            } else {
+                log_message('error', 'Unsupported image type: ' . $file->getMimeType());
             }
         }
-        if($newName == '') {
+    
+        if ($newName == '') {
             log_message('error', 'Image Upload Error');
         }
-
         return $newName;
     }
-
+    
+    private function resizeAndSaveImage($uploadPath, $filename, $width, $height)
+    {
+        $imageService = \Config\Services::image();
+        $fileInfo = pathinfo($filename);
+        $newFilename = "{$fileInfo['filename']}-{$width}x{$height}.{$fileInfo['extension']}";
+        
+        $imageService->withFile($uploadPath . $filename)
+                     ->fit($width, $height, 'center')
+                     ->save($uploadPath . $newFilename);
+        
+    }
+    
     /*
      * called from ajax
      */
 
-    public function do_upload_others_images()
-    {
-        if ($this->request->isAJAX()) {
-            $upath = '.' . DIRECTORY_SEPARATOR . 'attachments' . DIRECTORY_SEPARATOR . 'shop_images' . DIRECTORY_SEPARATOR . $_POST['folder'] . DIRECTORY_SEPARATOR;
-            if (!file_exists($upath)) {
-                mkdir($upath, 0777);
-            }
+     public function do_upload_others_images()
+{
+    if ($this->request->isAJAX()) {
+        $upath = '.' . DIRECTORY_SEPARATOR . 'attachments' . DIRECTORY_SEPARATOR . 'shop_images' . DIRECTORY_SEPARATOR . $this->request->getPost('folder') . DIRECTORY_SEPARATOR;
+        if (!file_exists($upath)) {
+            mkdir($upath, 0777, true);
+        }
 
-            $files = $_FILES;
-            $cpt = count($_FILES['others']['name']);
-            for ($i = 0; $i < $cpt; $i++) {
-                unset($_FILES);
-                $_FILES['others']['name'] = $files['others']['name'][$i];
-                $_FILES['others']['type'] = $files['others']['type'][$i];
-                $_FILES['others']['tmp_name'] = $files['others']['tmp_name'][$i];
-                $_FILES['others']['error'] = $files['others']['error'][$i];
-                $_FILES['others']['size'] = $files['others']['size'][$i];
+        // Get all uploaded files
+        $files = $this->request->getFiles();
+        // Get the image name from POST request
+        $imageName = $this->request->getPost('image_name');
+        // Initialize a counter
+        $counter = 1;
 
-                $file = $this->request->getFile('others');
-                // Check if a file was uploaded
-                if ($file->isValid()) {
-                    // Validate file type using finfo
-                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                    $fileMimeType = finfo_file($finfo, $file->getPathName());
-                    // Set allowed file types
-                    $allowedMimeTypes = ['image/jpg', 'image/jpeg','image/png']; // Specify allowed MIME types
-                    if (in_array($fileMimeType, $allowedMimeTypes)) {
-                        // Set the target directory for file upload
-                        $newName = $file->getRandomName();
-                        $uploadPath = $upath;
-                        $file->move($uploadPath, $newName);
-                        if($file->hasMoved()) {
-                            
-                        }
+        if ($files) {
+            foreach ($files['others'] as $file) {
+                if ($file->isValid() && !$file->hasMoved()) {
+                    $allowedMimeTypes = ['image/jpeg', 'image/png'];
+                    if (in_array($file->getMimeType(), $allowedMimeTypes)) {
+                        // Use imageName with counter if not empty, otherwise use a random name
+                        $fileExtension = $file->getClientExtension();
+                        $newName = !empty($imageName) ? $imageName . '(' . $counter . ').' . $fileExtension : $file->getRandomName();
+
+                        $file->move($upath, $newName);
+
+                        // Create resized versions for each uploaded file
+                        $this->resizeAndSaveImage($upath, $newName, 380, 380);
+                        $this->resizeAndSaveImage($upath, $newName, 1200, 1200);
+
+                        // Increment the counter for the next file
+                        $counter++;
                     }
                 }
             }
         }
     }
+}
+
+     
 
     public function loadOthersImages()
     {
@@ -159,7 +180,8 @@ class Publish extends ADMIN_Controller
                 if ($dh = opendir($dir)) {
                     $i = 0;
                     while (($file = readdir($dh)) !== false) {
-                        if (is_file($dir . $file)) {
+                        // Skip the resized images based on naming convention
+                        if (is_file($dir . $file) && !preg_match('/-\d+x\d+/', $file)) {
                             $output .= '
                                 <div class="other-img" id="image-container-' . $i . '">
                                     <img src="' . base_url('attachments/shop_images/' . $_POST['folder'] . '/' . $file) . '" style="width:100px; height: 100px;">
@@ -181,17 +203,39 @@ class Publish extends ADMIN_Controller
             return $output;
         }
     }
+    
 
     /*
      * called from ajax
      */
 
-    public function removeSecondaryImage()
-    {
-        if ($this->request->isAJAX()) {
-            $img = '.' . DIRECTORY_SEPARATOR . 'attachments' . DIRECTORY_SEPARATOR . 'shop_images' . DIRECTORY_SEPARATOR . '' . $_POST['folder'] . DIRECTORY_SEPARATOR . $_POST['image'];
-            unlink($img);
-        }
-    }
+     public function removeSecondaryImage()
+     {
+         if ($this->request->isAJAX()) {
+             $baseDir = '.' . DIRECTORY_SEPARATOR . 'attachments' . DIRECTORY_SEPARATOR . 'shop_images' . DIRECTORY_SEPARATOR . $_POST['folder'] . DIRECTORY_SEPARATOR;
+             $originalImg = $baseDir . $_POST['image'];
+             
+             // Delete the original image
+             if (file_exists($originalImg)) {
+                 unlink($originalImg);
+             }
+             
+             // Attempt to delete resized versions of the image
+             $fileInfo = pathinfo($originalImg);
+             $filenameWithoutExt = $fileInfo['filename'];
+             $extension = $fileInfo['extension'];
+     
+             // Define the sizes you want to check for and delete
+             $sizes = ['380x380', '1200x1200'];
+             foreach ($sizes as $size) {
+                 // Construct the filename for the resized image
+                 $resizedImg = "{$baseDir}{$filenameWithoutExt}-{$size}.{$extension}";
+                 if (file_exists($resizedImg)) {
+                     unlink($resizedImg); // Delete the resized image
+                 }
+             }
+         }
+     }
+     
 
 }
