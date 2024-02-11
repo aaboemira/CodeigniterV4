@@ -175,9 +175,12 @@ $routes->post('/paypal/update-paypal-order', 'PaypalController::updatePaypalOrde
 $routes->get('/oauth/authorize', 'OAuthController::showAuthorize');
 $routes->post('/oauth/authorize', 'OAuthController::authorize');
 $routes->post('/oauth/changeAccount', 'OAuthController::changeAccount');
-
 $routes->post('/oauth/token', 'OAuthController::token');
 $routes->get('/oauth/userinfo', 'OAuthController::userInfo');
+
+$routes->post('/smart-home/fulfilment', 'SmartHomeController::fulfillment');
+
+$routes->post('/sync/fulfillment', 'SyncController::fulfillment');
 
 
 $routes->add('account', "Account::account");
