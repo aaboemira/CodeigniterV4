@@ -25,6 +25,14 @@ class Auth_model extends Model
         $query = $builder->get();
         return $query->getRowArray() !== null;
     }
+    public function validateClientID($clientId)
+    {
+        $builder = $this->db->table('oauth_clients');
+        $builder->where('client_id', $clientId);
+
+        $query = $builder->get();
+        return $query->getRowArray() !== null;
+    }
     public function validateClientCredentials($clientId, $clientSecret)
     {
         $builder = $this->db->table('oauth_clients');
