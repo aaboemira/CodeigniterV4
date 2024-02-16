@@ -711,7 +711,7 @@ class Public_model extends Model
     public function setSubscribe($array)
     {
         $builder = $this->db->table('subscribed');
-        $num = $builder->where('email', $arr['email'])->countAllResults();
+        $num = $builder->where('email', $array['email'])->countAllResults();
         if ($num == 0) {
             $builder->insert($array);
         }
@@ -836,7 +836,8 @@ class Public_model extends Model
             'mobile' => $post['mobile'],
             'lang' => $post['language'],
             'account_type' => $post['account_type'],
-            'verify_token' => $post['verify_token']
+            'verify_token' => $post['verify_token'],
+            'newsletter'=>$post['subscribe_newsletter']
         ];
             // Add company to user data if it's set
         if (isset($post['company'])) {
@@ -1220,16 +1221,29 @@ class Public_model extends Model
         $query = $builder->get();
         return $query->getRowArray();
     }
-    public function getSmartHomeDevicesByUID($uid, $limit, $page)
+    public function getSmartHomeDevicesByUID($uid, $limit = null, $page = 0)
     {
-        $offset = ($page - 1) * $limit; // Correctly calculate the offset
-
         $builder = $this->db->table('smart_devices');
         $builder->select('*');
         $builder->where('user_id', $uid);
-        $builder->limit($limit, $offset);
+    
+        if (isset($limit) && $page > 0) {
+            $offset = ($page - 1) * $limit;
+            $builder->limit($limit, $offset);
+        }
+        
         $query = $builder->get();
         return $query->getResultArray();
+    }
+    public function getSmartDeviceBySerialAndUserId($uid,$serial){
+        $builder = $this->db->table('smart_devices');
+        $builder->select('*');
+        $builder->where('serial_number', $serial);
+        $builder->where('user_id', $uid);
+
+        $query = $builder->get();
+        return $query->getRowArray();
+
     }
     public function getGuestDevicesByUserId($userId)
     {
@@ -1332,7 +1346,26 @@ class Public_model extends Model
         $builder->where('device_id', $deviceId);
         return $builder->delete();
     }
+    public function deleteSmartDeviceBySerialAndUserId($userId, $serial)
+    {
+        return $this->db->table('smart_devices') // Replace 'devices_table' with your actual table name
+                        ->where('user_id', $userId)
+                        ->where('serial_number', $serial)
+                        ->delete();
+    }
 
+    public function getLatestDeviceUpdateForUser($userId) {
+        $query = $this->db->table('smart_devices')
+                          ->selectMax('last_updated')
+                          ->where('user_id', $userId)
+                          ->get();
+        
+        if ($query->getNumRows() > 0) {
+            return $query->getRow()->last_updated;
+        }
+        return null;
+    }
+    
     public function getGuestsForDevice($deviceId)
     {
         $builder = $this->db->table('smart_devices_guests');
