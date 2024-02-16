@@ -119,8 +119,17 @@ class OAuthController extends BaseController
     public function token()
     {
         try {
-            $request = $this->request->getJSON(true);
+            $contentType = $this->request->getHeaderLine('Content-Type');
 
+            // Parse the request data based on the content type
+            if (strpos($contentType, 'application/json') !== false) {
+                $request = $this->request->getJSON(true);
+            } elseif (strpos($contentType, 'application/x-www-form-urlencoded') !== false) {
+                $request = $this->request->getPost();
+            } else {
+                return $this->fail("Unsupported content type", 400);
+            }
+            
             if (!$this->oauthModel->validateClientCredentials($request['client_id'], $request['client_secret'])) {
                 return $this->failUnauthorized("Invalid client credentials");
             }
@@ -181,7 +190,72 @@ class OAuthController extends BaseController
             return $this->failServerError("An error occurred".$e);
         }
     }
+    public function appLogin()
+    {
+        try {
+            $jsonData = $this->request->getJSON(true);
+            $client_id = $jsonData['client_id'] ?? null;
+            $email = $jsonData['email'] ?? null;
+            $password = $jsonData['password'] ?? null;
+            $requestId = $jsonData['requestId'] ?? null;
+    
+            // Validate required parameters
+            if (is_null($client_id) || is_null($email) || is_null($password) || is_null($requestId)) {
+                return $this->fail('Missing required parameters', 400);
+            }
+    
+            // Validate client credentials
+            if (!$this->oauthModel->validateClientID($client_id)) {
+                return $this->failUnauthorized("Invalid client credentials");
+            }
+    
+            // Attempt to log in the user
+            $usersController = new \App\Controllers\Users();
+            $loginSuccess = $usersController->performLogin($email, $password);
+            if (!$loginSuccess) {
+                return $this->failUnauthorized("Invalid user credentials");
+            }
 
+            // Assuming login success returns user ID or similar
+            $user =$this->Public_model->getUserProfileInfoByEmail($email); // Adjust based on actual return value
+            $userId=$user->id;
+            // Generate access token and refresh token
+            $accessToken = generateAccessToken(); // This function should be defined to generate a token
+            $refreshToken = generateRefreshToken(); // This function should also be defined to generate a token
+    
+            // Save tokens with a model method, adjust parameters as necessary
+            $this->oauthModel->saveAccessToken([
+                'access_token' => $accessToken,
+                'client_id' => $client_id,
+                'user_id' => $userId,
+                'expires' => date('Y-m-d H:i:s', time() + 3600) // 1 hour expiry
+            ]);
+    
+            $this->oauthModel->saveRefreshToken([
+                'refresh_token' => $refreshToken,
+                'client_id' => $client_id,
+                'user_id' => $userId,
+                'expires' => date('Y-m-d H:i:s', time() + 1209600) // 2 weeks expiry
+            ]);
+    
+            // Return the tokens
+            $response = [
+                'requestId' => $requestId,
+                'payload' => [ // Separate part for the token data
+                    'token_type' => 'Bearer',
+                    'access_token' => $accessToken,
+                    'refresh_token' => $refreshToken, // Optional
+                    'expires_in' => 3600 // Token expiration time in seconds
+                ]
+            ];
+            return $this->respondSuccess($response, 200);
+    
+        } catch (\Exception $e) {
+            return $this->failServerError("An error occurred: " . $e->getMessage());
+        }
+    }
+    
+    
     // public function userInfo()
     // {
     //     try {
