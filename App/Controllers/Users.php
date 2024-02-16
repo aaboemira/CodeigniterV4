@@ -269,11 +269,12 @@ class Users extends BaseController
         $country=$_POST['country'];
         $fullName=$_POST['first_name'].' '. $_POST['last_name'];
 
-        $verificationToken = random_string('alnum', 32);
+        $verificationToken = bin2hex(random_bytes(16)); // Generates a 32-character hexadecimal string
         $email = $this->sendVerificationEmail($email,$country,$fullName, $verificationToken);
-        //$email=true;
         if($email) {
             $_POST['verify_token'] = $verificationToken;
+            $_POST['subscribe_newsletter'] = isset($_POST['subscribe_newsletter']) ? 1 : 0;
+
             $this->user_id = $this->Public_model->registerUser($_POST);
             session()->setFlashdata('resultSend', lang_safe('verify_mail', 'Verificaiton link sent to your email. Please verify.'));
             return true;

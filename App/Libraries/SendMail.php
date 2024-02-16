@@ -127,7 +127,7 @@ class SendMail
         //$this->mail->setFrom('kontakt@nodedevices.de', 'Node Devices');
         $this->mail->setFrom('a.aboemira1@gmail.com', 'Node Devices');
         $this->mail->addAddress($toEmail);
-        if ($data->billing_country=='Deutschland')$german=true;
+        if ($data->lang=='deu')$german=true;
         // Email subject
         if($german){
             $html=$this->passwordEmailHelper->generateEmailHTML($data,$resetLink);
