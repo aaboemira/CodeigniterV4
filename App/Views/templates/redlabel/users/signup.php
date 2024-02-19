@@ -365,8 +365,7 @@ $languages = [
                                 </div>
 
                                 <div class="form-group">
-                                    <input type="checkbox" id="subscribe_newsletter"
-                                           name="subscribe_newsletter" <?php if (isset($_POST['subscribe_newsletter']) && $_POST['subscribe_newsletter'] == 'on') echo 'checked'; ?>>
+                                <input type="checkbox" id="subscribe_newsletter" name="subscribe_newsletter" value="1" <?php echo (isset($_POST['subscribe_newsletter']) && $_POST['subscribe_newsletter'] == "1") ? 'checked' : ''; ?>>
                                     <label class="form-check-label" for="subscribe_newsletter">
                                         <?= lang_safe('newsletter_agreement') ?>
                                     </label>
