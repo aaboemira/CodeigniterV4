@@ -970,6 +970,15 @@ div.product-sort .form-group {
     padding: 12px;
     position: relative;
 }
+.payment-type-box .radio_text{
+    margin-left: 40px; 
+    width:90%;
+}
+@media only screen and (min-width: 700px){
+    .payment-type-box .radio_text{
+        width:100%;
+    }
+}
 
 .payment-type-box .top-header {
     background-color: #fff;
@@ -4387,6 +4396,118 @@ li.login-dropdown-li .login-icon:hover{
         font-size: smaller;
     }
 }
+
+/* Support */
+        #support .alone h2{
+        margin-bottom:20px;
+        color:black;
+        font-size:2.2em;
+        }
+        .support-div .description{
+            margin:15px 0 25px 0 ;
+        }
+        .support-image-container{
+        margin-top:15px;
+        }
+        .support-contact-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .support-contact-item {
+            display: flex;
+            align-items: center; /* Center the icon vertically */
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 2px;
+            border-top: 1px solid #cccaca;
+            padding:25px 10px;
+
+        }
+
+        .support-contact-icon {
+            margin-right: 3em;
+            max-width: 5rem;
+            align-self: center; /* Align the icon to the top */
+        }
+
+        .support-contact-text {
+            display: flex;
+            flex-direction: column; /* Stack text lines vertically */
+            justify-content: center;
+        }
+
+        .support-contact-text-line {
+            font-size: 1.6em;
+            color: #333;
+            margin: 0; /* Remove default margin from paragraphs */
+        }
+        .support-contact-item:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .support-description{
+            font-size:1.5em;
+        }
+        .support-contact-list a {
+            text-decoration: none; /* Removes underline from links */
+        }
+        .support-contact-list a:focus , .support-contact-list a:hover {
+            outline: none; /* Removes the outline */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .support-image-container{
+                    display: none;
+
+            }
+            .support-contact-icon {
+                width: 40px; /* Smaller icon size for mobile */
+                height: 40px; /* Maintain aspect ratio */
+            }
+            .support-contact-text-line {
+                font-size: 1.4em; /* Smaller font size for mobile */
+            }
+            .support-description{
+                font-size:1.4em;
+            }
+        }
+        .free-shipping-info{
+            width:50%;
+        }
+        @media (max-width: 768px) {
+            .free-shipping-info{
+                width:100%;
+            }
+        }
+        .free-shipping-info p {
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 14px;
+            border-left: 4px solid #ccc; /* Change this color to match your site's theme */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .free-shipping-info p .highlight {
+            font-weight: bold;
+            color: #007bff; /* Change this color to match your site's theme */
+        }
+        .checkout2 .payment-type-box {
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding:20px 15px;
+            margin-top: 20px;
+        }
+        .checkout2 .radio_input{
+             margin-right:20px;
+        }
+        .checkout2 .payment-div{
+        margin-bottom: 20px;
+        }
+
 /*    !* Adjust dropdown menu styles for mobile *!*/
 
 /*    .dropdown.login-dropdown-li .dropdown-menu {*/
