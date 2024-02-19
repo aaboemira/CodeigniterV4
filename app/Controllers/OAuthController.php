@@ -166,7 +166,7 @@ class OAuthController extends BaseController
             } elseif ($request['grant_type'] == 'refresh_token') {
                 $refreshData = $this->oauthModel->validateRefreshToken($request['refresh_token']);
                 if (!$refreshData) {
-                    return $this->fail("Invalid refresh token", 400);
+                    return $this->fail("invalid_grant", 400);
                 }
 
                 $newAccessToken = generateAccessToken();
