@@ -40,26 +40,35 @@ class Orders_model extends Model
         $result = $builder->get($limit, $page);
         return $result->getResultArray();
     }
-
-    public function changeOrderStatus($id, $to_status)
+    public function getOrderStatuses()
     {
+        $query = $this->db->query("SHOW COLUMNS FROM orders WHERE Field = 'order_status'");
+        $type = $query->getRow()->Type;
+        preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
+        $enum = explode("','", $matches[1]);
+        return $enum;
+    }
+    
+public function changeOrderStatus($id, $to_status)
+{
+    $builder = $this->db->table('orders');
+    $builder->where('id', $id);
+    $builder->select('order_status');
+    $result1 = $builder->get();
+    $res = $result1->getRowArray();
+
+    $result = true;
+    if ($res['order_status'] != $to_status) {
         $builder = $this->db->table('orders');
         $builder->where('id', $id);
-        $builder->select('processed');
-        $result1 = $builder->get();
-        $res = $result1->getRowArray();
-
-        $result = true;
-        if ($res['processed'] != $to_status) {
-            $builder = $this->db->table('orders');
-            $builder->where('id', $id);
-            $result = $builder->update(array('processed' => $to_status, 'viewed' => '1'));
-            if ($result == true) {
-                $this->manageQuantitiesAndProcurement($id, $to_status, $res['processed']);
-            }
+        $result = $builder->update(array('order_status' => $to_status, 'viewed' => '1'));
+        if ($result == true) {
+            $this->manageQuantitiesAndProcurement($id, $to_status, $res['order_status']);
         }
-        return $result;
     }
+    return $result;
+}
+
 
     private function manageQuantitiesAndProcurement($id, $to_status, $current)
     {
@@ -94,21 +103,21 @@ class Orders_model extends Model
         }
     }
 
-    public function setBankAccountSettings($post)
-    {
-        $query = $this->db->query('SELECT id FROM bank_accounts');
-        if ($query->countAllResults() == 0) {
-            $id = 1;
-        } else {
-            $result = $query->getRowArray();
-            $id = $result['id'];
-        }
-        $post['id'] = $id;
-        if (!$builder->replace('bank_accounts', $post)) {
-            ///log_message('error', print_r($builder->error(), true));
-            show_error(lang_safe('database_error'));
-        }
-    }
+    // public function setBankAccountSettings($post)
+    // {
+    //     $query = $this->db->query('SELECT id FROM bank_accounts');
+    //     if ($query->countAllResults() == 0) {
+    //         $id = 1;
+    //     } else {
+    //         $result = $query->getRowArray();
+    //         $id = $result['id'];
+    //     }
+    //     $post['id'] = $id;
+    //     if (!$builder->replace('bank_accounts', $post)) {
+    //         ///log_message('error', print_r($builder->error(), true));
+    //         show_error(lang_safe('database_error'));
+    //     }
+    // }
 
     public function getBankAccountSettings()
     {

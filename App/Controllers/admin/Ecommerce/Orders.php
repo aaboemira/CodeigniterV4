@@ -117,6 +117,8 @@ class Orders extends ADMIN_Controller
         $data['paypal_email'] = $this->Home_admin_model->getValueStore('paypal_email');
         $data['cashondelivery_visibility'] = $this->Home_admin_model->getValueStore('cashondelivery_visibility');
         $data['bank_account'] = $this->Orders_model->getBankAccountSettings();
+        $data['orderStatuses'] = $this->Orders_model->getOrderStatuses();
+
         if ($page == 0) {
             $this->saveHistory('Go to orders page');
         }

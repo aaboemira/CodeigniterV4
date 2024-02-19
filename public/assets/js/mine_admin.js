@@ -334,11 +334,11 @@ function changeTextualPageStatus(id) {
 }
 
 //products publish
-function removeSecondaryProductImage(image, folder, container) {
+function removeSecondaryProductImage(image, folder,abbr, container) {
     $.ajax({
         type: "POST",
         url: urls.removeSecondaryImage,
-        data: {image: image, folder: folder}
+        data: {image: image, folder: folder,abbr:abbr}
     }).done(function (data) {
         $('#image-container-' + container).remove();
     });
@@ -386,10 +386,12 @@ $('button[type="submit"]').click(function (e) {
 
 // Upload More Images on publish product
 $('.finish-upload').click(function () {
+    var langAbbr = $(this).attr('data-lang-abbr'); // Get the language abbreviation from the button attribute
     $('.finish-upload .finish-text').hide();
     $('.finish-upload .loadUploadOthers').show();
-    var someFormElement = document.getElementById('uploadImagesForm');
+    var someFormElement = document.getElementById('uploadImagesForm_' + langAbbr); // Use the language abbreviation to select the correct form
     var formData = new FormData(someFormElement);
+
     $.ajax({
         url: urls.uploadOthersImages,
         type: "POST",
@@ -401,12 +403,16 @@ $('.finish-upload').click(function () {
         {
             $('.finish-upload .finish-text').show();
             $('.finish-upload .loadUploadOthers').hide();
-            reloadOthersImagesContainer();
-            $('#modalMoreImages').modal('hide');
-            document.getElementById("uploadImagesForm").reset();
+            reloadOthersImagesContainer(langAbbr);
+            console.log("-----------------------------")
+            console.log(langAbbr)
+             // Pass the language abbreviation to the function that reloads the images container
+            $('#modalMoreImages_' + langAbbr).modal('hide'); // Use the language abbreviation to close the correct modal
+            document.getElementById("uploadImagesForm_" + langAbbr).reset();
         }
     });
 });
+
 
 // Edit Categories Positions
 var editPositionField;
@@ -445,33 +451,44 @@ $('.locale-change').click(function () {
     $(this).addClass('active');
 });
 
-function reloadOthersImagesContainer() {
-    $('.others-images-container').empty();
-    $('.others-images-container').load(urls.loadOthersImages, {"folder": $('[name="folder"]').val()});
+function reloadOthersImagesContainer(langAbbr) {
+    $('.others-images-container_' + langAbbr).empty(); // Use the language abbreviation to select the correct container
+    $('.others-images-container_' + langAbbr).load(urls.loadOthersImages, {
+        "folder": $('[name="folder"]').val(),
+        "lang_abbr": langAbbr // Pass the language abbreviation to the server
+    });
 }
 
 // Orders
 function changeOrdersOrderStatus(id, to_status, products, userEmail) {
+    const statusMap = {
+        'received': { text: 'Received', class: 'bg-success' },
+        'receipt_confirmed': { text: 'Receipt Confirmed', class: 'bg-success' },
+        'confirmed': { text: 'Confirmed', class: 'bg-success' },
+        'preparing_shipment': { text: 'Preparing Shipment', class: 'bg-success' },
+        'shipped': { text: 'Shipped', class: 'bg-success' },
+        'delivered': { text: 'Delivered', class: 'bg-success' },
+        'completed': { text: 'Completed', class: 'bg-info' },
+        'rejected': { text: 'Rejected', class: 'bg-danger' },
+        'canceled': { text: 'Canceled', class: 'bg-danger' },
+        'revocation_done': { text: 'Revocation Done', class: 'bg-info' },
+        'default': { text: 'Unknown', class: 'bg-secondary' }
+    };
+
     $.post(urls.changeOrdersOrderStatus, {the_id: id, to_status: to_status, products: products, userEmail: userEmail}, function (data) {
         if (data == '1') {
-            if (to_status == 0) {
-                $('[data-action-id="' + id + '"] div.status b').text('No processed');
-                $('[data-action-id="' + id + '"]').removeClass().addClass('bg-danger text-center');
-            }
-            if (to_status == 1) {
-                $('[data-action-id="' + id + '"] div.status b').text('Processed');
-                $('[data-action-id="' + id + '"]').removeClass().addClass('bg-success  text-center');
-            }
-            if (to_status == 2) {
-                $('[data-action-id="' + id + '"] div.status b').text('Rejected');
-                $('[data-action-id="' + id + '"]').removeClass().addClass('bg-warning  text-center');
-            }
+            const statusInfo = statusMap[to_status] || statusMap['default'];
+            $('[data-action-id="' + id + '"] div.status b').text(statusInfo.text);
+            $('[data-action-id="' + id + '"]').removeClass().addClass(statusInfo.class + ' text-center');
             $('#new-order-alert-' + id).remove();
         } else {
             alert('Error with status change. Please check logs!');
         }
     });
 }
+
+
+
 
 function changeProductStatus(id) {
     var to_status = $("#to-status").val();

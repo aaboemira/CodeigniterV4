@@ -41,17 +41,30 @@ if (!isset($_GET['settings'])) {
                 <tbody>
                 <?php
                 foreach ($orders as $tr) {
-                    if ($tr['processed'] == 0) {
-                        $class = 'bg-danger';
-                        $type = 'No processed';
-                    }
-                    if ($tr['processed'] == 1) {
-                        $class = 'bg-success';
-                        $type = 'Processed';
-                    }
-                    if ($tr['processed'] == 2) {
-                        $class = 'bg-warning';
-                        $type = 'Rejected';
+                    
+                    $class = '';
+                    $type = '';
+                    switch ($tr['order_status']) {
+                        case 'revocation_done':
+                            $class = 'bg-info';
+                            $type = 'Revocation Done';
+                            break;
+                        case 'completed':
+                            $class = 'bg-success';
+                            $type = 'Confirmed';
+                            break;
+                        case 'rejected':
+                            $class = 'bg-danger';
+                            $type = 'Rejected';
+                            break;
+                        case 'canceled':
+                            $class = 'bg-danger';
+                            $type = 'Canceled';
+                            break;
+                        // Add more cases as needed
+                        default:
+                            $class = 'bg-success';
+                            $type = 'Unknown';
                     }
                     ?>
                     <tr>
@@ -81,22 +94,17 @@ if (!isset($_GET['settings'])) {
                         <td><i class="fa fa-phone" aria-hidden="true"></i>
                             <?= $tr['phone'] ?>
                         </td>
-                        <td class="<?= $class ?> text-center" data-action-id="<?= $tr['id'] ?>">
+                        <td class="bg-success text-center" data-action-id="<?= $tr['id'] ?>">
                             <div class="status" style="padding:5px; font-size:16px;">
-                                -- <b>
-                                    <?= $type ?>
+                            -- <b>
+                                    <?= lang_safe('order_status_'.$tr['order_status'])  ?>
                                 </b> --
                             </div>
-                            <div style="margin-bottom:4px;"><a href="javascript:void(0);"
-                                                               onclick="changeOrdersOrderStatus(<?= $tr['id'] ?>, 1, '<?= htmlentities($tr['products']) ?>', '<?= $tr['email'] ?>')"
-                                                               class="btn btn-success btn-xs">Processed</a></div>
-                            <div style="margin-bottom:4px;"><a href="javascript:void(0);"
-                                                               onclick="changeOrdersOrderStatus(<?= $tr['id'] ?>, 0)"
-                                                               class="btn btn-danger btn-xs">No
-                                    processed</a></div>
-                            <div style="margin-bottom:4px;"><a href="javascript:void(0);"
-                                                               onclick="changeOrdersOrderStatus(<?= $tr['id'] ?>, 2)"
-                                                               class="btn btn-warning btn-xs">Rejected</a></div>
+                            <select class="form-control" onchange="changeOrdersOrderStatus(<?= $tr['id'] ?>, this.value, '<?= htmlentities($tr['products']) ?>', '<?= $tr['email'] ?>')">
+                                <?php foreach ($orderStatuses as $status): ?>
+                                    <option value="<?= $status ?>" <?= $tr['order_status'] == $status ? 'selected' : '' ?>><?= ucfirst($status) ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </td>
                         <td class="text-center">
                             <a href="javascript:void(0);" class="btn btn-default more-info" data-toggle="modal"
