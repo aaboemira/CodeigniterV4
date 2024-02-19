@@ -52,34 +52,50 @@ class SyncController extends ResourceController
 
     public function sync($requestId, $userId)
     {
-        // Retrieve the list of devices for the user
-        $devices = $this->publicModel->getSmartHomeDevicesByUID($userId);
+        // Retrieve the list of devices owned by the user
+        $ownedDevices = $this->publicModel->getSmartHomeDevicesByUID($userId);
     
-        // Format the devices array
-        $formattedDevices = array_map(function ($device) {
-            $guests = $this->publicModel->getGuestsByDevice($device['device_id']);
-            foreach ($guests as &$guest) {
-                $guest['guest_password'] = decryptData($guest['guest_password'], '@@12@@');
-            }
+        // Format the owned devices array
+        $formattedOwnedDevices = array_map(function ($device) {
             return [
                 'device_name' => $device['device_name'],
                 'serial_number' => $device['serial_number'],
                 'UID' => decryptData($device['UID'], '@@12@@'),
                 'password' => decryptData($device['password'], '@@12@@'),
-                'guests' => $guests,
+                'is_guest' => 0,
+                'can_control'=> 1
             ];
-        }, $devices);
+        }, $ownedDevices);
+    
+        // Retrieve the list of devices where the user is a guest
+        $guestDevices = $this->publicModel->getGuestDevicesByUserId($userId);
+    
+        // Format the guest devices array
+        $formattedGuestDevices = array_map(function ($device) {
+            return [
+                'device_name' => $device['device_name'],
+                'serial_number' => $device['serial_number'],
+                'UID' => decryptData($device['UID'], '@@12@@'),
+                'password' => decryptData($device['guest_password'], '@@12@@'),
+                'is_guest' => 1,
+                'can_control'=>$device['can_control']
+            ];
+        }, $guestDevices);
+    
+        // Combine owned and guest devices
+        $allDevices = array_merge($formattedOwnedDevices, $formattedGuestDevices);
     
         // Construct the response
         $response = [
             'requestId' => $requestId,
             'payload' => [
-                'devices' => $formattedDevices,
+                'devices' => $allDevices,
             ],
         ];
     
         return $this->response->setJSON($response);
     }
+    
     
     public function syncCheck($requestId,$intent)
     {
@@ -124,106 +140,108 @@ class SyncController extends ResourceController
     {
         $jsonData = $this->request->getJSON(true);
         $requestId = $jsonData['requestId'] ?? null;
-        
+    
         if (is_null($requestId)) {
             return $this->fail('Missing requestId', 400);
         }
-        
+    
         $accessToken = $this->getAccessTokenFromHeader();
         $userId = $this->validateToken($accessToken);
-        
+    
         if (!$userId) {
             return $this->failUnauthorized("Invalid or missing access token");
         }
-        
-        $devicesList = $jsonData['payload']['devices'] ?? null;
-        
-        if (is_null($devicesList)) {
-            return $this->fail('Missing devices list', 400);
+    
+        $devicesList = $jsonData['payload']['devices'] ?? [];
+        $guestDevicesList = $jsonData['payload']['guest_devices'] ?? [];
+    
+        try {
+            // Process owned devices
+            $this->processDevices($devicesList, $userId);
+    
+            // Process guest devices
+            $this->processGuestDevices($guestDevicesList, $userId);
+    
+            $response = [
+                'requestId' => $requestId,
+                'status' => 'success',
+                'message' => 'Device and guest device sync complete.'
+            ];
+        } catch (\Exception $e) {
+            // Catch the exception and return the error response
+            return $this->fail($e->getMessage(), $e->getCode());
         }
-
-        foreach ($devicesList as $deviceData) {
-            $this->processDeviceData($deviceData, $userId);
-        }
-
-        // Cleanup devices not included in the upload
-        $this->cleanupDevices($userId, $devicesList);
-
-        $response = [
-            'requestId' => $requestId,
-            'status' => 'success',
-            'message' => 'Device and guest sync complete.'
-        ];
-
+    
         return $this->response->setJSON($response);
     }
+    
 
-    private function processDeviceData($deviceData, $userId)
+
+
+    private function processDevices($devicesList, $userId)
     {
-        $serial = $deviceData['serial_number'];
-        $deviceName = $deviceData['device_name'];
-        $UID = encryptData($deviceData['UID'], '@@12@@');
-        $password = encryptData($deviceData['password'], '@@12@@');
-
-        // Check if device exists
-        $existingDevice = $this->publicModel->getSmartDeviceBySerialAndUserId($userId, $serial);
-        $deviceId = $existingDevice['device_id'] ?? null;
-        if ($existingDevice) {
-            // Update device
-            $updateData = [
-                'device_name' => $deviceName,
-                'UID' => $UID ,
-                'password' => $password,
-                'device_id'=>$existingDevice['device_id'],
-                'serial_number'=>$serial
-            ];
-            $this->publicModel->updateSmartDevice($updateData);
-        } else {
-            // Add new device
-            $newDeviceData = [
-                'user_id' => $userId,
-                'device_name' => $deviceName,
-                'serial_number' => $serial,
-                'UID' => $UID,
-                'password' => $password,
-            ];
-            $deviceId = $this->publicModel->saveSmartDevice($newDeviceData);
-        }
-
-        // Process guests if present
-        if (isset($deviceData['guests']) && is_array($deviceData['guests'])) {
-            $this->processGuestsData($deviceData['guests'], $deviceId);
-        }
-        $this->cleanupGuests($deviceId, $deviceData['guests'] ?? []);
-    }
-
-    private function processGuestsData($guestsData, $deviceId)
-    {
-        foreach ($guestsData as $guestData) {
-            $guestEmail = $guestData['email'];
-            $guestCanControl = $guestData['can_control'];
-            $guestPassword = encryptData($guestData['guest_password'], '@@12@@');
-
-            // Check if guest exists for this device
-            $existingGuest = $this->publicModel->getGuestByDeviceAndEmail($deviceId, $guestEmail);
-            if ($existingGuest) {
-                // Update guest
-                $guestUpdateData = [
-                    'can_control' => $guestCanControl,
-                    'guest_password' => $guestPassword,
+        foreach ($devicesList as $deviceData) {
+            $serial = $deviceData['serial_number'];
+            $deviceName = $deviceData['device_name'];
+            $UID = encryptData($deviceData['UID'], '@@12@@');
+            $password = encryptData($deviceData['password'], '@@12@@');
+    
+            // Check if the device already exists for the user
+            $existingDevice = $this->publicModel->getSmartDeviceBySerialAndUserId($userId, $serial);
+            if ($existingDevice) {
+                // Update the existing device
+                $updateData = [
+                    'device_name' => $deviceName,
+                    'UID' => $UID,
+                    'password' => $password,
+                    'serial_number' => $serial,
+                    'device_id' => $existingDevice['device_id']
                 ];
-                $this->publicModel->updateGuestSync($existingGuest['id'], $guestUpdateData);
+                $this->publicModel->updateSmartDevice($updateData);
             } else {
-                // Add new guest
-                $newGuestData = [
-                    'device_id' => $deviceId,
-                    'email' => $guestEmail,
-                    'can_control' => $guestCanControl,
-                    'guest_password' => $guestPassword,
+                // Add a new device for the user
+                $newDeviceData = [
+                    'user_id' => $userId,
+                    'device_name' => $deviceName,
+                    'serial_number' => $serial,
+                    'UID' => $UID,
+                    'password' => $password,
                 ];
-                $this->publicModel->addGuestToSmartDevice($newGuestData);
+                $this->publicModel->saveSmartDevice($newDeviceData);
             }
         }
+    
+        // Cleanup devices not included in the upload
+        $this->cleanupDevices($userId, $devicesList);
+    }
+    
+    private function processGuestDevices($guestDevicesList, $userId)
+    {
+        foreach ($guestDevicesList as $guestDeviceData) {
+            // Adapted guest device processing logic here
+            $serial = $guestDeviceData['serial_number'];
+            $password = encryptData($guestDeviceData['guest_password'], '@@12@@');
+            $canControl = $guestDeviceData['can_control'] ?? 1;
+            $userEmail = $this->publicModel->getUserEmail($userId);
+
+            $device = $this->publicModel->getSmartDeviceBySerial($serial);
+            if ($device) {
+                $existingGuest = $this->publicModel->getGuestByDeviceAndEmail($device['device_id'], $userEmail);
+                if ($existingGuest) {
+                    // Update guest
+                    $guestUpdateData = ['can_control' => $canControl, 'guest_password' => $password];
+                    $this->publicModel->updateGuestSync($existingGuest['id'], $guestUpdateData);
+                } else {
+                    // Add new guest
+                    $newGuestData = ['device_id' => $device['device_id'], 'email' => $userEmail, 'can_control' => $canControl, 'guest_password' => $password, 'guest_id' => $userId];
+                    $this->publicModel->addGuestToSmartDevice($newGuestData);
+                }
+            }else{
+                throw new \Exception("Guest device with serial number '{$serial}' not found", 400);
+            }
+        }
+        // Cleanup guest devices not included in the upload
+        $this->cleanupGuestDevices($userId, $guestDevicesList);
     }
 
     private function cleanupDevices($userId, $devicesList)
@@ -237,18 +255,22 @@ class SyncController extends ResourceController
             $this->publicModel->deleteSmartDeviceBySerialAndUserId($userId, $serial);
         }
     }
-    private function cleanupGuests($deviceId, $uploadedGuests)
-    {
-        $currentGuests = $this->publicModel->getGuestsByDevice($deviceId);
-        $currentGuestEmails = array_column($currentGuests, 'email');
-        $uploadedGuestEmails = array_column($uploadedGuests, 'email');
 
-        $guestsToDelete = array_diff($currentGuestEmails, $uploadedGuestEmails);
-        foreach ($guestsToDelete as $email) {
-            $this->publicModel->deleteGuestByDeviceAndEmail($deviceId, $email);
+    private function cleanupGuestDevices($userId, $guestDevicesList)
+    {
+        $allGuestDeviceSerials = array_column($guestDevicesList, 'serial_number');
+        $currentGuestDevices = $this->publicModel->getGuestDevicesByUserId($userId);
+        $currentGuestDeviceSerials = array_column($currentGuestDevices, 'serial_number');
+    
+        $guestDevicesToDelete = array_diff($currentGuestDeviceSerials, $allGuestDeviceSerials);
+        foreach ($guestDevicesToDelete as $serial) {
+            $device = $this->publicModel->getSmartDeviceBySerial($serial);
+            if ($device) {
+                $this->publicModel->deleteGuestByDeviceAndUserId($device['device_id'], $userId);
+            }
         }
     }
-
+    
     private function validateToken($accessToken) {
         if (!$accessToken) {
             return false;
