@@ -171,6 +171,8 @@ $routes->post('/paypal/calculate-shipping', 'PaypalController::calculateShipping
 $routes->post('/paypal/update-paypal-order', 'PaypalController::updatePaypalOrderWithShipping');
 
 
+$routes->add('/support', "Support::index");
+
 
 $routes->get('/oauth/authorize', 'OAuthController::showAuthorize');
 $routes->post('/oauth/authorize', 'OAuthController::authorize');
@@ -180,7 +182,8 @@ $routes->get('/oauth/userinfo', 'OAuthController::userInfo');
 
 $routes->post('/smart-home/fulfilment', 'SmartHomeController::fulfillment');
 
-$routes->post('/sync/fulfillment', 'SyncController::fulfillment');
+$routes->post('/app/auth', 'OAuthController::appLogin');
+$routes->post('/app-sync/fulfillment', 'SyncController::fulfillment');
 
 
 $routes->add('account', "Account::account");
@@ -282,6 +285,8 @@ $routes->add('admin/emails', "admin\Settings\Emails");
 $routes->add('admin/emails/(:num)', "admin\Settings\Emails::index/$1");
 $routes->add('admin/history', "admin\Settings\History");
 $routes->add('admin/history/(:num)', "admin\Settings/History::index/$1");
+$routes->add('admin/shipping', "admin\Settings\Shipping");
+
 // ADVANCED SETTINGS
 $routes->add('admin/languages', "admin\AdvancedSettings\Languages");
 $routes->add('admin/filemanager', "admin\AdvancedSettings\Filemanager");
@@ -295,6 +300,7 @@ $routes->add('admin/logout', "admin\Home\Home::logout");
 $routes->add('admin/changePass', "admin\Home\Home::changePass");
 $routes->add('admin/uploadOthersImages', "admin\Ecommerce\Publish::do_upload_others_images");
 $routes->add('admin/loadOthersImages', "admin\Ecommerce\Publish::loadOthersImages");
+
 
 /*
   | -------------------------------------------------------------------------
