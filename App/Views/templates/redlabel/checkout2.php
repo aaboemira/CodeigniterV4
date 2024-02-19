@@ -1,4 +1,4 @@
-<div class="container" id="checkout-page">
+<div class="container checkout2" id="checkout-page">
 
 <?php
     if (!isset($_SESSION['shipping_address']) || !isset($_SESSION['billing_address'])) {
@@ -30,16 +30,27 @@
                         <?php
                         foreach ($shipments as $shipment) {
                             ?>
-                            <div class="radio_div">
-                                <input class="radio_input" type="radio" name="shipping_type" id="shipping_type" value="<?= $shipment['title'] ?>" data-price="<?= $shipment['price'] ?>" <?php if(isset($_SESSION['shipping_type'])){ if ($_SESSION['shipping_type'] == $shipment['title']) echo 'checked="checked"';} else{ if(!$checked_shipping){ $checked_shipping = true; echo 'checked="checked"';}} ?> />
-                                <label for="shipping_type">  </label>
-                                <span class="radio_label">   <?=  $shipment['title'] ?> | <?=  $shipment['price'] != '' ? number_format($shipment['price'], 2) : 0 ?> <?=CURRENCY ?></span>
+                            <div class="payment-div">
+                                <div class="radio_div" style="margin-bottom: 10px;">
+                                    <input class="radio_input" type="radio" name="shipping_type" id="shipping_type" value="<?= $shipment['title'] ?>" data-price="<?= $shipment['price'] ?>" <?php if(isset($_SESSION['shipping_type'])){ if ($_SESSION['shipping_type'] == $shipment['title']) echo 'checked="checked"';} else{ if(!$checked_shipping){ $checked_shipping = true; echo 'checked="checked"';}} ?> />
+                                    <label for="shipping_type">  </label>
+                                    <span class="radio_label">   <?=  $shipment['title'] ?> | <?=  $shipment['price'] != '' ? number_format($shipment['price'], 2) : 0 ?> <?=CURRENCY ?></span>
+                                </div>
+                                <?php if (!empty($shipment['description'])) { ?>
+                                        <p class="radio_text"><?= strip_tags($shipment['description'], '<br><strong>') ?></p>
+                                <?php }?>
                             </div>
-                            <?php
-                        } ?>
+                       <?php } ?>
                         <input type="hidden" name="selected_shipping_price" id="selected_shipping_price" value="">
-
+                        <?php if (!is_null($freeShippingInfo['difference'])) : ?>
+                            <div class="free-shipping-info">
+                                <?php if (!$freeShippingInfo['isEligible']) : ?>
+                                    <p>Add <span class="highlight"><?= number_format($freeShippingInfo['difference'], 2) ?> <?= CURRENCY ?></span> more to your cart for free shipping!</p>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
+
 			<?php } else {
 					?>
 					<script>
@@ -60,24 +71,33 @@
 				<div class="payment-type-box">
 
 					<?php if ($cashondelivery_visibility == 1) { ?>
-					<div class="radio_div">
+                    <div class="payment-div">
+					<div class="radio_div"style="margin-bottom: 10px;">
 						<input class="radio_input" type="radio" name="payment_type" id="payment_type" value="cashOnDelivery" <?php if(isset($_SESSION['payment_type'])){ if ($_SESSION['payment_type'] == 'cashOnDelivery') echo 'checked="checked';} else{ if(!$checked_payment){ $checked_payment = true; echo 'checked="checked';}} ?> />
 						<label for="payment_type"> </label>
 						<span class="radio_label" >  <?= lang_safe('cash_on_delivery') ?></span>
 					</div>
-					<?php } if (filter_var($paypal_email, FILTER_VALIDATE_EMAIL)) { ?>
-					<div class="radio_div">
+                    <p class="radio_text" >  <?= lang_safe('cash_on_delivery_text','Sie zahlen einfach vorab und erhalten die Ware bequem und günstig bei Zahlu ...') ?></p>
+                    </div>
+                    <?php } if (filter_var($paypal_email, FILTER_VALIDATE_EMAIL)) { ?>
+                    <div class="payment-div">
+					<div class="radio_div"style="margin-bottom: 10px;">
 						<input class="radio_input" type="radio" name="payment_type" id="payment_type" value="PayPal" <?php if(isset($_SESSION['payment_type'])){ if ($_SESSION['payment_type'] == 'PayPal') echo 'checked="checked';} else{ if(!$checked_payment){ $checked_payment = true; echo 'checked="checked';}} ?> />				
 						<label for="payment_type"> </label>
 						<span class="radio_label" >  <?= lang_safe('paypal') ?></span>
 					</div>
-					<?php } if ($bank_account['iban'] != null) { ?>
-					<div class="radio_div">
+                    <p class="radio_text"  >  <?= lang_safe('paypal_text','Bezahlung per PayPal - einfach, schnell und sicher.') ?></p>
+					</div>
+                    <?php } if ($bank_account['iban'] != null) { ?>
+                    <div class="payment-div">
+					<div class="radio_div" style="margin-bottom: 10px;">
 						<input class="radio_input" type="radio" name="payment_type" id="payment_type" value="Bank" <?php if(isset($_SESSION['payment_type'])){ if ($_SESSION['payment_type'] == 'Bank') echo 'checked="checked';} else{ if(!$checked_payment){ $checked_payment = true; echo 'checked="checked';}} ?> />
 						<label for="payment_type"> </label>
 						<span class="radio_label" >  <?= lang_safe('bank_payment') ?></span>
 					</div>
-					<?php  } ?>
+                    <p class="radio_text" >  <?= lang_safe('bank_text','Sie zahlen einfach vorab und erhalten die Ware bequem und günstig bei Zahlu ...') ?></p>
+					</div>
+                    <?php  } ?>
                 </div>
 
 
