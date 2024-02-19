@@ -62,8 +62,12 @@ class SmartHomeController extends ResourceController
             return $this->failUnauthorized("Invalid or missing access token");
         }
         $userDevices = $this->publicModel->getSmartHomeDevicesByUID($userId);
+        $guestDevices = $this->publicModel->getGuestDevicesByUserIdAndControl($userId, true);
+    
+        // Combine the user's own devices and guest devices
+        $allDevices = array_merge($userDevices, $guestDevices);
         $devices = [];
-        foreach ($userDevices as $device) {
+        foreach ($allDevices as $device) {
             // Map your device data to the expected SYNC response format
             $devices[] = [
                 'id' => $device['device_id'], // Use the correct field for your device's unique identifier
