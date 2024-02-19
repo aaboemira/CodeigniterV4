@@ -1,6 +1,60 @@
 </div><!-- content end -->
 </div><!-- wrapper end -->
+<style>/* Custom styles for reducing space between images */
+.no-padding {
+    padding: 0 !important;
+}
 
+.apps-container .img-responsive.custom-size {
+    width: 90%; /* Make the image fill the column */
+    height: auto; /* Keep the aspect ratio */
+    margin: 0 2% auto; /* Center the image if smaller than the column width */
+}
+.apps-container .box{
+    padding:30px;
+    border: 1.5px solid #808080fa;
+    margin-top: 30px;
+}
+
+@media (min-width: 900px) {
+    .apps-container .box{
+        margin: 60px 19% 40px;
+    }
+}
+
+.apps-container #title {
+  position: absolute;
+  top: -14px;
+  left:20%;
+  margin-left: 1em;
+  display: inline;
+  background-color: black;
+  color:#808080fa;
+  padding: 2px 20px;
+}
+
+@media (max-width: 600px) {
+   .apps-container .img-responsive.custom-size{
+        width: 96%;
+        margin: 0 2% 0 0;
+    }
+    .apps-container .box{
+        padding:15px 20px;
+        margin-top: 30px;
+    }
+    .apps-container .row .container-fluid{
+        padding: 0px;
+    }
+    .apps-container #title {
+
+        left:7%;
+    }
+    .apps-container .col-md-4.no-padding:last-child {
+        display: none; /* This will hide the last .col-md-4.no-padding element within .apps-container, which should be your Windows Store link */
+    }
+}
+
+</style>
 <!-- Site footer -->
 <footer>
     <div class="site-footer" id="footer">
@@ -13,13 +67,13 @@
                         <li><a href="<?=LANG_URL?>"><?=lang_safe('nav_startseite')?> </a></li>
                         <li><a href="<?=LANG_URL . '/' . "shop"?>"><?=lang_safe('shop')?></a></li>
                         <?php
-if (!empty($nonDynPages)) {
-    foreach ($nonDynPages as $addonPage) {?>
+                            if (!empty($nonDynPages)) {
+                                foreach ($nonDynPages as $addonPage) {?>
                         <li><a href="<?=LANG_URL . '/' . $addonPage?>"><?=mb_ucfirst(lang_safe($addonPage))?> </a></li>
                         <?php
-}
-}
-?>
+                                }
+                            }
+                            ?>
                         <li><a href="<?=LANG_URL . '/contacts'?>"><?=lang_safe('nav_kontakt')?></a>
                         <li>
                     </ul>
@@ -88,31 +142,45 @@ if (!empty($nonDynPages)) {
 	                    <img class="shipping_img " alt="dhl" src="<?=base_url('png/DHL_logo_rgb50.png')?>" />
 	                    <img class="shipping_img " alt="Visa" src="<?=base_url('png/DHL_Express_logo_rgb50.png')?>" />
 	                    <p class="footer_ship_cost"> <?=lang_safe('footer_ship_with')?> </p>
-	                    <p class="footer_ship_cost1"> -&nbsp <?=lang_safe('footer_free_ship_germany')?> -&nbsp <?=lang_safe('footer_ship_EU')?></p>
+	                    <p class="footer_ship_cost1"> -&nbsp <?=lang_safe('footer_free_ship_germany')?><br> -&nbsp <?=lang_safe('footer_ship_EU')?></p>
 	                    
 	                  
 	                
 	            </div>
 	        </div>
         </div>
-        <div class="container">
+        <div class="container apps-container">
+            <div class="row">            
+                <div class="col-md-8 col-md-offset-2  col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 box" >
+                    <div id="title"><?=lang_safe('footer_app_download')?> </div>
+                    <div class="container-fluid">
+                        <div class="row no-gutters" style="margin:0;">
+                            <div class="col-xs-6 col-sm-4 col-md-4  no-padding">
+                                <a class="google" href="https://www.onelink.to/q7zjvn">
+                                    <img class="img-responsive custom-size" alt="Google Play" src="<?=base_url('/png/google-play' . (MY_LANGUAGE_ABBR == 'de' ? '_de' : '_en') . '.png')?>">
+                                </a>
+                            </div>
+                            <div class="col-xs-6 col-sm-4 col-md-4 no-padding">
+                                <a class="apple" href="https://www.onelink.to/q7zjvn" style="padding-top:1px;">
+                                    <img class="img-responsive custom-size" alt="Apple Store" src="<?=base_url('/png/apple-store' . (MY_LANGUAGE_ABBR == 'de' ? '_de' : '_en') . '.png')?>">
+                                </a>
+                            </div>
+                            <div class="col-xs-6 col-sm-4 col-md-4 no-padding">
+                                <a class="windows" href="https://www.onelink.to/q7zjvn" style="padding-top:1px;">
+                                    <img class="img-responsive custom-size" alt="Windows Store" src="<?=base_url('/png/windows-store' . (MY_LANGUAGE_ABBR == 'de' ? '_de' : '_en') . '.png')?>">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container copyrights-container">
             <div class="row">
                 <hr>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <p class="copyright-text">Copyright &copy; 2023 All Rights Reserved by Node Devices GmbH.</p>
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <p class="copyright-text" style="text-align: center;">Copyright &copy; 2023 All Rights Reserved by Node Devices GmbH.</p>
 
-                </div>
-
-                <div class="col-md-4 col-sm-6 col-xs-12">
-
-
-                    <ul class="social-icons">
-                        <li><span class="app_icon-text"> Mobile app </span></li>
-                        <li><a class="facebook" href="https://www.onelink.to/q7zjvn"><i class="fa fa-android"></i></a></li>
-                        <li><a class="twitter" href="https://www.onelink.to/q7zjvn"><i class="fa fa-apple"></i></a></li>
-                        <li><a class="dribbble" href="https://www.onelink.to/q7zjvn"><i class="fa fa-windows"></i></a></li>
-
-                    </ul>
                 </div>
             </div>
         </div>
