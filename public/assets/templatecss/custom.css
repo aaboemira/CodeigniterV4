@@ -1,6 +1,6 @@
 html,
 body {
-    height: 100%;
+    height: fit-content;
 }
 
 body {
@@ -8,10 +8,10 @@ body {
     font-family: arial;
 
 }
-
 #wrapper {
-    min-height: 60%;
     top: 0;
+    min-height: fit-content;
+
 }
 
 #content {
@@ -24,6 +24,11 @@ body {
 @media (max-width: 767px) {
     #content {
         margin-top: 130px;
+    }
+}
+@media (max-width: 465px) {
+    #content {
+        margin-top: 125px;
     }
 }
 
@@ -970,10 +975,13 @@ div.product-sort .form-group {
     padding: 12px;
     position: relative;
 }
-.payment-type-box .radio_text{
-    margin-left: 40px; 
-    width:90%;
+.payment-type-box .radio_text {
+    left: 40px;
+    width: calc(100% - 40px) !important; /* Adjust the width to account for the left offset */
+    position: relative;
+    word-wrap: break-word; /* Ensure long words are wrapped */
 }
+
 @media only screen and (min-width: 700px){
     .payment-type-box .radio_text{
         width:100%;
@@ -2438,7 +2446,12 @@ footer .footer-icon li {
         right: 0;
     }
 }
-
+@media only screen and (max-width: 767px) {
+    #contact_menu {
+        bottom: 20%;
+        right: 0;
+    }
+}
 /* .float_wa {
     position: fixed;
     bottom: 70px;
@@ -3729,6 +3742,29 @@ a:hover {
     height: 250px;
     overflow-y:hidden;
 }
+@media only screen and (max-width:1199px){
+    .home-container .arrivals-container .panel-body {
+        height: 280px;
+    }
+}
+@media only screen and (max-width:992px){
+    .home-container .arrivals-container .panel-body {
+        height: 290px;
+    }
+    .home-container .arrivals-container .panel-header {
+        margin-bottom:5px;
+    }
+}
+@media only screen and (max-width:767px){
+    .home-container .arrivals-container .panel-body {
+        height: auto;
+    }
+}
+@media only screen and (max-width:400px){
+        .home-container .arrivals-container .panel-header {
+        margin-bottom:5px;
+    }
+}
 /* Panel Heading Styles */
 .home-container .panel-heading {
     padding: 0;
@@ -4471,6 +4507,12 @@ li.login-dropdown-li .login-icon:hover{
             .support-description{
                 font-size:1.4em;
             }
+            .support-div .row{
+                margin:0;
+            }
+            .support-div .row .col-sm-12{
+            padding:0;
+            }
         }
         .free-shipping-info{
             width:50%;
@@ -4507,7 +4549,95 @@ li.login-dropdown-li .login-icon:hover{
         .checkout2 .payment-div{
         margin-bottom: 20px;
         }
+        /*Headers title*/
+        .container:first-child > .row:first-child > .alone.title:first-child,
+        #products-side > .alone.title, div.filter-sidebar .title ,#shopping-cart > .alone.title  {
+            /* Your styles here */
+            font-size:2.5rem;
+        }
+        @media (max-width: 768px) {
+                    .container:first-child > .row:first-child > .alone.title:first-child,
+                #products-side > .alone.title, div.filter-sidebar .title ,#shopping-cart > .alone.title  {
+                /* Your styles here */
+                font-size:1.9rem;
+            }
+        }
+        .upp-text{
+        font-size:16px !important;
+        }
 
+        @media (max-width: 767px) {
+            .register-icon-wrapper {
+                position: absolute;
+                right: 50px; /* Adjust this value based on your layout */
+                top: 12px;
+                padding:5px;
+            }
+            .register-icon-wrapper a{
+                padding: 8px 12px;
+                display: inline-block;
+            }
+            .register-icon img {
+                max-height: 30px;
+                max-width: 30px;
+                min-height: 20px;
+                min-width: 20px;
+            }
+        }
+        @media (max-width: 400px) {
+            .register-icon-wrapper {
+                right: 30px; /* Adjust this value based on your layout */
+            }
+            .register-icon-wrapper a{
+                padding: 8px 6px;
+            }
+            .shopping-cart-dropdown-wrapper{
+                padding:5px 0px;
+            }
+            .shopping-cart-dropdown-wrapper .custom-a{
+                padding:8px 6px;
+            }
+            .shopping-cart-dropdown-wrapper .shopping_cart_img{
+                max-height: 25px !important;
+                max-width: 25px !important;
+            }
+            #top-part .shopping_cart_counter {
+                position: absolute;
+                top: 10px;
+                right: 2px;
+                font-size: 0.9rem;
+                height: 1.2rem;
+                width: 1.2rem;
+                }
+            .register-icon img {
+                max-height: 25px;
+                max-width: 25px;
+            }
+        }
+        @media (min-width: 768px) {
+            .register-icon-wrapper {
+                display: none; /* Hide the register icon on larger screens */
+            }
+        }
+        @media(min-width:767px) and (max-width:991px) {
+            .container-sm{
+                width:90%;
+
+            }
+        }
+        .sale-box {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            background-color: #ff0000; /* Red background */
+            color: black; /* White text color */
+            padding: 5px 10px;
+            font-size: 16px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3); /* Slight shadow for depth */
+            background-color: #FFC107; /* Orange background */
+
+            z-index: 2; /* Ensure it's above the image */
+        }
 /*    !* Adjust dropdown menu styles for mobile *!*/
 
 /*    .dropdown.login-dropdown-li .dropdown-menu {*/
