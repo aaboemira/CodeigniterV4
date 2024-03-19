@@ -367,7 +367,8 @@ $lang['out_of_stock_product'] = 'Das Produkt ist aktuell ausverkauft';
 $lang['overview'] = 'Overview';
 
 $lang['pages'] = 'Seiten';
-$lang['partner_description']='Sie suchen qualifizierte Fachleute für die Montage unserer NODEMATIC<span style="vertical-align: super;font-size: smaller;">®</span> Produkte? ';
+$lang['partner_description']='Sie suchen qualifizierte Fachleute für die Montage unserer NODEMATIC<span style="vertical-align: super;font-size: smaller;">®</span> Produkte? 
+Finden Sie schnell die richtigen Spezialisten in Ihrer Umgebung, für eine sichere und fachgerechte Montage. ';
 $lang['partner_title']='Monteure finden';
 $lang['pass_repeat'] = 'Please repeat password';
 $lang['password'] = 'Password';
@@ -589,5 +590,67 @@ $lang['order_status_completed'] = 'Completed';
 $lang['order_status_rejected'] = 'Rejected';
 $lang['order_status_canceled'] = 'Canceled';
 $lang['order_status_revocation_done'] = 'Revocation Done';
+
+$lang['user_address'] = 'User Address';
+$lang['shipping_free_add'] = 'Add amount of ';
+$lang['shipping_free_text'] = 'for free shipping';
+
+$lang['checkout0_registration'] = 'Registration';
+$lang['checkout0_not_a_member_yet'] = 'Not a member yet?';
+$lang['checkout0_create_an_account_with_us'] = 'Create an account with us and enjoy a personalized shopping experience. Benefit from a faster checkout process and keep a complete record of all your transactions.';
+$lang['checkout0_register_now_and_take_advantage'] = 'Register now and take advantage of:';
+$lang['checkout0_quick_and_easy_checkout'] = 'Quick and easy checkout';
+$lang['checkout0_access_to_your_order_history'] = 'Access to your order history and status';
+$lang['checkout0_exclusive_promotions_and_discounts'] = 'Exclusive promotions and discounts';
+$lang['checkout0_create_account'] = 'Create Account';
+$lang['checkout0_shop_as_guest'] = 'Shop as Guest';
+$lang['checkout0_login'] = 'Please enter your login details to sign in.';
+
+
+$lang['verify_mail_error']='Error while verify mail';
+$lang['smart_device_enable_pin_text']='Enable Speech Pin Number';
+
+//Create Smart Device
+$lang['create_smart_device_enable_pin_text']='Enable Speech Pin';
+$lang['create_smart_device_speech_pin']='Speech Pin Number';
+$lang['create_smart_device_enable_pin'] = 'Enabled';
+$lang['create_smart_device_disable_pin'] = 'Disabled';
+$lang['create_smart_device_security_warning_title'] = 'Security Warning';
+$lang['create_smart_device_security_warning_message'] = 'Disabling the Speech Pin may increase security risks. <br> <br> Are you sure you want to proceed?';
+$lang['create_smart_device_model_confirm'] = 'Confirm';
+$lang['create_smart_device_model_cancel'] = 'Cancel';
+$lang['create_smart_device_validation_speech_pin_min_length'] = 'The Speech Pin Number must be at least 4 digits long.';
+$lang['create_smart_device_validation_speech_pin_max_length'] = 'The Speech Pin Number cannot exceed 6 digits.';
+$lang['create_smart_device_validation_speech_pin_numeric'] = 'The Speech Pin Number must contain only numbers.';
+
+
+$lang['edit_smart_device_enable_pin_text']='Enable Speech Pin';
+$lang['edit_smart_device_speech_pin']='Speech Pin Number';
+$lang['edit_smart_device_enable_pin'] = 'Enabled';
+$lang['edit_smart_device_disable_pin'] = 'Disabled';
+$lang['edit_smart_device_security_warning_title'] = 'Security Warning';
+$lang['edit_smart_device_security_warning_message'] = 'Disabling the Speech Pin may increase security risks. <br> <br> Are you sure you want to proceed?';
+$lang['edit_smart_device_model_confirm'] = 'Confirm';
+$lang['edit_smart_device_model_cancel'] = 'Cancel';
+$lang['edit_smart_device_validation_speech_pin_min_length'] = 'The Speech Pin Number must be at least 4 digits long.';
+$lang['edit_smart_device_validation_speech_pin_max_length'] = 'The Speech Pin Number cannot exceed 6 digits.';
+$lang['edit_smart_device_validation_speech_pin_numeric'] = 'The Speech Pin Number must contain only numbers.';
+
+$lang['smart_guest_enable_pin'] = 'Enabled';
+$lang['smart_guest_disable_pin'] = 'Disabled';
+$lang['smart_guest_enable_pin_text'] = 'Control Speech Pin';
+$lang['smart_guest_speech_pin'] = 'Speech Pin Number';
+
+$lang['speech_control_title'] = 'Speech Control';
+$lang['speech_control_disable_pin'] = 'Disabled';
+$lang['speech_control_enable_pin'] = 'Enabled';
+$lang['speech_control_enable_pin_text'] = 'Control Pin';
+$lang['speech_control_speech_pin'] = 'Speech Pin Number';
+$lang['speech_control_update_success'] = 'Updated Succesfully';
+
+$lang['checkout3_change_address'] = 'Change Address';
+$lang['signup_login_text'] = 'Welcome Back!<br>
+Please enter your email and password to access your account and continue where you left off. Your journey to exceptional technology solutions is just a login away!';
+$lang['signup_register_text'] = 'Create an account and start enjoying a personalized and streamlined experience. Whether for personal or business use, sign up and let us tailor our innovative solutions to your needs. Welcome to the future of tech with us!';
 
 return $lang;

@@ -11,5 +11,6 @@ var lang = {
     checkout: "Bezahlung",
     remove_from_cart: "Aus dem Warenkorb nehmen",
     enter_valid_email: "Bitte geben Sie eine gültige E-Mail Adresse ein",
+    disabled:"N/A",
     discountCodeInvalid: "Der eingegebene Gutscheincode ist ungültig",
 };
