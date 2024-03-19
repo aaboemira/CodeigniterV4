@@ -159,7 +159,7 @@ function generateEmailHTML($orderData) {
                                 '.$i.'
                                 </td>
                                 <td>
-                                    <img width="30" src="https://nodedevices.de/attachments/shop_images/' . $product["product_info"]['image'] . '" alt="Product Image Placeholder">
+                                    <img width="30" src="'.$orderData['image_url'] . $product["product_info"]['image'] . '" alt="Product Image Placeholder">
                                 </td>
                                 <td>' . $product["product_info"]['title'] . '</td>
                                 <td>' . $product['product_quantity'] . '</td>
@@ -409,7 +409,7 @@ function generateEmailHTML_en($orderData) {
                                 '.$i.'
                                 </td>
                                 <td>
-                                    <img width="50" src="https://nodedevices.de/attachments/shop_images/' . $product["product_info"]['image'] . '" alt="Product Image Placeholder">
+                                    <img width="30" src="'.$orderData['image_url'] . $product["product_info"]['image'] . '" alt="Product Image Placeholder">
                                 </td>
                                 <td>' . $product["product_info"]['title'] . '</td>
                                 <td>' . $product['product_quantity'] . '</td>
