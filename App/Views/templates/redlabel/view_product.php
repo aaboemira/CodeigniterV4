@@ -315,8 +315,8 @@ th {
                     var strUser_text = e.options[e.selectedIndex].text;
                     if (strUser_text != '') {
                         //document.location.href = "<?= $product['url'] . '?var=' ?>" + strUser;
-                        console.log(strUser)
-                        document.location.href = strUser;
+                        let url='<?=LANG_URL?>'+"/"+strUser
+                        document.location.href = url;
                     }
                 }
             </script>

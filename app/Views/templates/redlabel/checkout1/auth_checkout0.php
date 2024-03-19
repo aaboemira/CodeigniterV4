@@ -222,18 +222,20 @@
         </h3>
     <!-- Registration Section -->
         <div class="col-md-6">
-            <div class="user-info">
-                <div class="icon-container">
-                    <img src="<?= base_url('png/myaccount_black.png') ?>">
-                </div>
-                <div class="details-container">
-                    <p class="name">
-                    <?= session()->get('user_name') ?>
-                    </p>
-                    <p class="email">
-                    <?= session()->get('email') ?>
-                    </p>
-                    <a class="logout" href="<?= LANG_URL.'/logout' ?>">Logout</a>
+            <div class="payment-type-box">
+                <div class="user-info">
+                    <div class="icon-container">
+                        <img src="<?= base_url('png/myaccount_black.png') ?>">
+                    </div>
+                    <div class="details-container">
+                        <p class="name">
+                        <?= session()->get('user_name') ?>
+                        </p>
+                        <p class="email">
+                        <?= session()->get('email') ?>
+                        </p>
+                        <a class="logout" href="<?= LANG_URL.'/logout' ?>">Logout</a>
+                    </div>
                 </div>
             </div>
         </div>

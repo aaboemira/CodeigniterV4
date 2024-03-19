@@ -51,7 +51,7 @@
         <?= $title ?>
     </title>
     <link rel="icon" type="image/vnd.microsoft.icon" href="<?= base_url('ico/favicon.ico') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/w3.css') ?>"/>
+    
 
     <link rel="stylesheet" href="<?= base_url('assets/css/font-awesome.min.css') ?>"/>
 

@@ -3,7 +3,7 @@
     <?php if (isset($cartItems['array']) && $cartItems['array'] != null) {  ?>
 
 
-    <?= purchase_steps(1, 1) ?>
+    <?= purchase_steps(2, 1) ?>
 
     <form method="POST" id="goOrder" name="checkout1">
         <input type="hidden" name="user_status" value="<?= session()->has('logged_user') ? 'user' : 'guest' ?>">
@@ -28,6 +28,7 @@
         ?>
         <div class="row">
             <?php if (!session()->has('logged_user')): ?>
+	
             <div class="title alone">
                 <span><?= lang_safe('checkout_contact') ?></span>
             </div>

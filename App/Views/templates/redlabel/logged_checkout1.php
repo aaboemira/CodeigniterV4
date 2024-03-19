@@ -8,6 +8,7 @@
                     <div class="title alone">
                         <span><?= lang_safe('billing_address') ?></span>
                     </div>
+<div class="payment-type-box">
                     <div class="flex-div">
                         <?= get_form_field($user_data, 'billing_address', 'billing_first_name') . ' ' . get_form_field($user_data, 'billing_address', 'billing_last_name') ?>
                         <form action="" method="post">
@@ -25,11 +26,13 @@
                         <?= get_form_field($user_data, 'billing_address', 'billing_country') ?>
                     </div>
                 </div>
+</div>
                 <div class="col-lg-3 col-md-4 col-xs-12" style="padding-left: 0 !important; margin-bottom: 1.2em; ">
                     <!-- Right column for delivery address -->
                     <div class="title alone">
                         <span><?= lang_safe('shipping_address') ?></span>
                     </div>
+<div class="payment-type-box">
                     <div class="flex-div">
                         <?= get_form_field($user_data, 'shipping_address', 'shipping_first_name') . ' ' . get_form_field($user_data, 'shipping_address', 'shipping_last_name') ?>
                         <form action="" method="post">
@@ -48,6 +51,7 @@
                     </div>
                 </div>
             </div>
+</div>
             <div class="row">
                 <div class="col-sm-12 checkout-buttons">
                     <br>

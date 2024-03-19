@@ -1,9 +1,11 @@
 <style>
-
+    #wrapper{
+        min-height: 350px;
+    }
 </style>
 <div class="container container-sm" id="checkout-page">
     <?php if (isset($cartItems['array']) && $cartItems['array'] != null) { ?>
-        <?= purchase_steps(1, 1) ?>
+        <?= purchase_steps(2, 1) ?>
 
         <div class="container-fluid">
             <div class="row">

@@ -17,7 +17,7 @@
         $finalSum = str_replace(',', '', $cartItems['finalSum']); // Remove commas if present
         $finalSum = is_numeric($finalSum) ? floatval($finalSum) : 0;
         $discountAmount = 0;
-        $discount = 0;;
+        $discount = 0;
         if ($codeDiscounts == 1 && session('discountCodeResult')) {
             $discountCodeResult = session('discountCodeResult');
             $discountType =isset($discountCodeResult['type'])? $discountCodeResult['type']:'';
@@ -42,7 +42,23 @@
         
         session()->set('discountCodeResult', $discountCodeResult);
         ?>
-    <?= purchase_steps(1, 1, 1,1) ?>
+    <?= purchase_steps(2, 2, 2,1) ?>
+<?php
+                    if (session('submit_error')) {
+                        ?>
+                <hr>
+                <div class="alert alert-danger">
+                    <h4><span class="glyphicon glyphicon-alert"></span> <?= lang_safe('finded_errors') ?></h4>
+                    <?php
+                            foreach (session('submit_error') as $error) {
+                                echo $error . '<br>';
+                            }
+                            ?>
+                </div>
+                <hr>
+                <?php
+                    }
+                    ?>
     <div class="row">
         <div class="col-sm-9 left-side" style="margin-bottom:0px !important;">
             <form method="POST" id="goOrder">
@@ -53,6 +69,7 @@
                             <div class="title alone chk3_address_title">
                                 <span><?= lang_safe('billing_address') ?></span>
                             </div>
+<div class="payment-type-box">
                             <div class="flex-div">
                                 <?= $billingAddress['billing_first_name'] .' '. $billingAddress['billing_last_name'] ?>
                                 <?php if (session()->has('logged_user')):  ?>
@@ -69,12 +86,14 @@
                                 <?= $billingAddress['billing_country'] ?>
                             </div>
                         </div>
+</div>
                         <div class="col-md-3 col-sm-7 col-xs-12"
                             style="padding-left: 0 !important;margin-bottom: 1.2em; ">
                             <!-- Right column for delivery address -->
                             <div class="title alone chk3_address_title">
                                 <span><?= lang_safe('shipping_address') ?></span>
                             </div>
+<div class="payment-type-box">
                             <div class="flex-div">
                                 <?= $shippingAddress['shipping_first_name'] .' '. $shippingAddress['shipping_last_name'] ?>
                                 <?php if (session()->has('logged_user')):  ?>
@@ -93,26 +112,12 @@
                         </div>
                     </div>
                 </div>
+</div>
                 <div class="title alone">
                     <span><?= lang_safe('checkout_overview') ?></span>
                 </div>
-                <?php
-                    if (session('submit_error')) {
-                        ?>
-                <hr>
-                <div class="alert alert-danger">
-                    <h4><span class="glyphicon glyphicon-alert"></span> <?= lang_safe('finded_errors') ?></h4>
-                    <?php
-                            foreach (session('submit_error') as $error) {
-                                echo $error . '<br>';
-                            }
-                            ?>
-                </div>
-                <hr>
-                <?php
-                    }
-                    ?>
 
+             
                 <div class="container mt-15" id="shopping-cart" style="padding-left: 0 !important;">
 
                     <div class="table-responsive-xxl">
@@ -294,6 +299,7 @@
                                 <span><?= lang_safe('mwst') ?></span>
                             </div>
                         </div>
+
 
                         <?php if ($codeDiscounts == 1) { ?>
                         <div class="discount align-right">
