@@ -150,60 +150,57 @@ class Publish extends ADMIN_Controller
 
     private function uploadImage($langAbbr)
     {
-        $file = $this->request->getFile('cover_image_' . $langAbbr);
-        $newName = '';
-        if ($file->isValid() && !$file->hasMoved()) {
-            $allowedMimeTypes = ['image/jpeg', 'image/png'];
-            if (in_array($file->getMimeType(), $allowedMimeTypes)) {
-                $uploadPath = './attachments/shop_images/' . $langAbbr . '/';
-                if (!is_dir($uploadPath)) {
-                    mkdir($uploadPath, 0777, true);
+        $startTime = microtime(true); // Start timing
+
+        $uploadPath = './attachments/shop_images/' . $langAbbr . '/';
+    
+        // Ensure upload directory exists
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+    
+        $images = $this->request->getFiles();
+        $imageName = $this->generateImageName($images['cover_image_' . $langAbbr], $langAbbr);
+        $imageExtension = $images['cover_image_' . $langAbbr]->getClientExtension();
+    
+        $imageUploaded = false; // Flag to check if any image was uploaded and moved
+    
+        foreach ($images as $key => $image) {
+            if (strpos($key, 'cover_image_' . $langAbbr) === 0) {
+                $suffix = '';
+
+                if (strpos($key, '_650') !== false) {
+                    $suffix = '';
+                }elseif(strpos($key, '_250')){
+                    $suffix = '-250x250';
+                } elseif (strpos($key, '_1200') !== false) {
+                    $suffix = '-1200x1200';
+                }elseif (strpos($key, '_2400') !== false) {
+                    $suffix = '-2400x2400';
+                }elseif (strpos($key, '_3500') !== false) {
+                    $suffix = '-3500x3500';
                 }
-                $extension = $file->getClientExtension();
-                $imageName = $this->generateImageName($file, $langAbbr);
-                $newName  = $imageName . '.' . $extension;
+                $newName = $imageName . $suffix . '.' . $imageExtension;
+                // Check if a file with the new name already exists, and delete it if it does
+                if (file_exists($uploadPath . $newName)) {
+                    unlink($uploadPath . $newName);
+                }
     
-                
-
-                // Move and resize the original image to 650x650
-                $file->move($uploadPath, $newName, true);
-                // Save the original image with the -org suffix
-                $originalName = $imageName . '-org.' . $extension;
-                copy($uploadPath . $newName, $uploadPath . $originalName);
-                $this->resizeAndSaveImage($uploadPath, $newName, 650, 650, false);
-    
-                // Create a resized version of 1200x1200
-                $this->resizeAndSaveImage($uploadPath, $newName, 1200, 1200, true);
-                $this->resizeAndSaveImage($uploadPath, $newName, 2400, 2400, true);
-
-
+                if ($image->isValid() && !$image->hasMoved()) {
+                    $image->move($uploadPath, $newName);
+                    $imageUploaded = true; // Set flag to true as an image was uploaded and moved
+                }
             }
         }
-        return $newName ? $langAbbr . '/' . $newName : '';
-    }
-    
-    
-    
-    
-    private function resizeAndSaveImage($uploadPath, $filename, $width, $height, $keepOriginal)
-    {
-        $imageService = \Config\Services::image();
-        $fileInfo = pathinfo($filename);
-        $newFilename = $keepOriginal ? "{$fileInfo['filename']}-{$width}x{$height}.{$fileInfo['extension']}" : $filename;
-    
-        if ($keepOriginal && file_exists($uploadPath . $newFilename)) {
-            unlink($uploadPath . $newFilename);
-        }
-    
-        $imageService->withFile($uploadPath . $filename)
-        ->resize($width, $height, true, 'width')
-        ->save($uploadPath . $newFilename, 100); // Set quality to 90 for JPEG images
+        $endTime = microtime(true); // End timing
+        $timeTaken = $endTime - $startTime;
+        $this->logger->alert("uploadImage time taken: " . $timeTaken . " seconds.");
 
-        // If not keeping the original, rename the resized file to the original filename
-        if (!$keepOriginal) {
-            rename($uploadPath . $newFilename, $uploadPath . $filename);
-        }
+        // The base image name is returned for database saving only if an image was uploaded and moved
+        return $imageUploaded ? $langAbbr . '/' . $imageName . '.' . $imageExtension : '';
     }
+    
+    
     
     private function generateImageName($file, $langAbbr)
     {
@@ -222,6 +219,8 @@ class Publish extends ADMIN_Controller
 
      public function do_upload_others_images()
      {
+         $startTime = microtime(true); // Start timing
+     
          if ($this->request->isAJAX()) {
              $langAbbr = $this->request->getPost('lang_abbr'); // Get the language abbreviation from the POST data
              $upath = '.' . DIRECTORY_SEPARATOR . 'attachments' . DIRECTORY_SEPARATOR . 'shop_images' . DIRECTORY_SEPARATOR . $langAbbr . DIRECTORY_SEPARATOR . $this->request->getPost('folder') . DIRECTORY_SEPARATOR;
@@ -233,34 +232,37 @@ class Publish extends ADMIN_Controller
              $files = $this->request->getFiles();
              // Get the image name from POST request
              $imageName = $this->request->getPost('image_name');
-             // Initialize a counter
-             $counter = 1;
      
              if ($files) {
-                 foreach ($files['others_'.$langAbbr] as $file) {
+                 $counter = 1; // Initialize a counter for unique file names
+                 foreach ($files['others_' . $langAbbr] as $index => $file) {
                      if ($file->isValid() && !$file->hasMoved()) {
                          $allowedMimeTypes = ['image/jpeg', 'image/png'];
                          if (in_array($file->getMimeType(), $allowedMimeTypes)) {
                              // Use imageName with counter if not empty, otherwise use a random name
                              $fileExtension = $file->getClientExtension();
-                             $baseName = !empty($imageName) ? $imageName . '(' . $counter . ')' : pathinfo($file->getRandomName(), PATHINFO_FILENAME);
-                             $newName = $baseName . '.' . $fileExtension;
-                             $file->move($upath, $newName);
-                             $originalName = $baseName . '-org.' . $fileExtension;
-                             copy($upath . $newName, $upath . $originalName);
-     
-                             // Create resized versions for each uploaded file
-                             $this->resizeAndSaveImage($upath, $newName, 650, 650, false);
-                             $this->resizeAndSaveImage($upath, $newName, 1200, 1200, true);
-     
-                             // Increment the counter for the next file
-                             $counter++;
+                             $baseName = !empty($imageName) ? $imageName . '-' . $counter : pathinfo($file->getRandomName(), PATHINFO_FILENAME);
+                             // Move the resized versions for each uploaded file
+                             foreach (['250','650', '1200','2400','3500'] as $size) {
+                                 if (isset($files["others_{$langAbbr}_{$size}"][$index])) {
+                                     $resizedFile = $files["others_{$langAbbr}_{$size}"][$index];
+                                     $resizedBaseName = $baseName . ($size == '650' ? '' : "-{$size}x{$size}");
+                                     $resizedName = $resizedBaseName . '.' . $fileExtension;
+                                     $resizedFile->move($upath, $resizedName);
+                                 }
+                             }
+                             $counter++; // Increment the counter for the next file
                          }
                      }
                  }
              }
          }
+         $endTime = microtime(true); // End timing
+         $timeTaken = $endTime - $startTime;
+         $this->logger->alert("upload OTHER Image time taken: " . $timeTaken . " seconds.");
      }
+     
+     
      
      
      
@@ -336,7 +338,7 @@ class Publish extends ADMIN_Controller
              $extension = $fileInfo['extension'];
      
              // Define the sizes you want to check for and delete
-             $sizes = ['org', '1200x1200'];
+             $sizes = ['250x250', '1200x1200','2400x2400','3500x3500',];
              foreach ($sizes as $size) {
                  // Construct the filename for the resized image
                  $resizedImg = "{$baseDir}{$filenameWithoutExt}-{$size}.{$extension}";

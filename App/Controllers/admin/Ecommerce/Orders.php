@@ -111,6 +111,7 @@ class Orders extends ADMIN_Controller
                 'shipping_price' => $_POST['shipping_price'],
                 'currency' => config('config')->currency
             );
+
             $this->sendBestellbestaetigung($orderData);
         }
         $data['paypal_sandbox'] = $this->Home_admin_model->getValueStore('paypal_sandbox');
@@ -123,6 +124,8 @@ class Orders extends ADMIN_Controller
             $this->saveHistory('Go to orders page');
         }
         $page = 'ecommerce/orders';
+                // Remove the new_order_flag session variable
+                session()->remove('new_order_flag');
         return view('templates/admin/_parts/template', ['page'=> $page, 'head' => $head ,'data' => $data, 'footer' => []]);
     }
 
@@ -193,7 +196,7 @@ class Orders extends ADMIN_Controller
             $this->sendmail->sendToBestellbestaetigung($orderData['user_details']['email'], $orderData['user_details']['full_name'], $title , 'Check it https://www.nodedevices.de/admin/orders',$orderData,$pdf,$attachmentName,$german);
 
         }
-        $this->Orders_model->changeOrderStatus($orderData['id'],'1');
+       $this->Orders_model->changeOrderStatus($orderData['order_id'],'preparing_shipment');
         echo '<script>window.location.href = "'.site_url('admin/orders').'";</script>';
     }
 

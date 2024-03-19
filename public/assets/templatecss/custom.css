@@ -711,7 +711,10 @@ div.filter-sidebar .title,
     margin: 0 0 10px;
     padding: 0;
 }
-
+.col-md-10 div.filter-sidebar .title,
+.title.alone{
+width: 50%;
+}
 div.filter-sidebar .title span,
 .title.alone span {
     border-bottom: 3px solid #8c0707;
@@ -719,6 +722,7 @@ div.filter-sidebar .title span,
     display: inline-block;
     margin-bottom: -3px;
     padding-bottom: 10px;
+
 }
 
 div.filter-sidebar ul {
@@ -1013,7 +1017,7 @@ div.product-sort .form-group {
 }
 
 #checkout-page .left-side {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 .discount-form {
@@ -1023,8 +1027,7 @@ div.product-sort .form-group {
 }
 
 #checkout-page .discount {
-;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 #small_carousel.carousel {
@@ -1500,47 +1503,6 @@ div.product-sort .form-group {
     cursor: pointer;
 }
 
-/*image preveiw finish*/
-.steps {
-    margin-bottom: 30px;
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-.steps .step {
-    text-transform: uppercase;
-    text-align: center;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    /* border-left: 2px solid #fff; */
-    text-decoration: none;
-}
-
-.step-bg-ok {
-    background: #000;
-    /* background: #7db9e8;
-    background: -moz-linear-gradient(top, #7db9e8 0%, #337ab7 100%);
-    background: -webkit-linear-gradient(top, #7db9e8 0%, #337ab7 100%);
-    background: linear-gradient(to bottom, #7db9e8 0%, #337ab7 100%); */
-    /* filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#7db9e8', endColorstr='#337ab7', GradientType=0); */
-    color: #fff;
-    cursor: pointer;
-    border: 2px solid black;
-
-}
-
-.step-bg-not-ok {
-    background: #FFF;
-    /* background: #d9edf7;
-    background: -moz-linear-gradient(top, #d9edf7 0%, #a6dbf4 100%);
-    background: -webkit-linear-gradient(top, #d9edf7 0%, #a6dbf4 100%);
-    background: linear-gradient(to bottom, #d9edf7 0%, #a6dbf4 100%); */
-    /* filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d9edf7', endColorstr='#a6dbf4', GradientType=0); */
-    color: #424449;
-    border: 2px solid black;
-
-    pointer-events: none;
-}
 
 #dynPage .top-bg {
     background-color: #e7e7e7;
@@ -4560,6 +4522,7 @@ li.login-dropdown-li .login-icon:hover{
                 #products-side > .alone.title, div.filter-sidebar .title ,#shopping-cart > .alone.title  {
                 /* Your styles here */
                 font-size:1.9rem;
+				width: 75%;
             }
         }
         .upp-text{
@@ -4638,6 +4601,46 @@ li.login-dropdown-li .login-icon:hover{
 
             z-index: 2; /* Ensure it's above the image */
         }
+        
+        /* Checkout Steps */
+.steps {
+    margin-bottom: 30px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.steps .step {
+    text-transform: uppercase;
+    text-align: center;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    /* border-left: 2px solid #545454; */
+    text-decoration: none;
+}
+
+.completed {
+    background: #00d100;
+    color: #000;
+    cursor: pointer;
+    border: 2px solid #545454;
+}
+
+.inactive {
+    background: #FFF;
+    color: #424449;
+    border: 2px solid #545454;
+    pointer-events: none;
+}
+
+.active {
+    background: #1f1f1f;
+    color: #FFF;
+    border: 2px solid #545454;
+    pointer-events: none;
+}
+
+
+
 /*    !* Adjust dropdown menu styles for mobile *!*/
 
 /*    .dropdown.login-dropdown-li .dropdown-menu {*/
@@ -4668,3 +4671,9 @@ li.login-dropdown-li .login-icon:hover{
     color: #000;
 
 } */
+
+
+
+
+
+
