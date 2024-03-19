@@ -705,15 +705,17 @@ div.filter-sidebar {
 }
 
 div.filter-sidebar .title,
+
 .title.alone {
     font-size: 18px;
     line-height: 1;
     margin: 0 0 10px;
     padding: 0;
+	width: 50%;	   
 }
-.col-md-10 div.filter-sidebar .title,
-.title.alone{
-width: 50%;
+.col-md-2 div.filter-sidebar .title{
+	width: 75%;	   
+
 }
 div.filter-sidebar .title span,
 .title.alone span {
@@ -1017,7 +1019,7 @@ div.product-sort .form-group {
 }
 
 #checkout-page .left-side {
-    margin-bottom: 10px;
+    margin-bottom: 30px;
 }
 
 .discount-form {
@@ -1027,7 +1029,8 @@ div.product-sort .form-group {
 }
 
 #checkout-page .discount {
-    margin-bottom: 10px;
+;
+    margin-bottom: 20px;
 }
 
 #small_carousel.carousel {
@@ -1502,7 +1505,6 @@ div.product-sort .form-group {
 .img-sl {
     cursor: pointer;
 }
-
 
 #dynPage .top-bg {
     background-color: #e7e7e7;
@@ -4522,7 +4524,7 @@ li.login-dropdown-li .login-icon:hover{
                 #products-side > .alone.title, div.filter-sidebar .title ,#shopping-cart > .alone.title  {
                 /* Your styles here */
                 font-size:1.9rem;
-				width: 75%;
+			   width: 75%;
             }
         }
         .upp-text{
@@ -4601,15 +4603,14 @@ li.login-dropdown-li .login-icon:hover{
 
             z-index: 2; /* Ensure it's above the image */
         }
-        
-        /* Checkout Steps */
-.steps {
+	  /* Checkout Steps */
+.checkout-panel-steps {
     margin-bottom: 30px;
     padding-left: 0px;
     padding-right: 0px;
 }
 
-.steps .step {
+.checkout-panel-steps .checkout-panel-step {
     text-transform: uppercase;
     text-align: center;
     padding-top: 7px;
@@ -4618,26 +4619,81 @@ li.login-dropdown-li .login-icon:hover{
     text-decoration: none;
 }
 
-.completed {
+.checkout-panel-completed {
     background: #00d100;
     color: #000;
     cursor: pointer;
     border: 2px solid #545454;
 }
 
-.inactive {
+.checkout-panel-inactive {
     background: #FFF;
     color: #424449;
     border: 2px solid #545454;
     pointer-events: none;
 }
 
-.active {
+.checkout-panel-active {
     background: #1f1f1f;
     color: #FFF;
     border: 2px solid #545454;
     pointer-events: none;
 }
+
+.btn-container{
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.w3-hide-ever {
+    display: none !important;
+}	
+.w3-left{float:left!important}
+.w3-right{float:right!important}								
+.w3-container{padding:0.01em 16px}	
+						
+					  
+					   
+ 
+
+			  
+							  
+					   
+					 
+						
+										 
+						  
+ 
+
+			
+						
+				
+					
+							  
+ 
+
+		   
+					 
+				   
+							  
+						 
+ 
+
+		 
+						
+				
+							  
+						 
+ 
+
+			   
+					 
+						
+ 
+
+			   
+							 
+ 
 
 
 
