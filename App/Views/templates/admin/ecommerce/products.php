@@ -83,8 +83,15 @@
                             <?php
                             foreach ($products as $row) {
                                 $u_path = 'attachments/shop_images/';
-                                if ($row->image != null && file_exists($u_path . $row->image)) {
-                                    $image = base_url($u_path . $row->image);
+                                $images = explode(',', $row->images); // Split the images string into an array
+                                $firstImage = $images[0] ?? ''; // Get the first image detail
+                                $imageDetails = explode('|', $firstImage); // Split the image detail into its components
+                                $imageName = $imageDetails[0] ?? 'no-image.png'; // Get the image name, default to 'no-image.png'
+                                $u_path = 'attachments/shop_images/';
+
+                                $imagePath = $u_path . $imageName;
+                                if (file_exists($imagePath)) {
+                                    $image = base_url($imagePath);
                                 } else {
                                     $image = base_url('attachments/no-image.png');
                                 }

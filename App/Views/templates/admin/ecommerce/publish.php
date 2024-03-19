@@ -20,7 +20,7 @@ if (session('result_publish')) {
 <?php
 }
 ?>
-<form method="POST" action="" enctype="multipart/form-data">
+<form method="POST" id="publish" action="" enctype="multipart/form-data">
     <input type="hidden" value="<?= isset($_POST['folder']) ? htmlspecialchars($_POST['folder']) : $timeNow ?>"
         name="folder">
 
@@ -34,6 +34,22 @@ if (session('result_publish')) {
         </button>
         <?php } ?>
     </div>
+    <div class="form-group">
+            <label>Fields to update in all variants:</label>
+            <select class="selectpicker" name="variants_fields[]" multiple data-actions-box="true" data-live-search="true">
+                <option value="bullet1">Bullet 1 </option>
+                <option value="bullet2">Bullet 2 </option>
+                <option value="bullet3">Bullet 3 </option>
+                <option value="bullet4">Bullet 4 </option>
+                <option value="bullet5">Bullet 5</option>
+                <option value="bullet6">Bullet 6 </option>
+                <option value="bullet7">Bullet 7 </option>
+                <option value="variant_name">Variant Name </option>
+                <option value="variant_description">Variant Description </option>
+                <option value="price">Price</option>
+                <option value="description">Description</option>
+            </select>
+        </div>
     <?php
     $i = 0;
     foreach ($languages as $language) {
@@ -41,6 +57,7 @@ if (session('result_publish')) {
     <div class="locale-container locale-container-<?= $language->abbr ?>"
         <?= $language->abbr == MY_DEFAULT_LANGUAGE_ABBR ? 'style="display:block;"' : '' ?>>
         <input type="hidden" name="translations[]" value="<?= $language->abbr ?>">
+
         <div class="form-group">
             <label>Title (<?= $language->name ?><img src="<?= base_url('attachments/lang_flags/' . $language->flag) ?>"
                     alt="">)</label>
@@ -137,6 +154,8 @@ if (session('result_publish')) {
             CKEDITOR.config.entities = false;
             </script>
         </div>
+
+
         <div class="form-group for-shop">
             <label>Price (<?= $language->name ?><img src="<?= base_url('attachments/lang_flags/' . $language->flag) ?>"
                     alt="">)</label>
@@ -172,13 +191,60 @@ if (session('result_publish')) {
                 value="<?= $trans_load != null && isset($trans_load[$language->abbr]['delivery_status']) ? $trans_load[$language->abbr]['delivery_status'] : '' ?>"
                 class="form-control">
         </div>
+        <?php
+        $imageNameValue = '';
+        if ($trans_load != null && isset($trans_load[$language->abbr]['images']['image_name'])) {
+            $imagePath = $trans_load[$language->abbr]['images']['image_name'];
+            $imageNameValue = pathinfo($imagePath, PATHINFO_FILENAME);
+        }
+        ?>
         <div class="form-group for-shop">
         <label >image_name (<?= $language->name ?><img
                     src="<?= base_url('attachments/lang_flags/' . $language->flag) ?>" alt="">)</label>
         <input type="text" id="imageName" name="image_name[]" placeholder="image_name text" class="form-control"
-        value="<?= $trans_load != null && isset($trans_load[$language->abbr]['image']) ? $trans_load[$language->abbr]['image'] : '' ?>"
+        value="<?= $imageNameValue ?>"
         >
-    </div>
+        </div>
+        <div class="form-group for-shop">
+            <label>Image_text (<?= $language->name ?><img
+                    src="<?= base_url('attachments/lang_flags/' . $language->flag) ?>" alt="">)</label>
+            <input type="text" name="image_text[]" placeholder="image_card text" class="form-control" value="<?= $trans_load[$language->abbr]['image_text'] ?? '' ?>">
+        </div>
+        <div class="form-group bordered-group">
+            <?php
+            // Check if there's an image for the current language and the image name is not empty
+            if (isset($trans_load[$language->abbr]['images']) && !empty($trans_load[$language->abbr]['images']['image_name'])) {
+                $imageDetails = $trans_load[$language->abbr]['images'];
+                $imagePath = 'attachments/shop_images/'  . $imageDetails['image_name'];
+                if (file_exists($imagePath)) {
+                    $imageUrl = base_url($imagePath);
+                } else {
+                    $imageUrl = base_url('attachments/no-image.png');
+                }
+            ?>
+            <p>Current image:</p>
+            <div>
+                <img src="<?= $imageUrl ?>" class="img-responsive img-thumbnail" style="max-width:300px; margin-bottom: 5px;">
+            </div>
+            <input type="hidden"  name="old_image[<?= $language->abbr ?>]" value="<?= $imageDetails['image_name'] ?>">
+            <?php } else { ?>
+            <!-- Show 'no image' placeholder if there's no image or the image name is empty -->
+            <div>
+                <img src="<?= base_url('attachments/no-image.png') ?>" class="img-responsive img-thumbnail" style="max-width:300px; margin-bottom: 5px;">
+            </div>
+            <input type="hidden" name="old_image[<?= $language->abbr ?>]" value="">
+            <?php } ?>
+            <label for="userfile">Cover Image</label>
+            <input type="file" id="cover_image" name="cover_image_<?= $language->abbr ?>" class="form-control">
+        </div>
+
+        <div class="form-group bordered-group">
+            <div class="others-images-container_<?= $language->abbr ?>">
+                <?= $otherImgs[$language->abbr] ?? '' ?>
+            </div>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalMoreImages_<?= $language->abbr ?>" class="btn btn-default">Upload more images</a>
+        </div>
+
     </div>
 
     <?php
@@ -186,36 +252,6 @@ if (session('result_publish')) {
     }
     ?>
 
-    <div class="form-group bordered-group">
-        <?php
-        if (isset($_POST['image']) && $_POST['image'] != null) {
-            $image = 'attachments/shop_images/' . htmlspecialchars($_POST['image']);
-            if (!file_exists($image)) {
-                $image = 'attachments/no-image.png';
-            }
-            ?>
-        <p>Current image:</p>
-        <div>
-            <img src="<?= base_url($image) ?>" class="img-responsive img-thumbnail"
-                style="max-width:300px; margin-bottom: 5px;">
-        </div>
-        <input type="hidden" name="old_image" value="<?= htmlspecialchars($_POST['image']) ?>">
-        <?php if (isset($_GET['to_lang'])) { ?>
-        <input type="hidden" name="image" value="<?= htmlspecialchars($_POST['image']) ?>">
-        <?php
-            }
-        }
-        ?>
-        <label for="userfile">Cover Image</label>
-        <input type="file" id="userfile" name="userfile">
-    </div>
-    <div class="form-group bordered-group">
-        <div class="others-images-container">
-            <?= $otherImgs ?>
-        </div>
-        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalMoreImages" class="btn btn-default">Upload
-            more images</a>
-    </div>
     <div class="form-group for-shop">
         <label>Shop Categories</label>
         <select class="selectpicker form-control show-tick show-menu-arrow" name="shop_categorie">
@@ -325,35 +361,32 @@ if (session('result_publish')) {
     <a href="<?= base_url('admin/products') ?>" class="btn btn-lg btn-default">Cancel</a>
     <?php } ?>
 </form>
-<!-- Modal Upload More Images -->
-<div class="modal fade" id="modalMoreImages" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Upload more images</h4>
-            </div>
-            <div class="modal-body">
-                <form id="uploadImagesForm">
-                    <input type="hidden"
-                        value="<?= isset($_POST['folder']) ? htmlspecialchars($_POST['folder']) : $timeNow ?>"
-                        name="folder">
-                        <input type="hidden" id="hiddenImageName" name="image_name">
-
-                    <label for="others">Select images</label>
-                    <input type="file" name="others[]" id="others" multiple />
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default finish-upload">
-                    <span class="finish-text">Finish</span>
-                    <img src="<?= base_url('assets/imgs/load.gif') ?>" class="loadUploadOthers" alt="">
-                </button>
+<?php foreach ($languages as $language) { ?>
+    <div class="modal fade" id="modalMoreImages_<?= $language->abbr ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Upload more images (<?= $language->name ?>)</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadImagesForm_<?= $language->abbr ?>">
+                        <input type="hidden" value="<?= isset($_POST['folder']) ? htmlspecialchars($_POST['folder']) : $timeNow ?>" name="folder">
+                        <input type="hidden" name="lang_abbr" value="<?= $language->abbr ?>">
+                        <label for="others_<?= $language->abbr ?>">Select images</label>
+                        <input type="file" name="others_<?= $language->abbr ?>[]" id="others_<?= $language->abbr ?>" multiple />
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default finish-upload" data-lang-abbr="<?= $language->abbr ?>">
+                        <span class="finish-text">Finish</span>
+                        <img src="<?= base_url('assets/imgs/load.gif') ?>" class="loadUploadOthers" alt="">
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+<?php } ?>
 <!-- virtualProductsHelp -->
 <div class="modal fade" id="virtualProductsHelp" tabindex="-1" role="dialog" aria-labelledby="virtualProductsHelp">
     <div class="modal-dialog" role="document">
@@ -378,13 +411,62 @@ if (session('result_publish')) {
         </div>
     </div>
 </div>
+<input type="hidden" name="hiddenImageName">
 <script>
 $('#imageName').change(function () {
     // Copy the value from the imageText input to the hiddenImageName input
     var imageTextValue = document.getElementById('imageName').value;
-    console.log("iam here")
-    console.log("=====")
 
     document.getElementById('hiddenImageName').value = imageTextValue;
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('publish');
+
+    form.addEventListener('change', function (e) {
+        if (e.target.matches('input[id^="cover_image"]')) {
+            const parts = e.target.name.split('_');
+            const lang = parts.pop(); // Gets the last element, the language abbreviation
+            resizeAndAppendImage(e.target.files[0], lang, form);
+        }
+    });
+
+    function resizeAndAppendImage(file, lang, form) {
+        const sizes = [250,650, 1200,2400,3500];
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            const img = new Image();
+            img.onload = function () {
+                sizes.forEach(size => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const scaleFactor = size / Math.max(img.width, img.height);
+                    canvas.width = img.width * scaleFactor;
+                    canvas.height = img.height * scaleFactor;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob(function (blob) {
+                        let fileExtension = blob.type.split('/')[1];
+                        if (fileExtension === 'jpeg') fileExtension = 'jpg';
+                        const resizedFileName = `cover_image_${lang}_${size}.${fileExtension}`;
+                        const resizedFile = new File([blob], resizedFileName, { type: blob.type });
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(resizedFile);
+                        const fileInput = document.createElement('input');
+                        fileInput.type = 'file';
+                        fileInput.name = `cover_image_${lang}_${size}`;
+                        fileInput.style.display = 'none';
+                        fileInput.files = dataTransfer.files;
+                        form.appendChild(fileInput);
+                    }, file.type);
+                });
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+</script>
+
+

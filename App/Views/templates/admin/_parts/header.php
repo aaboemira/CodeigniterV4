@@ -108,11 +108,12 @@
                                     <li>
                                         <a href="<?= base_url('admin/orders') ?>" <?= urldecode(uri_string()) == 'admin/orders' ? 'class="active"' : '' ?>>
                                             <i class="fa fa-money" aria-hidden="true"></i> Orders 
-                                            <?php if (isset($numNotPreviewOrders) && $numNotPreviewOrders > 0) { ?>
+                                            <?php if (session()->has('new_order_flag')): ?>
                                                 <img src="<?= base_url('assets/imgs/exlamation-hi.png') ?>" style="position: absolute; right:10px; top:7px;" alt="">
-                                            <?php } ?>
+                                            <?php endif; ?>
                                         </a>
                                     </li>
+
                                     <li><a href="<?= base_url('admin/discounts') ?>" <?= urldecode(uri_string()) == 'admin/discounts' ? 'class="active"' : '' ?>><i class="fa fa-percent" aria-hidden="true"></i> Discount Codes</a></li>
                                     <?php if (isset($activePages) && in_array('blog', $activePages)) { ?>
                                         <li class="header">BLOG</li>
