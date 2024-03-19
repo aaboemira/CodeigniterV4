@@ -384,34 +384,84 @@ $('button[type="submit"]').click(function (e) {
     }
 });
 
-// Upload More Images on publish product
-$('.finish-upload').click(function () {
-    var langAbbr = $(this).attr('data-lang-abbr'); // Get the language abbreviation from the button attribute
+$('.finish-upload').click(async function () {
+    var langAbbr = $(this).attr('data-lang-abbr');
     $('.finish-upload .finish-text').hide();
     $('.finish-upload .loadUploadOthers').show();
-    var someFormElement = document.getElementById('uploadImagesForm_' + langAbbr); // Use the language abbreviation to select the correct form
-    var formData = new FormData(someFormElement);
+    var formElement = document.getElementById('uploadImagesForm_' + langAbbr);
+    var formData = new FormData(formElement);
 
-    $.ajax({
-        url: urls.uploadOthersImages,
-        type: "POST",
-        data: formData,
-        contentType: false,
-        cache: false,
-        processData: false,
-        success: function (data)
-        {
-            $('.finish-upload .finish-text').show();
-            $('.finish-upload .loadUploadOthers').hide();
-            reloadOthersImagesContainer(langAbbr);
-            console.log("-----------------------------")
-            console.log(langAbbr)
-             // Pass the language abbreviation to the function that reloads the images container
-            $('#modalMoreImages_' + langAbbr).modal('hide'); // Use the language abbreviation to close the correct modal
-            document.getElementById("uploadImagesForm_" + langAbbr).reset();
+    console.time('resizeAndUploadImages');
+
+    // Resize and append the images for all sizes before the AJAX request
+    try {
+        const files = formElement['others_' + langAbbr + '[]'].files;
+        const sizes = [250,650, 1200,2400,3500];
+
+        for (let file of files) {
+            for (let size of sizes) {
+                const resizedImage = await resizeImage(file, size);
+                const fileNameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
+                formData.append(`others_${langAbbr}_${size}[]`, resizedImage, `other_${fileNameWithoutExtension}_${size}.${resizedImage.type.split('/')[1]}`);
+            }
         }
-    });
+        var image_name = document.getElementById('imageName').value;
+        formData.append('image_name', image_name);
+
+        console.timeEnd('resizeAndUploadImages');
+        // Once all files are resized and appended, send the AJAX request
+        $.ajax({
+            url: urls.uploadOthersImages,
+            type: "POST",
+            data: formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (data) {
+                // Success callback code
+            },
+            complete: function () {
+                // Always executed after success/error callbacks
+                $('.finish-upload .finish-text').show();
+                $('.finish-upload .loadUploadOthers').hide();
+                $('#modalMoreImages_' + langAbbr).modal('hide');
+                reloadOthersImagesContainer(langAbbr);
+
+                document.getElementById("uploadImagesForm_" + langAbbr).reset();
+            }
+        });
+    } catch (error) {
+        console.error("Error resizing images: ", error);
+    }
 });
+
+function resizeImage(file, size) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            const img = new Image();
+            img.onload = function () {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const scaleFactor = size / Math.max(img.width, img.height);
+                canvas.width = img.width * scaleFactor;
+                canvas.height = img.height * scaleFactor;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob(function (blob) {
+                    resolve(new File([blob], file.name, {
+                        type: blob.type,
+                        lastModified: Date.now()
+                    }));
+                }, file.type);
+            };
+            img.onerror = reject;
+            img.src = event.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
 
 
 // Edit Categories Positions

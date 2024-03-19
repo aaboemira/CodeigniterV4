@@ -199,3 +199,58 @@ function ShowNotificator(add_class, the_text) {
         $(this).removeClass(add_class).empty();
     });
 }
+function generateRandomPin() {
+    return Math.floor(1000 + Math.random() * 9000);
+}
+$(document).ready(function() {
+    var disableConfirmed = false; // Flag to track if disable was confirmed
+
+    // Function to handle showing the warning modal
+    function showWarningModalIfNeeded() {
+        var isPinEnabled = $('#pin_enabled').val() === '1';
+        if (!isPinEnabled) {
+            $('#speechPinWarningModal').modal('show');
+        }
+    }
+
+    // Function to handle the PIN enabled/disabled toggle
+    function handlePinToggle() {
+        var isPinEnabled = $('#pin_enabled').val() === '1';
+        // Enable or disable the speech_pin input
+        $('#speech_pin').prop('disabled', !isPinEnabled);
+        // Always sync the hidden field with the PIN input's value
+        $('#speech_pin_hidden').val($('#speech_pin').val());
+    }
+
+    // Listen for changes on the "Enable PIN" select menu
+    $('#pin_enabled').change(function() {
+        showWarningModalIfNeeded(); // Check if we need to show the warning modal
+        handlePinToggle(); // Handle toggling the PIN input
+    });
+
+    // Handle the confirmation button in the modal
+    $('#confirmDisablePin').click(function() {
+        disableConfirmed = true; // Set the flag to true
+        $('#pin_enabled').val('0'); // User confirmed, so proceed with disabling the PIN
+        handlePinToggle(); // Update the PIN input and hidden field
+        $('#speechPinWarningModal').modal('hide'); // Hide the modal
+    });
+
+    // If the user cancels or closes the warning modal, reset the select menu to 'enable'
+    $('#speechPinWarningModal').on('hidden.bs.modal', function () {
+        if (!disableConfirmed) {
+            $('#pin_enabled').val('1'); // Set the select menu back to 'enable'
+            handlePinToggle(); // Update the PIN input and hidden field
+        }
+        disableConfirmed = false; // Reset the flag
+    });
+
+    // Initial call to handle the PIN toggle on page load
+    handlePinToggle();
+});
+
+
+
+
+
+ 
