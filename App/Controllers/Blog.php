@@ -17,7 +17,7 @@ class Blog extends BaseController
     public function __construct()
     {
         if (!in_array('blog', $this->nonDynPages)) {
-            show_404();
+            $this->show_404();
         }
         
         $this->load->helper(array('pagination'));
@@ -55,13 +55,13 @@ class Blog extends BaseController
     public function viewPost($id)
     {
         if (!is_numeric($id) || $id <= 0) {
-            show_404();
+            $this->show_404();
         }
         $data = array();
         $head = array();
         $data['article'] = $this->Public_model->getOnePost($id);
         if ($data['article'] == null) {
-            show_404();
+            $this->show_404();
         }
         $data['archives'] = $this->getBlogArchiveHtml();
         $head['title'] = $data['article']['title'];

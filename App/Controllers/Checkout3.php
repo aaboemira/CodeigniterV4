@@ -71,12 +71,11 @@ class Checkout3 extends BaseController
             $_POST['shipping_type']=session('shipping_type');
             $_POST['shipping_address']=session('shipping_address');
             $_POST['billing_address']=session('billing_address');
-            $_POST['status']='receipt_confirmed';
+            $_POST['status']='received';
             //hier alle variablen von session nach post kopieren
             $_POST['referrer'] = session('referrer');
             $_POST['clean_referrer'] = cleanReferral($_POST['referrer']);
             $_POST['user_id'] = isset($_SESSION['logged_user']) ? $_SESSION['logged_user'] : 0;
-            $discount_amount = isset($_POST['discountAmount'])?$_POST['discountAmount']: 0;
             $orderId = $this->Public_model->setOrder($_POST);
             $products=$this->getOrderProducts($_POST['id'],$_POST['quantity']);
             $products=$this->addProductTitle($products);
@@ -86,10 +85,18 @@ class Checkout3 extends BaseController
                 'phone'     => $_POST['phone'],
                 'email'     => $_POST['email']
             );
-            
    
-            $currentDateTime = Time::now('America/Chicago', 'en_US');
-
+            $currentDateTime = Time::now('Europe/Berlin', 'de_DE');
+            if (!isset(session('discountCodeResult')['discount_amount'])) {
+                $session = session();
+                $discountCodeResult = session('discountCodeResult') ?? [];
+                $discountCodeResult['discount_amount'] = 0;
+                $session->set('discountCodeResult', $discountCodeResult);
+            }
+            
+            
+            $discount_amount = session('discountCodeResult')['discount_amount'] ?? 0;
+            $_POST['discountAmount']=$discount_amount;
             $orderData = array(
                 'order_id'=>$orderId,
                 'shipping_full_name'=>$_POST['shipping_address']['shipping_first_name'].' '.$_POST['shipping_address']['shipping_last_name'],
@@ -103,13 +110,16 @@ class Checkout3 extends BaseController
                 'currency'=>config('config')->currency,
                 'discount'=>$discount_amount,
                 'order_date' => $currentDateTime->format('d.m.Y:H:i:s'),
-                'address'=>$address
+                'address'=>$address,
+                'image_url'=> base_url('/attachments/shop_images/')
             );
             if ($orderId != false) {
                 $this->orderId = $orderId;
                 $this->sendBestellbestaetigung($orderData);
                 //$this->setActivationLink();
                 $this->sendNotifications();
+                session()->set('new_order_flag', true); // Set the new order flag
+
                 return $this->goToDestination();
             } else {
                 ///log_message('error', 'Cant save order!! ' . json_encode( $_POST));
@@ -126,7 +136,7 @@ class Checkout3 extends BaseController
         $data['cashondelivery_visibility'] = $this->Home_admin_model->getValueStore('cashondelivery_visibility');
         $data['paypal_email'] = $this->Home_admin_model->getValueStore('paypal_email');
         $data['bestSellers'] = $this->Public_model->getbestSellers();
-        $data['shipping_price']=session('shipping_price');
+        $data['shipping_price'] = number_format(floatval(session('shipping_price')), 2, '.', '');
         $data['shipping_type']=session('shipping_type');
         return $this->render('checkout3', $head, $data);
     }
@@ -210,6 +220,8 @@ class Checkout3 extends BaseController
                 $this->sendmail->orderConfirmation($user, $orderData['email'], $titleadmin, $orderData, $german);
             }
         }
+        $this->Orders_model->changeOrderStatus($orderData['order_id'],'receipt_confirmed');
+
     }
     public function getOrderProducts($id,$quantity){
         $post['products'] = array();

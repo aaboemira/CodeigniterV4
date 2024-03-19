@@ -47,7 +47,7 @@ class Home extends BaseController
         $data['shippingOrder'] = $this->Home_admin_model->getValueStore('shippingOrder'); 
         $data['showOutOfStock'] = $this->Home_admin_model->getValueStore('outOfStock');
         $data['showBrands'] = $this->Home_admin_model->getValueStore('showBrands');
-        
+        $data['homeflag']=1;
         //$data['links_pagination'] = pagination('home', $rowscount, $this->num_rows);
         return $this->render('home', $head, $data);
     }
@@ -148,11 +148,13 @@ class Home extends BaseController
     {
         $data = array();
         $head = array();
+
         $data['product'] = $this->Public_model->getOneProduct($id);
-        $data['sameCagegoryProducts'] = $this->Public_model->sameCagegoryProducts($data['product']['shop_categorie'], $id);
         if ($data['product'] === null) {
-            show_404();
+            return $this->show_404();
         }
+        $data['sameCagegoryProducts'] = $this->Public_model->sameCagegoryProducts($data['product']['shop_categorie'], $id);
+
         $vars['publicDateAdded'] = $this->Home_admin_model->getValueStore('publicDateAdded');
         $head = array_merge($head,$vars);
         $data = array_merge($data,$vars);
@@ -168,6 +170,8 @@ class Home extends BaseController
         }
         $model = $this->Public_model; // Replace with your model name
         $data['model'] = $model;
+            // Pass the function to the view
+
         //echo '<pre>'; print_r($data['product']); die;
         return $this->render('view_product', $head, $data);
     }
@@ -184,10 +188,10 @@ class Home extends BaseController
                 $head['keywords'] = '';
                 return $this->render('confirmed', $head, $data);
             } else {
-                show_404();
+                return $this->show_404();
             }
         } else {
-            show_404();
+            return $this->show_404();
         }
     }
 
@@ -197,6 +201,7 @@ class Home extends BaseController
             exit('No direct script access allowed');
         }
         $result = $this->Public_model->getValidDiscountCode($_POST['enteredCode']);
+        
         if ($result == null) {
             echo 0;
         } else {
@@ -239,4 +244,8 @@ class Home extends BaseController
 
     echo '</urlset>';
 }
+
+
+
+
 }

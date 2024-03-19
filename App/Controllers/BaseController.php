@@ -250,5 +250,13 @@ abstract class BaseController extends Controller
          }
          $this->template = 'templates' . DIRECTORY_SEPARATOR . $template . DIRECTORY_SEPARATOR;
      }
- 
+     public function show_404()
+     {
+         $head = array();
+         $head['title'] = 'Page Not Found';
+         $head['description'] = 'The page you are looking for does not exist.';
+         $head['keywords'] = '404, not found';
+         $data['message']='Page Not Found';
+         return $this->render('error_404', $head,$data);
+     }
 }

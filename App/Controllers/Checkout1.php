@@ -115,6 +115,7 @@ class Checkout1 extends BaseController
             ];
 
             $userId = session()->get('logged_user');
+
             $saveBillingAddress = isset($_POST['save_billing_address']);
             $saveShippingAddress = isset($_POST['save_shipping_address']);
             if ($saveBillingAddress) {

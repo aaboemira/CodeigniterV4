@@ -9,7 +9,7 @@ class SmartHomeController extends ResourceController
 {
     protected $authModel; // Add a protected member variable for Auth_model
     protected $publicModel;
-    private  $url = 'http://localhost:8012/dashboard/enddevice/Enddevice.php';
+    protected  $url ;
     private $errorCodeMapping = [
         -1 => 'serviceOutage', // Assuming a custom TTS code; adjust as necessary
         -2 => 'deviceOffline',
@@ -24,6 +24,8 @@ class SmartHomeController extends ResourceController
         // Instantiate Auth_model and store it in the member variable
         $this->authModel = new Auth_model();
         $this->publicModel = new Public_model();
+        $this->url = getenv('SMART_DEVICES_API');
+
 
     }
     public function fulfillment()
@@ -47,14 +49,17 @@ class SmartHomeController extends ResourceController
                 return $this->query($jsonData);
             case 'action.devices.EXECUTE':
                 return $this->execute($jsonData);
+            case 'action.devices.DISCONNECT':
+                return $this->disconnect($jsonData);
             default:
                 return $this->fail('Unknown intent', 400);
         }
     }
     private function sync($jsonData)
     {
-    
         
+        $this->logger->alert("-------------------Enter Sync--------------");
+
         // Assume $jsonData contains the SYNC intent structure
         $accessToken = $this->getAccessTokenFromHeader();
         $userId = $this->validateToken($accessToken);
@@ -78,8 +83,10 @@ class SmartHomeController extends ResourceController
                 'name'=>[
                     'name'=>$device['device_name']
                 ],
-                'willReportState' => false, // Whether the device reports state changes to Google
+                'willReportState' => true, // Whether the device reports state changes to Google
             ];
+            $result=$this->publicModel->connectGoogleHome($device['device_id']);
+            $this->logger->alert("Connect Google Home with id {$device['device_id']}, Serial number{$device['serial_number']} result:{$result}");
         }
         // Example response structure
         $response = [
@@ -90,8 +97,11 @@ class SmartHomeController extends ResourceController
             ],
         ];
         
-    
+            $this->reportStateToApi($userId, 'on');
+
         return $this->response->setJSON($response);
+        $this->logger->alert("-------------------End Sync--------------");
+
     }
     
 
@@ -103,7 +113,6 @@ class SmartHomeController extends ResourceController
     
             // Use the getDeviceStatus function to get the latest status
             $deviceStatus = $this->getDeviceStatus($deviceId);
-    
             if (!isset($deviceStatus['status']) || $deviceStatus['status'] !== 0) {
                 // Handle error in device status response
                 $errorCode=$this->errorCodeMapping[$deviceStatus['status']];
@@ -136,25 +145,39 @@ class SmartHomeController extends ResourceController
         foreach ($jsonData['inputs'][0]['payload']['commands'] as $commandGroup) {
             $devices = $commandGroup['devices'];
             $executions = $commandGroup['execution'];
-    
+
             foreach ($devices as $device) {
                 $deviceId = $device['id'];
                 foreach ($executions as $execution) {
                     $command = $execution['command'];
                     $params = $execution['params'];
-                    
-                    // Default to a "close" action; adjust as needed
-                    $action = 'close';
-                    if (isset($params['openPercent']) && $params['openPercent'] > 0) {
-                        $action = 'open';
-                    }
-    
+                    $pin = isset($execution['challenge']) && isset($execution['challenge']['pin']) ? $execution['challenge']['pin'] : null;
+
                     // Attempt to control the device
-                    $controlResult = $this->controlDevice($deviceId, $action);
+                    $controlResult = $this->controlDevice($deviceId, $params['openPercent'], $pin);
     
-                    // Assuming controlDevice() now returns an array with 'status' and optionally 'message'
-                    if ($controlResult['status'] === 0) {
-                        // On success, fetch the updated status to reflect in the command response
+                    if ($controlResult['status'] === 'pin_required') {
+                        // Handle the case where a pin is required
+                        $commands[] = [
+                            'ids' => [$deviceId],
+                            'status' => 'ERROR',
+                            'errorCode' => 'challengeNeeded',
+                            'challengeNeeded' => [
+                                'type' => 'pinNeeded'
+                            ]
+                        ];
+                    } elseif ($controlResult['status'] === 'incorrect_pin') {
+                        // Handle the case where the pin is incorrect
+                        $commands[] = [
+                            'ids' => [$deviceId],
+                            'status' => 'ERROR',
+                            'errorCode' => 'challengeNeeded',
+                            'challengeNeeded' => [
+                                'type' => 'challengeFailedPinNeeded'
+                            ]
+                        ];
+                    } elseif ($controlResult['status'] === 0) {
+                        // Handle successful control
                         $deviceStatus = $this->getDeviceStatus($deviceId);
                         $online = true;
                         $openPercent = $deviceStatus['data']['percent'] ?? 0;
@@ -168,7 +191,7 @@ class SmartHomeController extends ResourceController
                             ],
                         ];
                     } else {
-                        // On error, map the error code to a Google TTS error code
+                        // Handle other errors
                         $errorCode = $this->errorCodeMapping[$controlResult['status']];
                         $commands[] = [
                             'ids' => [$deviceId],
@@ -189,6 +212,7 @@ class SmartHomeController extends ResourceController
     
         return $this->response->setJSON($response);
     }
+    
     
 
 
@@ -212,36 +236,40 @@ class SmartHomeController extends ResourceController
             'api' => 'get_status'
         ];
         $response = callAPI('POST', $this->url, $data);
+        $this->logger->alert($response);
         $responseData = json_decode($response, true);
         return $responseData;
     }
-    private function controlDevice($deviceId,$action){
+    private function controlDevice($deviceId,$action,$pin = null){
 
-
+        $accessToken = $this->getAccessTokenFromHeader();
+        $userID=$this->authModel->getUserIdFromAccessToken($accessToken);
+        $guest=$this->publicModel->getGuestDevicePinDetails($userID,$deviceId);
+        
         // Fetch device data by ID (assuming you have a method like getSmartDeviceById)
         $device = $this->publicModel->getSmartDeviceById($deviceId);
-
+        if($guest!=null){
+            $device['pin_enabled']=$guest['guest_pin_enabled'];
+            $device['pin_code']=$guest['guest_pin_code'];
+            $device['password']=$guest['guest_password'];
+        }
+        if ($device['pin_enabled']) {
+            if ($pin === null) {
+                return ['status' => 'pin_required'];  // Indicate that a pin is required
+            } elseif ($pin !== $device['pin_code']) {
+                return ['status' => 'incorrect_pin'];  // Indicate that the pin is incorrect
+            }
+        }
         $devicePassword = decryptData($device['password'], '@@12@@');
 
         // Default password is the device password
         $password = $devicePassword;
     
 
-        $dataValue = '00';
+        $dataValue = dechex($action);
+        $dataValue = str_pad($dataValue, 2, '0', STR_PAD_LEFT);
+        $this->logger->alert("openpercent:{$dataValue}");
 
-        // Map the action to the corresponding data value
-        switch ($action) {
-            case 'open':
-                $dataValue = '64';
-                break;
-            case 'stop':
-                $dataValue = 'FF';
-                break;
-            // Add more cases if needed
-            default:
-                // For 'close' action or any other action not specified, keep the default value
-                break;
-        }
         // Prepare data for external API request
         $apiData = [
             'serial' => $device['serial_number'],
@@ -253,6 +281,9 @@ class SmartHomeController extends ResourceController
         ];
         // Make the API request
         $response = callAPI('POST', $this->url, $apiData);
+        $this->logger->alert($response);
+        $this->logger->alert($apiData);
+
         // Handle the response as needed
         $responseData = json_decode($response, true);
 
@@ -286,4 +317,74 @@ class SmartHomeController extends ResourceController
         }
         return false; // Return false if the content type is unsupported or data is missing
     }
+    public function disconnect() {
+        // Extract the access token from the header to identify the user
+        $accessToken = $this->getAccessTokenFromHeader();
+        $userId = $this->validateToken($accessToken);
+        // $this->logger->alert("DIsconect Recieved");
+
+        if (!$userId) {
+            $this->logger->alert("DIsconect UnAuthorized");
+
+            return $this->failUnauthorized("Invalid or missing access token");
+        }
+        // $this->logger->alert("DIsconect Authorized");
+        // Set google_linked to false for all devices associated with this user
+        $this->publicModel->disconnectGoogleHome($userId);
+        $this->logger->alert("DIsconect User with id:{$userId}");
+        $this->reportStateToApi($userId, 'off');
+
+        // Return an empty object with a success HTTP status code
+        return $this->response->setJSON([])->setStatusCode(200);
+    }
+    
+    protected function reportStateToApi($userId, $reportStateValue) {
+        $this->logger->alert("-------------------Enter Sending Report State  (Start Reporting)--------------");
+
+        $apiUrl = getenv('SMART_DEVICES_API');
+        $apiSecret = getenv('API_SECRET'); // Assuming you have your API secret stored in .env
+        
+        // Fetch both owned and guest devices with control access
+        $ownedDevices = $this->publicModel->getSmartHomeDevicesByUID($userId);
+        $guestDevices = $this->publicModel->getGuestDevicesByUserIdAndControl($userId, true);
+        
+        // Combine both owned and guest devices
+        $allDevices = array_merge($ownedDevices, $guestDevices);
+        $this->logger->alert($allDevices);
+    
+        foreach ($allDevices as $device) {
+    
+            $data = [
+                'serial' => $device['serial_number'],
+                'api' => 'report_state',
+                'report_state' => $reportStateValue,
+                'api_secret' => $apiSecret,
+            ];
+            $this->logger->alert("Request of report state ");
+
+            $this->logger->alert($data);
+            $this->logger->alert("End Of Request----------------------- ");
+
+            $response = callAPI('POST', $apiUrl, $data); // callAPI function from api_helper
+            $this->logger->alert("Response of report state ");
+
+            $this->logger->alert($response);
+            $this->logger->alert("End Of Response----------------------- ");
+
+            $responseData = json_decode($response, true);
+            
+            if (isset($responseData['status']) && $responseData['status'] != 0) {
+                $this->logger->alert("Error for device {$device['serial_number']}: {$responseData['message']}");
+            } else {
+                if (isset($responseData['data']['code']) && $responseData['data']['code'] != 0) {
+                    $this->logger->alert("Error code for device {$device['serial_number']}: {$responseData['data']['code']}");
+                }
+            }
+        }
+        $this->logger->alert("-------------------End Sending Report State  (Start Reporting)--------------");
+
+    }
+    
+
+    
 }

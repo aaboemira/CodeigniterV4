@@ -9,10 +9,12 @@ class SmartDevices extends BaseController
 {
     protected $Public_model;
     private $num_rows = 10;
-    private  $url = 'http://localhost:8012/dashboard/enddevice/Enddevice.php';
+    protected  $url ;
     public function __construct()
     {
         $this->Public_model = new Public_model();
+        $this->url = getenv('SMART_DEVICES_API');
+        
         helper('api_helper');
 
     }
@@ -22,7 +24,7 @@ public function index($page = 0)
     if (!session()->has('logged_user')) {
         return redirect()->to(LANG_URL . '/register');
     }
-
+    
     $head = array();
     $data = array();
     $head['title'] = lang_safe('my_acc');
@@ -74,14 +76,14 @@ public function index($page = 0)
         $head['description'] = lang_safe('add smart device');
         $head['keywords'] = str_replace(" ", ",", $head['title']);
 
-
+        // Generate a random PIN and pass it to the view
+        $data['randomPin'] = $this->generateRandomPin();
         return $this->render('smart_devices/create_device', $head,$data); // Render the add device form view
     }
     public function store()
     {
-
         $validation = \Config\Services::validation(); // Load the validation library
-
+    
         // Set validation rules
         $validation->setRules([
             'device_name' => [
@@ -113,18 +115,37 @@ public function index($page = 0)
                     'max_length' => lang_safe('validation_password_max_length'),
                 ]
             ],
+            'speech_pin' => [
+                'rules' => 'permit_empty|min_length[4]|max_length[6]|numeric',
+                'errors' => [
+                    'min_length' => lang_safe('create_smart_device_validation_speech_pin_min_length'),
+                    'max_length' => lang_safe('create_smart_device_validation_speech_pin_max_length'),
+                    'numeric' => lang_safe('create_smart_device_validation_speech_pin_numeric'),
+                ]
+            ],
         ]);
-
+    
         // Check if form data is valid
         if (!$validation->withRequest($this->request)->run()) {
             return redirect()->back()->withInput()->with('errors', $validation->getErrors());
         }
-
+    
         $serial = $this->request->getPost('serial_number');
         $deviceName = $this->request->getPost('device_name');
         $uid = $this->request->getPost('uid');
         $password = $this->request->getPost('password');
+        $pinEnabled = $this->request->getPost('pin_enabled') == '1';
+        $speechPin = $this->request->getPost('speech_pin') ;
+        $speechPinHidden = $this->request->getPost('speech_pin_hidden');
+    
+        // Decide which PIN value to save based on whether the PIN is enabled or not
+        $speechPin = $pinEnabled ? $speechPin : $speechPinHidden;
+            // If the PIN is not enabled and the speech pin is empty, generate a new random PIN
+        if (!$pinEnabled && empty($speechPin)) {
+            $speechPin = $this->generateRandomPin();
+        }
         $userId = $_SESSION['logged_user'];
+    
 
         // Check if the user already has a device with the same serial number
         $existingDevicesCount = $this->Public_model->countSmartHomeDevicesByUserAndSerial($userId, $serial);
@@ -141,27 +162,27 @@ public function index($page = 0)
         }
         // Endpoint URL
 
-
-        $passwordEncrypted=encryptData($password,'@@12@@');
-
-        $uidEncrypted=encryptData($uid,'@@12@@');
-
+        $passwordEncrypted = encryptData($password, '@@12@@');
+        $uidEncrypted = encryptData($uid, '@@12@@');
+    
         $deviceData = [
-            'device_name'=>$deviceName,
+            'device_name' => $deviceName,
             'user_id' => $userId,
             'UID' => $uidEncrypted,
             'serial_number' => $serial,
             'password' => $passwordEncrypted,
+            'pin_code' => $speechPin,
+            'pin_enabled' => $pinEnabled,
             'connected' => -2,
-            'state' =>'none'
+            'state' => 'none'
         ];
+    
         $this->Public_model->saveSmartDevice($deviceData);
-
-
+    
         // Redirect back to the form
         return redirect()->to('/smart-home');
-
     }
+    
 
     public function refreshDeviceStatus()
     {
@@ -222,6 +243,7 @@ public function index($page = 0)
             session()->setFlashdata('error', lang_safe('unauthorized_user'));
             return redirect()->to('/smart-home');
         }
+        
         // Fetch device details
         $device = $this->Public_model->getSmartDeviceById($deviceId);
 
@@ -245,9 +267,21 @@ public function index($page = 0)
         $uid = $this->request->getPost('uid');
         $deviceID = $this->request->getPost('device_id');
         $pwd = $this->request->getPost('password');
-
+        $pinEnabled = $this->request->getPost('pin_enabled') == '1';
+        $speechPin = $this->request->getPost('speech_pin') ;
+        $speechPinHidden = $this->request->getPost('speech_pin_hidden');
+        // Decide which PIN value to save based on whether the PIN is enabled or not
+        $speechPin = $pinEnabled ? $speechPin : $speechPinHidden;
+            // If the PIN is not enabled and the speech pin is empty, generate a new random PIN
+        if (!$pinEnabled && empty($speechPin)) {
+            $speechPin = $this->generateRandomPin();
+        }
         $validation = \Config\Services::validation();
         $userId = $_SESSION['logged_user'];
+        if (!$this->isValidPassword($pwd)) {
+            // Set an error message
+            return redirect()->withInput()->back()->with('error', lang_safe('validation_password_invalid_characters','invalid password'));
+        }
         // Set validation rules
         $validation->setRules([
             'device_name' => [
@@ -279,6 +313,14 @@ public function index($page = 0)
                     'max_length' => lang_safe('validation_password_max_length'),
                 ]
             ],
+            'speech_pin' => [
+                'rules' => 'permit_empty|min_length[4]|max_length[6]|numeric',
+                'errors' => [
+                    'min_length' => lang_safe('edit_smart_device_validation_speech_pin_min_length'),
+                    'max_length' => lang_safe('edit_smart_device_validation_speech_pin_max_length'),
+                    'numeric' => lang_safe('edit_smart_device_validation_speech_pin_numeric'),
+                ]
+            ],
         ]);
         
     // Check serial number uniqueness
@@ -308,7 +350,9 @@ public function index($page = 0)
             'device_name' => $deviceName,
             'serial_number' => $serial,
             'uid' => $uidEncrypted,
-            'password'=>$pwdEncrypted // Consider encryption if needed
+            'password' => $pwdEncrypted,
+            'pin_code' => $speechPin,
+            'pin_enabled' => $pinEnabled
         ];
 
         if ($this->Public_model->updateSmartDevice($deviceData)) {
@@ -355,6 +399,7 @@ public function index($page = 0)
         $head['title'] = lang_safe('access_control');
         $head['description'] = lang_safe('manage_access');
         $head['keywords'] = '';
+        $data['randomPin'] = $this->generateRandomPin();
 
 
 
@@ -387,8 +432,21 @@ public function index($page = 0)
         $deviceId = $this->request->getPost('device_id');
         $password = $this->request->getPost('password');
         $pwdEncrypted=encryptData($password,'@@12@@');
+        $pinEnabled = $this->request->getPost('guest_speech_pin_enabled');
+        $speechPin = $this->request->getPost('guest_speech_pin');
+        $speechPinHidden = $this->request->getPost('speech_pin_hidden');
+    
+        // Decide which PIN value to save based on whether the PIN is enabled or not
+        $speechPin = $pinEnabled ? $speechPin : $speechPinHidden;
+            // If the PIN is not enabled and the speech pin is empty, generate a new random PIN
+        if (!$pinEnabled && empty($speechPin)) {
+            $speechPin = $this->generateRandomPin();
+        }
         $currentUserEmail = session()->get('email'); // Adjust this line based on your session structure
-
+        if (!$this->isValidPassword($password)) {
+            // Set an error message
+            return redirect()->withInput()->back()->with('error', lang_safe('validation_password_invalid_characters','invalid password'));
+        }
         $validation->setRules([
             'user_email' => [
                 'rules' => 'required|valid_email',
@@ -438,7 +496,9 @@ public function index($page = 0)
             'email' => $guestEmail,
             'can_control' => $canControl,
             'guest_password'=>$pwdEncrypted,
-            'guest_id'=>$userId
+            'guest_id'=>$userId,
+            'guest_pin_enabled'=>$pinEnabled,
+            'guest_pin_code'=>$speechPin
         ];
         if ($this->Public_model->addGuestToSmartDevice($guestData)) {
             session()->setFlashdata('success', lang_safe('guest_add_success'));
@@ -477,7 +537,13 @@ public function index($page = 0)
         $deviceId= $this->request->getPost('device_id');
 
         $canControl = $this->request->getPost('can_control') === '1';
-        $guestPassword = $this->request->getPost('password');
+        $guestPassword = $this->request->getPost('guest_password');
+        $pinEnabled = $this->request->getPost('guest_speech_pin_enabled');
+        $speechPin = $pinEnabled ? $this->request->getPost('guest_speech_pin') : null;
+        if (!$this->isValidPassword($guestPassword)) {
+            // Set an error message
+            return redirect()->withInput()->back()->with('error', lang_safe('validation_password_invalid_characters','invalid password'));
+        }
         $guestPassword=encryptData($guestPassword,'@@12@@');
         $validation->setRules([
             'user_email' => [
@@ -487,7 +553,7 @@ public function index($page = 0)
                     'valid_email' => lang_safe('validation_email'),
                 ]
             ],
-            'password' => [
+            'guest_password' => [
                 'rules' => 'required|min_length[4]|max_length[10]',
                 'errors' => [
                     'required' => lang_safe('validation_password_required'),
@@ -514,8 +580,17 @@ public function index($page = 0)
             session()->setFlashdata('error', lang_safe('guest_device_duplicate'));
             return redirect()->back();
         }
+        $data = [
+            'id'=>$guestId,
+            'email' => $guestEmail,
+            'can_control' => $canControl,
+            'guest_password'=>$guestPassword,
+            'guest_id'=>$userId,
+            'guest_pin_enabled'=>$pinEnabled,
+            'guest_pin_code'=>$speechPin
+        ];
         // Update the guest information in the database
-        if ($this->Public_model->updateGuest($guestId, $guestEmail, $canControl,$guestPassword,$userId)) {
+        if ($this->Public_model->updateGuest($data)) {
             session()->setFlashdata('success', lang_safe('guest_update_success'));
         } else {
             session()->setFlashdata('error', lang_safe('guest_update_error'));
@@ -579,7 +654,73 @@ public function index($page = 0)
         return $this->response->setJSON(['status' => $responseData['status'] , 'message' => $responseData['message']]);
     }
 
+    public function speechControl($deviceId)
+    {
+        if (!session()->has('logged_user')) {
+            return redirect()->to(LANG_URL . '/register');
+        }
+    
+        $head = array();
+        $data = array();
+        $head['title'] = lang_safe('speech_control');
+        $head['description'] = lang_safe('manage_speech_control');
+        $head['keywords'] = '';
+    
+        // Fetch device details
 
+        if($this->isUserDeviceGuest($deviceId)){
+           $guest= $this->Public_model->getGuestByDevice($deviceId);
+           $data['device']=[
+            'device_id'=>$guest['device_id'],
+            'pin_enabled'=>$guest['guest_pin_enabled'],
+            'pin_code'=>$guest['guest_pin_code'],
+            'is_guest'=>1
+           ];
+        }elseif($this->isUserDeviceOwner($deviceId)){
+            $device = $this->Public_model->getSmartDeviceById($deviceId);
+            $data['device']=[
+                'device_id'=>$device['device_id'],
+                'pin_enabled'=>$device ['pin_enabled'],
+                'pin_code'=>$device['pin_code'],
+                'is_guest'=>0
+               ];
+        }
+        else{
+            session()->setFlashdata('error', lang_safe('unauthorized_user'));
+            return redirect()->to('/smart-home');
+        }
+
+        return $this->render('smart_devices/speech_control', $head, $data);
+    }
+    
+    public function updateSpeechControl()
+    {
+        $isGuest = $this->request->getPost('is_guest')=='1';
+        $deviceId = $this->request->getPost('device_id');
+        $userId=session()->get('logged_user');
+        $pinEnabled = $this->request->getPost('pin_enabled');
+        $speechPin = $this->request->getPost('speech_pin');
+        $speechPinHidden = $this->request->getPost('speech_pin_hidden');
+    
+        // Decide which PIN value to save based on whether the PIN is enabled or not
+        $speechPin = $pinEnabled ? $speechPin : $speechPinHidden;
+            // If the PIN is not enabled and the speech pin is empty, generate a new random PIN
+        if (!$pinEnabled && empty($speechPin)) {
+            $speechPin = $this->generateRandomPin();
+        }
+        if($isGuest)$this->Public_model->updateGuestSpeech($deviceId,$userId,$pinEnabled,$speechPin);
+        else $this->Public_model->updateOwnerSpeech($deviceId,$pinEnabled,$speechPin);
+        session()->setFlashdata('success', lang_safe('speech_control_update_success'));
+
+        return redirect()->back();
+    }
+    
+    private function isUserDeviceGuest($deviceId)
+    {
+        $userId = session()->get('logged_user');
+        return $this->Public_model->isUserGuestOfDevice($userId, $deviceId);
+    }
+    
 
     private function isUserDeviceOwner($deviceId) {
         if (!session()->has('logged_user')) {
@@ -591,5 +732,11 @@ public function index($page = 0)
 
         return $device && $device['user_id'] == $userId; // Check if user is owner
     }
-
+    private function isValidPassword($password) {
+        return is_string($password) && preg_match('/^[A-Za-z0-9_.@-]+$/', $password);
+    }
+    private function generateRandomPin() {
+        return str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
+    }
+    
 }

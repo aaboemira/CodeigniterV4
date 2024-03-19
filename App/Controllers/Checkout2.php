@@ -3,9 +3,9 @@
 namespace App\Controllers;
 
 use App\Libraries\ShoppingCart;
-use App\Models\admin\settings_model;
-use App\Models\public_model;
-use App\Models\admin\orders_model;
+use App\Models\admin\Settings_model;
+use App\Models\Public_model;
+use App\Models\admin\Orders_model;
 
 class Checkout2 extends BaseController
 {
@@ -42,10 +42,6 @@ class Checkout2 extends BaseController
         // Get and filter shipments
         $shipments = $this->Public_model->getShippingsByDist($dist);
         $data['shipments'] = $this->filterShipments($shipments, $freeShippingValue, $orderTotal);
-        $data['freeShippingInfo'] = [
-            'isEligible' => is_numeric($freeShippingValue) && $orderTotal >= $freeShippingValue,
-            'difference' => is_numeric($freeShippingValue) ? max(0, $freeShippingValue - $orderTotal) : null
-        ];
 		if (isset($_POST['payment_type'])) {
             if(isset($_POST['payment_type']))
                 session()->set('payment_type', $_POST['payment_type']);
@@ -81,18 +77,31 @@ class Checkout2 extends BaseController
 	
     private function filterShipments($shipments, $freeShippingValue, $orderTotal)
     {
-        return array_filter($shipments, function ($shipment) use ($freeShippingValue, $orderTotal) {
-            // If freeShippingValue is null, filter out free shipping options
-            if (is_null($freeShippingValue) && $shipment['price'] == 0) {
-                return false;
+        foreach ($shipments as &$shipment) {
+            // Initialize info key in case it's not set
+            $shipment['info'] = '';
+    
+            // Check if this shipping option has free_shipping_enabled
+            if ($shipment['free_shipping_enabled']==1) {
+                // Determine if the order is eligible for free shipping
+                if ($orderTotal >= $freeShippingValue) {
+                    $shipment['price'] = 0; // Set price to 0 if eligible for free shipping
+                    $shipment['eligible_for_free_shipping'] = true;
+                } else {
+                    // Calculate the remaining amount for free shipping eligibility
+                    $remainingAmount = $freeShippingValue - $orderTotal;
+                    $shipment['additional_amount_for_free'] =  number_format($remainingAmount, 2) ;
+                    $shipment['eligible_for_free_shipping'] = false;
+                }
             }
-            // If orderTotal is less than freeShippingValue and shipment price is 0, filter out the shipment
-            if (!is_null($freeShippingValue) && $orderTotal < $freeShippingValue && $shipment['price'] == 0) {
-                return false;
-            }
-            return true;
-        });
+            // If free_shipping_enabled is not set or false, no additional info is added
+            // and the shipment['eligible_for_free_shipping'] remains unset or false
+        }
+        unset($shipment); // Break the reference with the last element
+        return $shipments;
     }
+    
+    
     
 
    

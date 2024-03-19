@@ -63,13 +63,16 @@ class SyncController extends ResourceController
                 'UID' => decryptData($device['UID'], '@@12@@'),
                 'password' => decryptData($device['password'], '@@12@@'),
                 'is_guest' => 0,
-                'can_control'=> 1
+                'can_control'=> 1,
+                'pin_enabled' => $device['pin_enabled'], // Add this line
+                'pin_code' => $device['pin_code'] // Add this line
             ];
         }, $ownedDevices);
     
         // Retrieve the list of devices where the user is a guest
         $guestDevices = $this->publicModel->getGuestDevicesByUserId($userId);
     
+        // Format the guest devices array
         // Format the guest devices array
         $formattedGuestDevices = array_map(function ($device) {
             return [
@@ -78,9 +81,12 @@ class SyncController extends ResourceController
                 'UID' => decryptData($device['UID'], '@@12@@'),
                 'password' => decryptData($device['guest_password'], '@@12@@'),
                 'is_guest' => 1,
-                'can_control'=>$device['can_control']
+                'can_control' => $device['can_control'],
+                'pin_enabled' => $device['guest_pin_enabled'], // Add this line
+                'pin_code' => $device['guest_pin_code'] // Add this line
             ];
         }, $guestDevices);
+
     
         // Combine owned and guest devices
         $allDevices = array_merge($formattedOwnedDevices, $formattedGuestDevices);
@@ -181,10 +187,18 @@ class SyncController extends ResourceController
     private function processDevices($devicesList, $userId)
     {
         foreach ($devicesList as $deviceData) {
+            $requiredFields = ['serial_number', 'device_name', 'UID', 'password', 'pin_enabled', 'pin_code'];
+            foreach ($requiredFields as $field) {
+                if (!isset($deviceData[$field])) {
+                    throw new \Exception("Missing field '{$field}' in device data", 400);
+                }
+            }
             $serial = $deviceData['serial_number'];
             $deviceName = $deviceData['device_name'];
             $UID = encryptData($deviceData['UID'], '@@12@@');
             $password = encryptData($deviceData['password'], '@@12@@');
+            $pinEnabled = $deviceData['pin_enabled'] ?? 0; // Add this line
+            $pinCode = $deviceData['pin_code'] ?? ''; // Add this line
     
             // Check if the device already exists for the user
             $existingDevice = $this->publicModel->getSmartDeviceBySerialAndUserId($userId, $serial);
@@ -195,7 +209,9 @@ class SyncController extends ResourceController
                     'UID' => $UID,
                     'password' => $password,
                     'serial_number' => $serial,
-                    'device_id' => $existingDevice['device_id']
+                    'device_id' => $existingDevice['device_id'],
+                    'pin_enabled' => $pinEnabled, // Add this line
+                    'pin_code' => $pinCode // Add this line
                 ];
                 $this->publicModel->updateSmartDevice($updateData);
             } else {
@@ -206,6 +222,8 @@ class SyncController extends ResourceController
                     'serial_number' => $serial,
                     'UID' => $UID,
                     'password' => $password,
+                    'pin_enabled' => $pinEnabled, // Add this line
+                    'pin_code' => $pinCode // Add this line
                 ];
                 $this->publicModel->saveSmartDevice($newDeviceData);
             }
@@ -215,34 +233,56 @@ class SyncController extends ResourceController
         $this->cleanupDevices($userId, $devicesList);
     }
     
+    
     private function processGuestDevices($guestDevicesList, $userId)
     {
         foreach ($guestDevicesList as $guestDeviceData) {
-            // Adapted guest device processing logic here
+            $requiredFields = ['serial_number', 'guest_password', 'can_control', 'pin_enabled', 'pin_code'];
+            foreach ($requiredFields as $field) {
+                if (!isset($guestDeviceData[$field])) {
+                    throw new \Exception("Missing field '{$field}' in guest device data", 400);
+                }
+            }
             $serial = $guestDeviceData['serial_number'];
             $password = encryptData($guestDeviceData['guest_password'], '@@12@@');
             $canControl = $guestDeviceData['can_control'] ?? 1;
             $userEmail = $this->publicModel->getUserEmail($userId);
-
+            $pinEnabled = $guestDeviceData['pin_enabled'] ?? 0; // Add this line
+            $pinCode = $guestDeviceData['pin_code'] ?? ''; // Add this line
+    
             $device = $this->publicModel->getSmartDeviceBySerial($serial);
             if ($device) {
                 $existingGuest = $this->publicModel->getGuestByDeviceAndEmail($device['device_id'], $userEmail);
                 if ($existingGuest) {
                     // Update guest
-                    $guestUpdateData = ['can_control' => $canControl, 'guest_password' => $password];
+                    $guestUpdateData = [
+                        'can_control' => $canControl,
+                        'guest_password' => $password,
+                        'guest_pin_enabled' => $pinEnabled, // Add this line
+                        'guest_pin_code' => $pinCode // Add this line
+                    ];
                     $this->publicModel->updateGuestSync($existingGuest['id'], $guestUpdateData);
                 } else {
                     // Add new guest
-                    $newGuestData = ['device_id' => $device['device_id'], 'email' => $userEmail, 'can_control' => $canControl, 'guest_password' => $password, 'guest_id' => $userId];
+                    $newGuestData = [
+                        'device_id' => $device['device_id'],
+                        'email' => $userEmail,
+                        'can_control' => $canControl,
+                        'guest_password' => $password,
+                        'guest_id' => $userId,
+                        'guest_pin_enabled' => $pinEnabled, // Add this line
+                        'guest_pin_code' => $pinCode // Add this line
+                    ];
                     $this->publicModel->addGuestToSmartDevice($newGuestData);
                 }
-            }else{
+            } else {
                 throw new \Exception("Guest device with serial number '{$serial}' not found", 400);
             }
         }
         // Cleanup guest devices not included in the upload
         $this->cleanupGuestDevices($userId, $guestDevicesList);
     }
+    
 
     private function cleanupDevices($userId, $devicesList)
     {

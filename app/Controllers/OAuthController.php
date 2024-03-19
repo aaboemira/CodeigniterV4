@@ -21,6 +21,7 @@ class OAuthController extends BaseController
         $this->oauthModel=new Auth_model();
         $this->logger = service('logger');  
         helper(['oauth']);
+        helper(['api_helper']);
 
     }
     public function showAuthorize()
@@ -142,16 +143,19 @@ class OAuthController extends BaseController
 
                 $accessToken = generateAccessToken();
                 $refreshToken = generateRefreshToken();
+                // Hash the tokens
+                $hashedAccessToken = hash('sha256', $accessToken);
+                $hashedRefreshToken = hash('sha256', $refreshToken);
 
                 $this->oauthModel->saveAccessToken([
-                    'access_token' => $accessToken,
+                    'access_token' => $hashedAccessToken,
                     'client_id' => $request['client_id'],
                     'user_id' => $authCodeData['user_id'],
                     'expires' => date('Y-m-d H:i:s', time() + 3600) // 1 hour for example
                 ]);
 
                 $this->oauthModel->saveRefreshToken([
-                    'refresh_token' => $refreshToken,
+                    'refresh_token' =>$hashedRefreshToken,
                     'client_id' => $request['client_id'],
                     'user_id' => $authCodeData['user_id'],
                     'expires' => date('Y-m-d H:i:s', time() + 1209600) // 2 weeks for example
@@ -170,9 +174,10 @@ class OAuthController extends BaseController
                 }
 
                 $newAccessToken = generateAccessToken();
+                $hashedAccessToken = hash('sha256', $newAccessToken);
 
                 $this->oauthModel->saveAccessToken([
-                    'access_token' => $newAccessToken,
+                    'access_token' =>$hashedAccessToken,
                     'client_id' => $refreshData['client_id'],
                     'user_id' => $refreshData['user_id'],
                     'expires' => date('Y-m-d H:i:s', time() + 3600) // 1 hour for example
@@ -222,17 +227,19 @@ class OAuthController extends BaseController
             // Generate access token and refresh token
             $accessToken = generateAccessToken(); // This function should be defined to generate a token
             $refreshToken = generateRefreshToken(); // This function should also be defined to generate a token
-    
+            // Hash the tokens
+            $hashedAccessToken = hash('sha256', $accessToken);
+            $hashedRefreshToken = hash('sha256', $refreshToken);
             // Save tokens with a model method, adjust parameters as necessary
             $this->oauthModel->saveAccessToken([
-                'access_token' => $accessToken,
+                'access_token' => $hashedAccessToken,
                 'client_id' => $client_id,
                 'user_id' => $userId,
                 'expires' => date('Y-m-d H:i:s', time() + 3600) // 1 hour expiry
             ]);
     
             $this->oauthModel->saveRefreshToken([
-                'refresh_token' => $refreshToken,
+                'refresh_token' => $hashedRefreshToken,
                 'client_id' => $client_id,
                 'user_id' => $userId,
                 'expires' => date('Y-m-d H:i:s', time() + 1209600) // 2 weeks expiry

@@ -46,6 +46,7 @@ class Shop extends BaseController
         $data['brands'] = $this->Brands_model->getBrands();
         //$data['links_pagination'] = pagination('shop', $rowscount, $this->num_rows);
         $data['links_pagination'] = '';
+
         return $this->render('shop', $head, $data);
     }
 
@@ -143,7 +144,7 @@ class Shop extends BaseController
         $data['product'] = $this->Public_model->getOneProduct($id);
         $data['sameCagegoryProducts'] = $this->Public_model->sameCagegoryProducts($data['product']['shop_categorie'], $id);
         if ($data['product'] === null) {
-            show_404();
+            $this->show_404();
         }
         $vars['publicDateAdded'] = $this->Home_admin_model->getValueStore('publicDateAdded');
         $this->load->vars($vars);
@@ -171,10 +172,10 @@ class Shop extends BaseController
                 $head['keywords'] = '';
                 return $this->render('confirmed', $head, $data);
             } else {
-                show_404();
+                $this->show_404();
             }
         } else {
-            show_404();
+            $this->show_404();
         }
     }
 

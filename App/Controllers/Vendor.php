@@ -23,7 +23,7 @@ class Vendor extends BaseController
     {
         $vendorInfo = $this->Vendorprofile_model->getVendorByUrlAddress($vendor);
         if ($vendorInfo == null) {
-            show_404();
+            $this->show_404();
         }
         $data = array();
         $head = array();
@@ -65,14 +65,14 @@ class Vendor extends BaseController
     {
         $vendorInfo = $this->Vendorprofile_model->getVendorByUrlAddress($vendor);
         if ($vendorInfo == null) {
-            show_404();
+            $this->show_404();
         }
         $data = array();
         $head = array();
         $data['product'] = $this->Public_model->getOneProduct($id);
         $data['sameCagegoryProducts'] = $this->Public_model->sameCagegoryProducts($data['product']['shop_categorie'], $id, $vendorInfo['id']);
         if ($data['product'] === null) {
-            show_404();
+            $this->show_404();
         }
         $vars['publicDateAdded'] = $this->Home_admin_model->getValueStore('publicDateAdded');
         $this->load->vars($vars);

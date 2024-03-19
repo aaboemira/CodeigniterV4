@@ -76,7 +76,15 @@ class Address extends BaseController
             return redirect()->back()->withInput();
         }
         // Add your validation logic here. This is very important for security and data integrity.
-
+        $userAddress = [
+            'first_name' => $input['user_first_name'],
+            'last_name'  => $input['user_last_name'],
+            'street'     => $input['user_street'],
+            'housenr'    => $input['user_housenr'],
+            'country'    => $input['user_country'],
+            'post_code'  => $input['user_post_code'],
+            'city'       => $input['user_city']
+        ];
         $billingAddress = [
             'first_name' => $input['billing_first_name'],
             'last_name'  => $input['billing_last_name'],
@@ -100,7 +108,7 @@ class Address extends BaseController
         ];
 
         // Call the model's update method
-        $result = $this->Public_model->updateUserAddressesById($userId, $billingAddress, $shippingAddress);
+        $result = $this->Public_model->updateUserAddressesById($userId, $userAddress, $billingAddress, $shippingAddress);
 
         if ($result) {
             // Set a success message in session and redirect

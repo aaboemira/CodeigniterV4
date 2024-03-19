@@ -280,6 +280,7 @@ class Users extends BaseController
             return true;
         } else {
             $errors[] = lang_safe('verify_mail_error');
+            $this->registerErrors = $errors;
             session()->setFlashdata('register_errors', $errors);
             return false;
         }
