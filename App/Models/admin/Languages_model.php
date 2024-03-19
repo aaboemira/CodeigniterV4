@@ -54,6 +54,16 @@ class Languages_model extends Model
         return $query->getResult();
     }
 
+    public function getLanguagesAbbr()
+    {
+        $query = $this->db->query('SELECT abbr FROM languages');
+        $result = $query->getResultArray();
+        $abbrs = [];
+        foreach ($result as $row) {
+            $abbrs[] = $row['abbr'];
+        }
+        return $abbrs;
+    }
     public function setLanguage($post)
     {
         $post['name'] = strtolower($post['name']);

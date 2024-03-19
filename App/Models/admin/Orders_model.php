@@ -40,19 +40,28 @@ class Orders_model extends Model
         $result = $builder->get($limit, $page);
         return $result->getResultArray();
     }
-    public function getOrderStatuses()
-    {
-        $query = $this->db->query("SHOW COLUMNS FROM orders WHERE Field = 'order_status'");
-        $type = $query->getRow()->Type;
-        preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
-        $enum = explode("','", $matches[1]);
-        return $enum;
-    }
-    
+public function getOrderStatuses()
+{
+    $query = $this->db->query("SHOW COLUMNS FROM orders WHERE Field = 'order_status'");
+    $type = $query->getRow()->Type;
+    preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
+    $enum = explode("','", $matches[1]);
+    return $enum;
+}
+public function getOrderStatus($id)
+{
+    $builder = $this->db->table('orders');
+
+    $builder->select('orders.order_status');
+    $builder->where('id', $id);
+
+    $result = $builder->get();
+    return $result->getResultArray();
+}
 public function changeOrderStatus($id, $to_status)
 {
     $builder = $this->db->table('orders');
-    $builder->where('id', $id);
+    $builder->where('order_id', $id);
     $builder->select('order_status');
     $result1 = $builder->get();
     $res = $result1->getRowArray();
@@ -60,8 +69,9 @@ public function changeOrderStatus($id, $to_status)
     $result = true;
     if ($res['order_status'] != $to_status) {
         $builder = $this->db->table('orders');
-        $builder->where('id', $id);
+        $builder->where('order_id', $id);
         $result = $builder->update(array('order_status' => $to_status, 'viewed' => '1'));
+
         if ($result == true) {
             $this->manageQuantitiesAndProcurement($id, $to_status, $res['order_status']);
         }
@@ -83,7 +93,7 @@ public function changeOrderStatus($id, $to_status)
         }
         $builder = $this->db->table('orders');
         $builder->select('products');
-        $builder->where('id', $id);
+        $builder->where('order_id', $id);
         $result = $builder->get();
         $arr = $result->getRowArray();
         $products = unserialize($arr['products']);

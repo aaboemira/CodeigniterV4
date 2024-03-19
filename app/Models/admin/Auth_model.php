@@ -79,10 +79,11 @@ class Auth_model extends Model
     // Validate access token
     public function validateAccessToken($accessToken)
     {
+        $hashedAccessToken = hash('sha256', $accessToken);
         $builder = $this->db->table('oauth_access_tokens');
-        $builder->where('access_token', $accessToken);
+        $builder->where('access_token', $hashedAccessToken);
         $query = $builder->get();
-
+    
         if ($row = $query->getRowArray()) {
             // Check if token is expired
             if ($row['expires'] > date('Y-m-d H:i:s')) {
@@ -91,14 +92,27 @@ class Auth_model extends Model
         }
         return false;
     }
+    public function getUserIdFromAccessToken($accessToken)
+    {
+        $hashedAccessToken = hash('sha256', $accessToken);
+        $builder = $this->db->table('oauth_access_tokens');
+        $builder->select('user_id');
+        $builder->where('access_token', $hashedAccessToken);
+        $query = $builder->get();
 
-    // Validate refresh token
+        if ($row = $query->getRowArray()) {
+            return $row['user_id'];
+        }
+        return false;
+    }
+
     public function validateRefreshToken($refreshToken)
     {
+        $hashedRefreshToken = hash('sha256', $refreshToken);
         $builder = $this->db->table('oauth_refresh_tokens');
-        $builder->where('refresh_token', $refreshToken);
+        $builder->where('refresh_token', $hashedRefreshToken);
         $query = $builder->get();
-        
+    
         if ($row = $query->getRowArray()) {
             // Check if token is expired
             if ($row['expires'] > date('Y-m-d H:i:s')) {
@@ -107,6 +121,7 @@ class Auth_model extends Model
         }
         return false;
     }
+    
     public function authenticateUser($username, $password)
     {
         $builder = $this->db->table('users');

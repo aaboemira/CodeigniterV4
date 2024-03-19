@@ -23,6 +23,7 @@ class Public_model extends Model
         $this->showInSliderProducts = (new Home_admin_model())->getValueStore('showInSlider');
         $this->multiVendor = (new Home_admin_model())->getValueStore('multiVendor');
         $this->logger = service('logger');        ;
+        helper('api_helper');
 
     }
 
@@ -107,10 +108,13 @@ class Public_model extends Model
         }
         $builder->select('vendors.url as vendor_url, products.id,products.image, products.quantity, products.is_main_view_from_variant, products.is_variant, products.variant_id, 
         products.article_nr, products.is_visible, products.shipment_destination, products.Reserve_Produkt_03,
-        products_translations.title, products_translations.title2, products_translations.bullet1, products_translations.bullet2, products_translations.bullet3, products_translations.bullet4, products_translations.bullet5, products_translations.bullet6, products_translations.bullet7, products_translations.variant_name, products_translations.variant_description, products_translations.price, products_translations.old_price, products_translations.shipping_cost, products_translations.shipping_time, products_translations.delivery_status, products.url');
+        products_translations.title, products_translations.title2, products_translations.bullet1, products_translations.bullet2, products_translations.bullet3, products_translations.bullet4, products_translations.bullet5, products_translations.bullet6, products_translations.bullet7, products_translations.variant_name, products_translations.variant_description, products_translations.price, products_translations.old_price, products_translations.shipping_cost, products_translations.shipping_time, products_translations.delivery_status, products.url,
+        product_images.image_name, product_images.folder_name, product_images.language'); // Added image fields
         $builder->join('products_translations', 'products_translations.for_id = products.id', 'left');
         $builder->join('vendors', 'vendors.id = products.vendor_id', 'left');
+        $builder->join('product_images', 'product_images.product_id = products.id', 'left'); // Joined product_images table
         $builder->where('products_translations.abbr', MY_LANGUAGE_ABBR);
+        $builder->where('product_images.language', MY_LANGUAGE_ABBR); // Added language filter for images
         $builder->where('visibility', 1);
         $builder->where('is_visible', 1);
         if ($vendor_id !== false) {
@@ -129,6 +133,7 @@ class Public_model extends Model
         $query = $builder->get();
         return $query->getResultArray();
     }
+    
     public function getMinimalProductDetailsById($productId)
     {
     
@@ -190,7 +195,7 @@ class Public_model extends Model
         $builder = $this->db->table('products');
         $builder->select('vendors.url as vendor_url, products.id,products.image, products.quantity, products.is_main_view_from_variant, products.is_variant, products.variant_id, 
         products.article_nr, products.is_visible, products.shipment_destination, products.Reserve_Produkt_03,
-        products_translations.title, products_translations.title2, products_translations.bullet1, products_translations.bullet2, products_translations.bullet3, products_translations.bullet4, products_translations.bullet5, products_translations.bullet6, products_translations.bullet7, products_translations.variant_name, products_translations.variant_description, products_translations.price, products_translations.old_price, products_translations.shipping_cost, products_translations.shipping_time, products_translations.delivery_status, products.url');
+        products_translations.title, products_translations.title2, products_translations.bullet1, products_translations.bullet2, products_translations.bullet3, products_translations.bullet4, products_translations.bullet5, products_translations.bullet6, products_translations.bullet7, products_translations.variant_name, products_translations.variant_description,products_translations.description, products_translations.price, products_translations.old_price, products_translations.shipping_cost, products_translations.shipping_time, products_translations.delivery_status, products.url,free_shipping_enabled');
         $builder->join('products_translations', 'products_translations.for_id = products.id', 'left');
         $builder->join('vendors', 'vendors.id = products.vendor_id', 'left');
         $builder->where('products_translations.abbr', MY_LANGUAGE_ABBR);
@@ -316,21 +321,36 @@ class Public_model extends Model
     {
         $builder = $this->db->table('products');
         $builder->where('products.id', $id);
-
-        $builder->select('vendors.url as vendor_url, products.*, products_translations.title, products_translations.title2, products_translations.bullet1, products_translations.bullet2, products_translations.bullet3, products_translations.bullet4, products_translations.bullet5, products_translations.bullet6, products_translations.bullet7, products_translations.variant_name, products_translations.variant_description, products_translations.description, products_translations.price, products_translations.old_price, products_translations.shipping_cost, products_translations.shipping_time, products_translations.delivery_status, products.url, shop_categories_translations.name as categorie_name');
-
+    
+        $builder->select('vendors.url as vendor_url, products.*, products_translations.title, products_translations.title2, products_translations.bullet1, products_translations.bullet2, products_translations.bullet3, products_translations.bullet4, products_translations.bullet5, products_translations.bullet6, products_translations.bullet7, products_translations.variant_name, products_translations.variant_description, products_translations.description, products_translations.price,products_translations.image_text, products_translations.old_price, products_translations.shipping_cost, products_translations.shipping_time, products_translations.delivery_status, products.url, shop_categories_translations.name as categorie_name, product_images.image_name, product_images.folder_name, product_images.language');
+    
         $builder->join('products_translations', 'products_translations.for_id = products.id', 'left');
         $builder->where('products_translations.abbr', MY_LANGUAGE_ABBR);
-
+    
         $builder->join('shop_categories_translations', 'shop_categories_translations.for_id = products.shop_categorie', 'inner');
         $builder->where('shop_categories_translations.abbr', MY_LANGUAGE_ABBR);
+    
         $builder->join('vendors', 'vendors.id = products.vendor_id', 'left');
         $builder->where('visibility', 1);
         $builder->where('is_visible', 1);
+    
+        // Join product_images table and filter by language
+        $builder->join('product_images', 'product_images.product_id = products.id', 'left');
+        $builder->where('product_images.language', MY_LANGUAGE_ABBR);
+    
         $query = $builder->get();
         return $query->getRowArray();
     }
-
+    
+    public function getOrderStatusValues() {
+        
+        $query = $this->db->query("SHOW COLUMNS FROM orders LIKE 'status'");
+        $type = $query->getRow()->Type;
+        preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
+        $enum = explode("','", $matches[1]);
+        return $enum;
+    }
+    
     public function getCountQuantities()
     {
         $query = $this->db->query('SELECT SUM(IF(quantity<=0,1,0)) as out_of_stock, SUM(IF(quantity>0,1,0)) as in_stock FROM products WHERE visibility = 1');
@@ -648,17 +668,20 @@ class Public_model extends Model
         $builder = $this->db->table('products');
         $builder->select('vendors.url as vendor_url, products.id, products.quantity, products.image, products.url, products.is_main_view_from_variant, products.is_variant, products.variant_id, 
         products.article_nr, products.is_visible, products.shipment_destination, products.Reserve_Produkt_03,
-        products_translations.price, products_translations.title, products_translations.title2, products_translations.bullet1, products_translations.bullet2, products_translations.bullet3, products_translations.bullet4, products_translations.bullet5, products_translations.bullet6, products_translations.bullet7, products_translations.variant_name, products_translations.variant_description, products_translations.old_price, products_translations.shipping_cost, products_translations.shipping_time, products_translations.delivery_status');
+        products_translations.price, products_translations.title, products_translations.title2, products_translations.bullet1, products_translations.bullet2, products_translations.bullet3, products_translations.bullet4, products_translations.bullet5, products_translations.bullet6, products_translations.bullet7, products_translations.variant_name, products_translations.variant_description, products_translations.old_price, products_translations.shipping_cost, products_translations.shipping_time, products_translations.delivery_status,
+        product_images.image_name, product_images.folder_name, product_images.language'); // Added image fields
         $builder->join('products_translations', 'products_translations.for_id = products.id', 'left');
         $builder->join('vendors', 'vendors.id = products.vendor_id', 'left');
+        $builder->join('product_images', 'product_images.product_id = products.id', 'left'); // Joined product_images table
         $builder->where('products.id !=', $noId);
         $builder->where('products.is_variant !=', 1);
-
+    
         if ($vendor_id !== false) {
             $builder->where('vendor_id', $vendor_id);
         }
         $builder->where('products.shop_categorie =', $categorie);
         $builder->where('products_translations.abbr', MY_LANGUAGE_ABBR);
+        $builder->where('product_images.language', MY_LANGUAGE_ABBR); // Added language filter for images
         $builder->where('visibility', 1);
         $builder->where('is_visible', 1);
         if ($this->showOutOfStock == 0) {
@@ -669,6 +692,7 @@ class Public_model extends Model
         $query = $builder->get();
         return $query->getResultArray();
     }
+    
 
     public function getOnePost($id)
     {
@@ -865,10 +889,14 @@ class Public_model extends Model
         $this->db->table('users_shipping_addresses')->insert($addressData);
         $shippingAddressId = $this->db->insertID();
 
+        $this->db->table('users_user_addresses')->insert($addressData);
+        $userAddressId = $this->db->insertID();
         // Update users_public with the address IDs
         $this->db->table('users_public')->where('id', $userId)->update([
             'billing_address_id' => $billingAddressId,
-            'shipping_address_id' => $shippingAddressId
+            'shipping_address_id' => $shippingAddressId,
+            'user_address_id' => $userAddressId,
+
         ]);
 
         // Complete the transaction
@@ -930,7 +958,8 @@ class Public_model extends Model
             $publicData['company'] = $userData['company'];
         }
         $this->db->table('users_public')->where('id', $userId)->update($publicData);
-        $billingAddressData = [
+        // Prepare user address data
+        $addressData = [
             'first_name' => $userData['first_name'],
             'last_name' => $userData['last_name'],
             'street' => $userData['street'],
@@ -939,7 +968,12 @@ class Public_model extends Model
             'city' => $userData['city'],
             'housenr' => $userData['housenr'],
         ];
-        $this->db->table('users_billing_addresses')->where('billing_id', $userData['billing_id'])->update($billingAddressData);
+
+        // Get the user_address_id from users_public
+        $userAddressId = $this->db->table('users_public')->select('user_address_id')->where('id', $userId)->get()->getRow()->user_address_id;
+
+        // Update the user address in users_user_addresses
+        $this->db->table('users_user_addresses')->where('id', $userAddressId)->update($addressData);
 
         // Complete the transaction
         $this->db->transComplete();
@@ -1016,13 +1050,36 @@ class Public_model extends Model
     public function getUserWithAddressesByID($id)
     {
         $builder = $this->db->table('users_public');
-        $builder->select('users_public.*, billing.first_name as billing_first_name, billing.last_name as billing_last_name,billing.company as billing_company, billing.street as billing_street, billing.post_code as billing_post_code, billing.country as billing_country, billing.city as billing_city, billing.housenr as billing_housenr, shipping.first_name as shipping_first_name, shipping.last_name as shipping_last_name,shipping.company as shipping_company, shipping.street as shipping_street, shipping.post_code as shipping_post_code, shipping.country as shipping_country, shipping.city as shipping_city, shipping.housenr as shipping_housenr');
+        $builder->select('users_public.*, 
+                          user_address.first_name as user_address_first_name, 
+                          user_address.last_name as user_address_last_name,
+                          user_address.street as user_address_street, 
+                          user_address.post_code as user_address_post_code, 
+                          user_address.country as user_address_country, 
+                          user_address.city as user_address_city, 
+                          user_address.housenr as user_address_housenr,
+                          billing.first_name as billing_first_name, 
+                          billing.last_name as billing_last_name,
+                          billing.street as billing_street, 
+                          billing.post_code as billing_post_code, 
+                          billing.country as billing_country, 
+                          billing.city as billing_city, 
+                          billing.housenr as billing_housenr, 
+                          shipping.first_name as shipping_first_name, 
+                          shipping.last_name as shipping_last_name,
+                          shipping.street as shipping_street, 
+                          shipping.post_code as shipping_post_code, 
+                          shipping.country as shipping_country, 
+                          shipping.city as shipping_city, 
+                          shipping.housenr as shipping_housenr');
+        $builder->join('users_user_addresses as user_address', 'users_public.user_address_id = user_address.id', 'left');
         $builder->join('users_billing_addresses as billing', 'users_public.billing_address_id = billing.billing_id', 'left');
         $builder->join('users_shipping_addresses as shipping', 'users_public.shipping_address_id = shipping.shipping_id', 'left');
         $builder->where('users_public.id', $id);
         $query = $builder->get();
         return $query->getRowArray();
     }
+    
 
     public function getUserProfileInfoByEmail($email)
     {
@@ -1046,50 +1103,77 @@ class Public_model extends Model
     public function getUserAddressesByID($id)
     {
         $builder = $this->db->table('users_public');
-        $builder->select('billing.first_name as billing_first_name, billing.last_name as billing_last_name, billing.company as billing_company, billing.street as billing_street, billing.post_code as billing_post_code, billing.country as billing_country, billing.city as billing_city, billing.housenr as billing_housenr, shipping.first_name as shipping_first_name, shipping.last_name as shipping_last_name, shipping.company as shipping_company, shipping.street as shipping_street, shipping.post_code as shipping_post_code, shipping.country as shipping_country, shipping.city as shipping_city, shipping.housenr as shipping_housenr');
+        $builder->select(
+            'user_address.first_name as user_address_first_name, 
+             user_address.last_name as user_address_last_name, 
+             user_address.street as user_address_street, 
+             user_address.post_code as user_address_post_code, 
+             user_address.country as user_address_country, 
+             user_address.city as user_address_city, 
+             user_address.housenr as user_address_housenr,
+             billing.first_name as billing_first_name, 
+             billing.last_name as billing_last_name, 
+             billing.company as billing_company, 
+             billing.street as billing_street, 
+             billing.post_code as billing_post_code, 
+             billing.country as billing_country, 
+             billing.city as billing_city, 
+             billing.housenr as billing_housenr, 
+             shipping.first_name as shipping_first_name, 
+             shipping.last_name as shipping_last_name, 
+             shipping.company as shipping_company, 
+             shipping.street as shipping_street, 
+             shipping.post_code as shipping_post_code, 
+             shipping.country as shipping_country, 
+             shipping.city as shipping_city, 
+             shipping.housenr as shipping_housenr'
+        );
+        $builder->join('users_user_addresses as user_address', 'users_public.user_address_id = user_address.id', 'left');
         $builder->join('users_billing_addresses as billing', 'users_public.billing_address_id = billing.billing_id', 'left');
         $builder->join('users_shipping_addresses as shipping', 'users_public.shipping_address_id = shipping.shipping_id', 'left');
         $builder->where('users_public.id', $id);
         $query = $builder->get();
-
+    
         return $query->getRowArray();
     }
-    public function updateUserAddressesById($userId, $billingAddress, $shippingAddress)
+    
+    public function updateUserAddressesById($userId, $userAddress, $billingAddress, $shippingAddress)
     {
         // Start transaction for data integrity
         $this->db->transStart();
-
-        // Fetch user to get billing and shipping address IDs
+    
+        // Fetch user to get address IDs
         $userBuilder = $this->db->table('users_public');
-        $userBuilder->select('billing_address_id, shipping_address_id');
+        $userBuilder->select('user_address_id, billing_address_id, shipping_address_id');
         $userBuilder->where('id', $userId);
         $user = $userBuilder->get()->getRow();
-
+    
         if (!$user) {
             return false;
         }
-
+    
+        // Update User Address
+        $userAddressBuilder = $this->db->table('users_user_addresses');
+        $userAddressBuilder->where('id', $user->user_address_id);
+        $userAddressBuilder->update($userAddress);
+    
         // Update Billing Address
         $billingBuilder = $this->db->table('users_billing_addresses');
         $billingBuilder->where('billing_id', $user->billing_address_id);
         $billingBuilder->update($billingAddress);
-
+    
         // Update Shipping Address
         $shippingBuilder = $this->db->table('users_shipping_addresses');
         $shippingBuilder->where('shipping_id', $user->shipping_address_id);
         $shippingBuilder->update($shippingAddress);
-
+    
         // Complete the transaction
         $this->db->transComplete();
-
+    
         // Check if transaction was successful
-        if ($this->db->transStatus() === FALSE) {
-            // Handle error
-            return false;
-        } else {
-            return true;
-        }
+        return $this->db->transStatus() !== FALSE;
     }
+    
 
     public function findUserByToken($verificationToken)
     {
@@ -1116,7 +1200,14 @@ class Public_model extends Model
         $query = $builder->get();
         return $query->getRowArray();
     }
-
+    public function getUserEmail($id)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->select("email");
+        $builder->where('id', $id);
+        $query = $builder->get();
+        return $query->getRowArray();
+    }
     public function sitemap()
     {
         $builder = $this->db->table('products');
@@ -1235,6 +1326,42 @@ class Public_model extends Model
         $query = $builder->get();
         return $query->getResultArray();
     }
+    public function getSmartDeviceBySerial($serial)
+    {
+        $builder = $this->db->table('smart_devices');
+        $builder->select('*');
+        $builder->where('serial_number', $serial);
+    
+        $query = $builder->get();
+        $result = $query->getRowArray();
+        return $result ? $result : false;
+    }
+    public function checkGoogleLinkWithSerial($serial)
+    {
+        $builder = $this->db->table('smart_devices');
+        $builder->select('google_linked'); // Select only the google_linked column since that's what we need.
+        $builder->where('serial_number', $serial);
+        $builder->where('google_linked', 1); // Add a condition to check for google_linked = 1
+    
+        $query = $builder->get();
+        $result = $query->getRowArray();
+    
+        // Instead of returning the device data, return true if a device is found, otherwise false.
+        return $result ? true : false;
+    }
+    
+    public function getSmartDevicesBySerial($serial)
+    {
+        $builder = $this->db->table('smart_devices');
+        $builder->select('*');
+        $builder->where('serial_number', $serial);
+        $builder->where('google_linked', '1');
+
+        $query = $builder->get();
+        $results = $query->getResultArray();
+        return $results ? $results : false;
+    }
+    
     public function getSmartDeviceBySerialAndUserId($uid,$serial){
         $builder = $this->db->table('smart_devices');
         $builder->select('*');
@@ -1245,6 +1372,85 @@ class Public_model extends Model
         return $query->getRowArray();
 
     }
+    public function updateGuestSpeech($deviceId, $userId, $pinEnabled, $speechPin)
+    {
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->where('device_id', $deviceId);
+        $builder->where('guest_id', $userId);
+        $data = [
+            'guest_pin_enabled' => $pinEnabled,
+            'guest_pin_code' => $speechPin
+        ];
+        return $builder->update($data);
+    }
+
+    public function updateOwnerSpeech($deviceId, $pinEnabled, $speechPin)
+    {
+        $builder = $this->db->table('smart_devices');
+        $builder->where('device_id', $deviceId);
+        $data = [
+            'pin_enabled' => $pinEnabled,
+            'pin_code' => $speechPin
+        ];
+        return $builder->update($data);
+    }
+
+    public function connectGoogleHome($userId)
+    {
+        $builder = $this->db->table('smart_devices');
+        $builder->set('google_linked', 1); // Assuming you are using a boolean type
+        $builder->where('device_id', $userId);
+        return $builder->update(); // This will return true if the update was successful
+    }
+    public function disconnectGoogleHome($userId)
+    {
+        $builder = $this->db->table('smart_devices');
+        $builder->set('google_linked', 'false'); // Assuming you are using a boolean type
+        $builder->where('user_id', $userId);
+        return $builder->update(); // This will return true if the update was successful
+    }
+    public function getGuestByDevice($deviceID)
+    {
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->select('*');
+        $builder->where('device_id', $deviceID);
+        $query = $builder->get();
+        return $query->getRowArray();
+    }
+    public function getGuestsByDevice($deviceID)
+    {
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->select('email, can_control, guest_password');
+        $builder->where('device_id', $deviceID);
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+    public function getGuestDevicePinDetails($userId, $deviceId)
+    {
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->select('guest_pin_enabled, guest_pin_code,guest_password ');
+        $builder->where('guest_id', $userId);
+        $builder->where('device_id', $deviceId);
+
+        $query = $builder->get();
+        $result = $query->getRowArray();
+
+        return $result ? $result : null;
+    }
+
+    public function isUserGuestOfDevice($userID, $deviceID)
+    {
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->select('*');
+        $builder->where('device_id', $deviceID);
+        $builder->where('guest_id', $userID);
+    
+        $query = $builder->get();
+        $result = $query->getRowArray();
+    
+        return $result !== null; // Returns true if a record is found, otherwise false
+    }
+    
     public function getGuestDevicesByUserId($userId)
     {
         $builder = $this->db->table('smart_devices_guests');
@@ -1253,6 +1459,20 @@ class Public_model extends Model
         $query = $builder->get();
         return $query->getResultArray();
     }
+    public function getGuestDevicesByUserIdAndControl($userId)
+    {
+        $canControlValue = 1;
+
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->select('smart_devices.*');
+        $builder->join('smart_devices', 'smart_devices.device_id = smart_devices_guests.device_id');
+        $builder->where('smart_devices_guests.guest_id', $userId);
+        $builder->where('smart_devices_guests.can_control', $canControlValue);
+
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+
     public function getGuestPasswordById($guestId)
     {
         $builder = $this->db->table('smart_devices_guests');
@@ -1354,17 +1574,24 @@ class Public_model extends Model
                         ->delete();
     }
 
-    public function getLatestDeviceUpdateForUser($userId) {
-        $query = $this->db->table('smart_devices')
-                          ->selectMax('last_updated')
-                          ->where('user_id', $userId)
-                          ->get();
-        
-        if ($query->getNumRows() > 0) {
-            return $query->getRow()->last_updated;
-        }
-        return null;
+    public function getLatestUpdateForUser($userId)
+    {
+        $subQuery1 = $this->db->table('smart_devices')
+                              ->selectMax('last_updated')
+                              ->where('user_id', $userId);
+    
+        $subQuery2 = $this->db->table('smart_devices_guests')
+                              ->join('smart_devices', 'smart_devices.device_id = smart_devices_guests.device_id')
+                              ->selectMax('smart_devices_guests.last_updated')
+                              ->where('smart_devices.user_id', $userId);
+    
+        $query = $this->db->table('(' . $subQuery1->getCompiledSelect() . ' UNION ' . $subQuery2->getCompiledSelect() . ') as combined_updates')
+                          ->selectMax('last_updated');
+    
+        $result = $query->get()->getRow();
+        return $result ? $result->last_updated : null;
     }
+    
     
     public function getGuestsForDevice($deviceId)
     {
@@ -1373,6 +1600,14 @@ class Public_model extends Model
         $builder->where('device_id', $deviceId);
         $query = $builder->get();
         return $query->getResultArray();
+    }
+    public function getGuestByDeviceAndEmail($deviceID,$email){
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->select('*');
+        $builder->where('device_id', $deviceID);
+        $builder->where('email', $email);
+        $query = $builder->get();
+        return $query->getRowArray();
     }
     public function addGuestToSmartDevice($guestData)
     {
@@ -1408,20 +1643,35 @@ class Public_model extends Model
         $builder->where('device_id', $deviceId);
         return $builder->delete();
     }
-    public function updateGuest($guestId, $guestEmail, $canControl,$password,$userid)
+    public function deleteGuestByDeviceAndEmail($deviceId,$email)
     {
-        $data = [
-            'email' => $guestEmail,
-            'can_control' => $canControl,
-            'guest_password'=>$password,
-            'guest_id'=>$userid
-        ];
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->where('device_id', $deviceId);
+        $builder->where('email', $email);
 
+        return $builder->delete();
+    }
+    public function deleteGuestByDeviceAndUserId($deviceId,$userID)
+    {
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->where('device_id', $deviceId);
+        $builder->where('guest_id', $userID);
+
+        return $builder->delete();
+    }
+    public function updateGuest($guestData)
+    {
+
+        $builder = $this->db->table('smart_devices_guests');
+        $builder->where('id', $guestData['id']);
+        return $builder->update($guestData);
+    }
+    public function updateGuestSync($guestId,$data)
+    {
         $builder = $this->db->table('smart_devices_guests');
         $builder->where('id', $guestId);
         return $builder->update($data);
     }
-
     public function subscribeToNewsletter($userId)
     {
         // Update the user's record to set newsletter to 1 (subscribed)
