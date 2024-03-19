@@ -615,6 +615,11 @@
                                                             </a>
                                                         </li>
                                                     <?php endif;  ?>
+                                                        <li>
+                                                            <a href="<?= LANG_URL . '/smartdevices/speechControl/' . $device['device_id'] ?>">
+                                                                <img src="<?= base_url('png/speech.svg') ?>" width="20" alt="Speech Control"> Speech Control
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                                 <?php if ($device['can_control']==1): ?>
@@ -719,17 +724,21 @@
         langConnection[<?= $i ?>] = "<?= lang_safe('connection-' . $i) ?>";
         langErrorConnection[<?= $i ?>] = "<?= lang_safe('connection_error_text-' . $i) ?>";
     <?php endfor; ?>
-
 </script>
 
-
 <script>
+    $(document).ready(function() {
+        refreshAllDevices();
+    });
+
+    var refreshInterval = 800; // Delay in milliseconds (1 second)
+
     function openModalAndRefresh(deviceId, modalId) {
         currentModalId = modalId;
         $('#' + modalId).modal('show');
         currentDeviceId = deviceId;
 
-        window.modalStatusRefreshInterval = setInterval(function () {
+        window.modalStatusRefreshInterval = setInterval(function() {
             refreshModalStatus(deviceId, modalId);
         }, 5000);
     }
@@ -740,10 +749,10 @@
         currentModal.modal('hide');
 
         clearInterval(window.modalStatusRefreshInterval);
-        refreshDeviceStatus(currentDeviceId);
+        refreshDeviceStatusModel(currentDeviceId);
     }
 
-    $('.modal').on('shown.bs.modal', function (e) {
+    $('.modal').on('shown.bs.modal', function(e) {
         var modalId = $(this).attr('id');
         if (modalId.startsWith('manageDeviceModal-')) {
             var deviceId = modalId.split('-')[1];
@@ -751,31 +760,13 @@
         }
     });
 
-    $('.modal').on('hidden.bs.modal', function () {
+    $('.modal').on('hidden.bs.modal', function() {
         var modalId = $(this).attr('id');
         if (modalId.startsWith('manageDeviceModal-')) {
             closeModalAndStopRefresh();
         }
     });
 
-    function showSpinnerInConnectedCell(deviceId) {
-        var connectedCell = $('.connected-' + deviceId);
-        connectedCell.html('<div class="spinner"><i class="fa fa-spinner fa-spin fa-3x"></i></div>'); // Add your spinner HTML here
-    }
-
-    function removeSpinnerFromConnectedCell(deviceId) {
-        var connectedCell = $('.connected-' + deviceId);
-        connectedCell.find('.spinner').remove();
-    }
-</script>
-
-<script>
-    $(document).ready(function () {
-        refreshAllDevices();
-    });
-
-
-    var currentDeviceId;
     function controlDevice(action, deviceId, guestID) {
         $('.btn-device-action').prop('disabled', true);
         $('#status-message-' + deviceId + ' .loading-text').show();
@@ -791,79 +782,72 @@
             url: '<?= base_url('/smartdevices/controlDevice') ?>',
             type: 'POST',
             data: data,
-            success: function (response) {
+            success: function(response) {
                 $('#status-message-' + deviceId + ' .result-message').text(response.message);
                 $('#status-message-' + deviceId + ' .loading-text').hide();
                 $('#status-message-' + deviceId + ' .result').show();
             },
-            error: function (error) {
+            error: function(error) {
                 $('#status-message-' + deviceId + ' .result-message').text('Error: ' + error.statusText);
             },
-            complete: function () {
+            complete: function() {
                 $('.btn-device-action').prop('disabled', false);
             }
         });
     }
 
-
-
-
     function refreshAllDevices() {
-    var refreshRequests = [];
+        var refreshRequests = [];
+        $('.device-id-input').each(function(index) {
+            var deviceId = $(this).val();
+            var isGuest = $(this).data('guest');
 
-    $('.device-id-input').each(function () {
-        var deviceId = $(this).val();
-        var isGuest = $(this).data('guest');
-        console.log("------")
-        console.log(isGuest) // Assuming each device has a data attribute indicating if it's a guest device
- // Assuming each device has a data attribute indicating if it's a guest device
-        showSpinnerInConnectedCell(deviceId);
-        var request = createRefreshRequest(deviceId,isGuest);
-        refreshRequests.push(request);
-    });
+            setTimeout(function() {
+                showSpinnerInConnectedCell(deviceId);
+                var request = createRefreshRequest(deviceId, isGuest);
+                refreshRequests.push(request);
+            }, index * refreshInterval);
+        });
 
-    $.when.apply($, refreshRequests).then(function () {
-    });
-}
+        $.when.apply($, refreshRequests).then(function() {});
+    }
 
     function refreshModalStatus(deviceId, modalId) {
-        createRefreshRequest(deviceId).then(function (response) {
+        createRefreshRequest(deviceId).then(function(response) {
             var currentStatusElement = $('#' + modalId).find('.current-status .status');
-
             currentStatusElement.text(response.state);
         });
     }
 
-    function refreshDeviceStatus(deviceId) {
+    function refreshDeviceStatusModel(deviceId) {
         $('#global-spinner-modal').modal('show'); // Show spinner when starting refresh
-        createRefreshRequest(deviceId).always(function () {
+        createRefreshRequest(deviceId).always(function() {
             $('#global-spinner-modal').modal('hide'); // Hide spinner once request is complete
         });
     }
 
-    function createRefreshRequest(deviceId,guestID) {
+    function createRefreshRequest(deviceId, guestID) {
         var data = {
             deviceId: deviceId,
         };
-        console.log(guestID)
         if (guestID !== false) {
             data.guestID = guestID; // Include guestID in the request if it's a guest device
         }
-    return $.ajax({
-        url: '<?= base_url('/smartdevices/refreshDeviceStatus') ?>',
-        type: 'POST',
-        data:data,
-        success: function (response) {
-            updateUIWithDeviceStatus(deviceId, response);
-        },
-        error: function () {
-            console.log("Error refreshing device with ID: " + deviceId);
-        },
-        complete: function () {
-            removeSpinnerFromConnectedCell(deviceId);
-        }
-    });
-}
+        return $.ajax({
+            url: '<?= base_url('/smartdevices/refreshDeviceStatus') ?>',
+            type: 'POST',
+            data: data,
+            success: function(response) {
+                updateUIWithDeviceStatus(deviceId, response);
+            },
+            error: function() {
+                console.log("Error refreshing device with ID: " + deviceId);
+            },
+            complete: function() {
+                removeSpinnerFromConnectedCell(deviceId);
+            }
+        });
+    }
 
     function updateUIWithDeviceStatus(deviceId, response) {
         updateStatusSpan(deviceId, response.connected, response.connection_message);
@@ -872,35 +856,24 @@
     }
 
     function updateStatusSpan(deviceId, connected, message) {
-    var connectedCell = $('.connected-' + deviceId);
-    var statusSpan = connectedCell.find('.status');
+        var connectedCell = $('.connected-' + deviceId);
+        var statusSpan = connectedCell.find('.status');
 
-    // Check if the status span exists
-    if (statusSpan.length === 0) {
-        // If not, create it with a nested span for the text
-        connectedCell.prepend('<span class="status"><span class="status-text"></span></span>');
-        statusSpan = connectedCell.find('.status');
+        if (statusSpan.length === 0) {
+            connectedCell.prepend('<span class="status"><span class="status-text"></span></span>');
+            statusSpan = connectedCell.find('.status');
+        }
+
+        var statusTextSpan = statusSpan.find('.status-text');
+        var statusClass = connected === 0 ? 'connected' : 'disconnected';
+        statusSpan.attr('class', 'status ' + statusClass);
+        statusTextSpan.text(message);
     }
-
-    // Find the nested span where the text should go
-    var statusTextSpan = statusSpan.find('.status-text');
-
-    // Determine the class based on the connection status
-    var statusClass = connected === 0 ? 'connected' : 'disconnected';
-
-    // Set the class and text
-    statusSpan.attr('class', 'status ' + statusClass);
-    statusTextSpan.text(message);
-}
-
-
-
 
     function updateStateCell(deviceId, state) {
         var stateCell = $('#state-' + deviceId);
         stateCell.text(state);
     }
-
 
     function addShowMoreLinkIfNeeded(deviceId, connected) {
         var connectedCell = $('.connected-' + deviceId);
@@ -919,25 +892,32 @@
     }
 
     function createErrorModal(deviceId, connected) {
-    connected = Math.abs(connected);
-    var modalHtml = '<div class="modal error-modal" id="errorModal-' + deviceId + '" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel-' + deviceId + '" aria-hidden="true">' +
-        '<div class="modal-dialog" role="document">' +
-        '<div class="modal-content">' +
-        '<div class="modal-header error-modal-header">' +
-        '<button  type="button" class="close close-custom" data-dismiss="modal" aria-label="Close">' +
-        '<span style="color:white !important;" aria-hidden="true">&times;</span>' +
-        '</button>' +
-        '<h5 class="modal-title" id="errorModalLabel-' + deviceId + '">' + langConnection[connected] + '</h5>' +
-        '</div>' +
-        '<div class="modal-body error-modal-body">' +
-        '<p class="error-instructions">' + langErrorConnection[connected] + '</p>' +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '</div>';
+        var modalHtml = '<div class="modal error-modal" id="errorModal-' + deviceId + '" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel-' + deviceId + '" aria-hidden="true">' +
+            '<div class="modal-dialog" role="document">' +
+            '<div class="modal-content">' +
+            '<div class="modal-header error-modal-header">' +
+            '<button type="button" class="close close-custom" data-dismiss="modal" aria-label="Close">' +
+            '<span style="color:white !important;" aria-hidden="true">&times;</span>' +
+            '</button>' +
+            '<h5 class="modal-title" id="errorModalLabel-' + deviceId + '">' + langConnection[connected] + '</h5>' +
+            '</div>' +
+            '<div class="modal-body error-modal-body">' +
+            '<p class="error-instructions">' + langErrorConnection[connected] + '</p>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
 
-    $('body').append(modalHtml);
-}
+        $('body').append(modalHtml);
+    }
 
+    function showSpinnerInConnectedCell(deviceId) {
+        var connectedCell = $('.connected-' + deviceId);
+        connectedCell.html('<div class="spinner"><i class="fa fa-spinner fa-spin fa-3x"></i></div>');
+    }
+
+    function removeSpinnerFromConnectedCell(deviceId) {
+        var connectedCell = $('.connected-' + deviceId);
+        connectedCell.find('.spinner').remove();
+    }
 </script>
-

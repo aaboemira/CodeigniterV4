@@ -58,7 +58,7 @@ $languages = [
                 </div>
 
                 <p style="font-size:16px;">
-                    <?= lang_safe('contact_us_text') ?>
+                    <?= lang_safe('signup_login_text') ?>
                 </p>
                 <?php if (validationError('loginError')) { ?>
                     <div class="alert alert-danger">
@@ -130,7 +130,7 @@ $languages = [
                 </div>
 
                 <p style="font-size:16px;">
-                    <?= lang_safe('contact_us_text') ?>
+                    <?= lang_safe('signup_register_text') ?>
                 </p>
 
                 <?php

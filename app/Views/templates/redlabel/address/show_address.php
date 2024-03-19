@@ -71,6 +71,30 @@
             ?>
             <div class="container">
                 <div class="row">
+                    <div class="col-md-7 col-xs-12 address-div" style="margin-bottom: 1.2em;">
+                        <!-- User Address -->
+                        <div class="title alone">
+                            <span>
+                                <?= lang_safe('user_address') ?>
+                            </span>
+                        </div>
+                        <div class="flex-address">
+                            <?= $userAddresses['user_address_first_name'] . ' ' . $userAddresses['user_address_last_name'] ?>
+                            <a href="<?= LANG_URL.'/address/edit' ?>" class="change_address">
+                                <?= lang_safe('change_address') ?>
+                            </a>
+                        </div>
+                        <div>
+                            <?= $userAddresses['user_address_street'] . ' ' . $userAddresses['user_address_housenr'] ?>
+                        </div>
+                        <div>
+                            <?= $userAddresses['user_address_post_code'] . ' ' . $userAddresses['user_address_city'] ?>
+                        </div>
+                        <div>
+                            <?= $userAddresses['user_address_country'] ?>
+                        </div>
+                    </div>
+
                     <div class="col-md-7 col-xs-12 address-div"
                         style="margin-bottom: 1.2em;">
                         <div class="title alone">

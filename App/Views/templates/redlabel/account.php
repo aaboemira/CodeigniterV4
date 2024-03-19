@@ -178,23 +178,24 @@ $languages = [
                             </div>
 
                             <hr>
+                            <!-- Address Fields -->
                             <div class="form-group">
-                                <label for="adresse">Adresse</label>
+                                <label for="adresse"><?= lang_safe('address') ?></label>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="street">Straße *</label>
+                                            <label for="street"><?= lang_safe('street') ?> *</label>
                                             <input type="text" name="street" id="street" class="form-control"
-                                                   value="<?= set_value('street', $userInfo['billing_street']) ?>"
-                                                   placeholder="<?= lang_safe('street') ?>">
+                                                value="<?= set_value('street', $userInfo['user_address_street']) ?>"
+                                                placeholder="<?= lang_safe('street') ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="housenr"><?= lang_safe("housenr") ?> *</label>
                                             <input type="text" name="housenr" id="housenr"
-                                                   value="<?= set_value('housenr', $userInfo['billing_housenr']) ?>"
-                                                   placeholder="<?= lang_safe('housenr') ?>" class="form-control">
+                                                value="<?= set_value('housenr', $userInfo['user_address_housenr']) ?>"
+                                                placeholder="<?= lang_safe('housenr') ?>" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -203,21 +204,8 @@ $languages = [
                                             <select size="1" id="country" name="country" class="form-control" style="height:34px !important;">
                                                 <?php
                                                 foreach ($countries as $countryName) {
-                                                    $selected = ($countryName == $userInfo['billing_country']) ? 'selected' : '';
+                                                    $selected = ($countryName == $userInfo['user_address_country']) ? 'selected' : '';
                                                     echo "<option value=\"$countryName\" $selected>$countryName</option>";
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="language"><?= lang_safe('lang') ?> *</label>
-                                            <select size="1" id="language" name="language" class="form-control" style="height:34px !important;">
-                                                <?php
-                                                foreach ($languages as $languageKey => $languageName) {
-                                                    $selected = ($languageKey == $userInfo['lang']) ? 'selected' : '';
-                                                    echo "<option value=\"$languageKey\" $selected>$languageName</option>";
                                                 }
                                                 ?>
                                             </select>
@@ -227,20 +215,21 @@ $languages = [
                                         <div class="form-group">
                                             <label for="post_code"><?= lang_safe("post_code") ?> *</label>
                                             <input type="text" name="post_code" id="post_code" class="form-control"
-                                                   value="<?= set_value('post_code', $userInfo['billing_post_code']) ?>"
-                                                   placeholder="<?= lang_safe('post_code') ?>">
+                                                value="<?= set_value('post_code', $userInfo['user_address_post_code']) ?>"
+                                                placeholder="<?= lang_safe('post_code') ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="city"><?= lang_safe("city") ?> *</label>
                                             <input type="text" name="city" id="city" class="form-control"
-                                                   value="<?= set_value('city', $userInfo['billing_city']) ?>"
-                                                   placeholder="<?= lang_safe('city') ?>">
+                                                value="<?= set_value('city', $userInfo['user_address_city']) ?>"
+                                                placeholder="<?= lang_safe('city') ?>">
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                             <hr>
 
                             <!-- Change Password Button -->

@@ -1,4 +1,27 @@
 <style>
+.img-zoom-result {
+    border: 1px solid #d4d4d4;
+    width: 70%; /* Adjust as needed */
+    aspect-ratio: 1 / 1; /* Set the aspect ratio to 1:1 */
+    position: absolute; /* Position the zoom result on top of the column */
+    z-index: 2; /* Ensure it's above other elements */
+    top: 0; /* Adjust as needed */
+    visibility: hidden;
+    background-color: white;
+}
+.zoom-in {
+  cursor: zoom-in;
+}
+
+.zoom-out {
+  cursor: zoom-out;
+}
+.zoom-mode {
+    cursor: zoom-out;
+    transform: scale(2); /* Adjust the scale value as needed */
+    transform-origin: center center;
+}
+
 /* Base styles for the table */
 table {
     width: 100%;
@@ -14,7 +37,24 @@ th, td {
 th {
     background-color: #f2f2f2;
 }
+.sale-box {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    background-color: #ff0000; /* Red background */
+    color: black; /* White text color */
+    padding: 10px;
+    font-size: 16px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3); /* Slight shadow for depth */
+    background-color: #FFC107; /* Orange background */
 
+    z-index: 2; /* Ensure it's above the image */
+}
+@media (min-width:768px){
+    .image-preview-container .inner-prev-container{
+        overflow: hidden;
+    }
+}
 /* Styles for mobile devices */
 @media only screen and (max-width: 767px) {
     table{
@@ -43,6 +83,9 @@ th {
     th:nth-child(3), td:nth-child(3) { width: 25%; } /* Example for first column */
     th:nth-child(4), td:nth-child(4) { width: 25%; } /* Example for second column */
     /* Continue as needed for each column */
+        .img-zoom-lens, .img-zoom-result {
+        visibility: hidden !important;
+    }
 }
 
 /* Additional styles for very small screens */
@@ -57,20 +100,51 @@ th {
         font-size: 11px !important; /* Smaller font size for very small screens */
     }
 }
+.img-zoom-container {
+  position: relative;
+}
+.img-zoom-lens {
+    width: 90px;
+    height: 90px;
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    visibility: hidden;
+    pointer-events: none;
+}
 </style>
-
 <div class="container" id="view-product">
     <div class="row">
-        <div class="col-sm-6">
-            <div <?= $product['folder'] != null ? 'style="margin-bottom:20px;"' : '' ?>>
-                <img src="<?= base_url('/attachments/shop_images/' . $product['image']) ?>"
-                    style="width:auto; height:auto;" data-num="0"
+        <div class="col-sm-6 " id="img-zoom-container"style="position:relative;">
+            <div <?= $product['folder'] != null ? 'style="margin-bottom:20px; position:relative;"' : '' ?>>
+            <?php if (!empty($product['image_text'])):  ?>
+                <div class="sale-box"><?= $product['image_text'] ?></div>
+            <?php endif; ?>
+                <?php
+                    
+                    $imageName = $product['image_name'];
+                    $lastDotPosition = strrpos($imageName, '.');
+                    $imageUrl = base_url('/attachments/shop_images/' . $imageName);
+                    $imageNameWithResolution_2400 = substr($imageName, 0, $lastDotPosition) . '-2400x2400' . substr($imageName, $lastDotPosition);
+                    $imageUrl_2400 = base_url('/attachments/shop_images/' . $imageNameWithResolution_2400);
+                ?>
+                <img id="myimage"  src="<?= base_url('/attachments/shop_images/'.$product['image_name']) ?>"
+                    data-src="<?=$imageUrl_2400?>"
+                    data-src-model-2400="<?=$imageUrl_2400?>"
+                    data-src-model="<?=$imageUrl?>"
+
+                    style="width:auto; height:auto;"  data-num="0"
                     class="other-img-preview img-responsive img-sl the-image"
                     alt="<?= str_replace('"', "'", $product['title']) ?>">
+                    <div class="img-zoom-lens" id="img-zoom-lens"></div>
+
             </div>
+            <!-- Container for the zoomed image, if you want a static position -->
+            
+
             <?php
             if ($product['folder'] != null) {
-                $dir = "attachments/shop_images/" . $product['folder'] . '/';
+                $dir = "attachments/shop_images/de/" . $product['folder'] . '/';
+                
                 ?>
                 <div class="row">
                     <?php
@@ -78,10 +152,29 @@ th {
                         if ($dh = opendir($dir)) {
                             $i = 1;
                             while (($file = readdir($dh)) !== false) {
-                                if (is_file($dir . $file)) {
+                                if (is_file($dir . $file) && !preg_match('/-\d+x\d+/', $file)&&strpos($file, '-org') === false) {
+                                    // Get the file extension
+                                    $ext = pathinfo($file, PATHINFO_EXTENSION);
+                                    // Get the file name without the extension
+                                    $filenameWithoutExt = pathinfo($file, PATHINFO_FILENAME);
+                                    // Construct the filename for the 1200x1200 version
+                                    $file250 = $filenameWithoutExt . '-250x250.' . $ext;
+                                    // Check if the 1200x1200 version of the image exists
+                                    $dataSrc_250 =file_exists($dir . $file250) ? base_url($dir . $file250) : base_url($dir . $file);
+
+
+                                    $file2400 = $filenameWithoutExt . '-2400x2400.' . $ext;
+                                    // Check if the 1200x1200 version of the image exists
+                                    $dataSrc_2400 = file_exists($dir . $file2400) ? base_url($dir . $file2400) : base_url($dir . $file);
+
+                                    $dataSrc_650=$dir . $file;
                                     ?>
                                     <div class="col-xs-4 col-sm-6 col-md-4 text-center">
-                                        <img src="<?= base_url($dir . $file) ?>" data-num="<?= $i ?>"
+                                        <img src="<?= base_url($dataSrc_250) ?>"
+                                            data-num="<?= $i ?>"
+                                            data-src-model="<?=base_url($dataSrc_650)?>"
+                                            data-src-model-2400="<?=base_url($dataSrc_2400)?>"
+
                                             class="other-img-preview img-sl img-thumbnail the-image"
                                             alt="<?= str_replace('"', "'", $product['title']) ?>">
                                     </div>
@@ -100,6 +193,7 @@ th {
         </div>
 
         <div class="col-sm-6">
+        <div id="myresult" class="img-zoom-result"></div>
 
             <h1>
                 <?= $product['title'] ?>
@@ -221,6 +315,7 @@ th {
                     var strUser_text = e.options[e.selectedIndex].text;
                     if (strUser_text != '') {
                         //document.location.href = "<?= $product['url'] . '?var=' ?>" + strUser;
+                        console.log(strUser)
                         document.location.href = strUser;
                     }
                 }
@@ -243,7 +338,7 @@ th {
 
                             <div>
                                 <a href="javascript:void(0);" data-toggle="modal" data-target="#myModal"
-                                    data-id="<?= $product['id'] ?>" class="add-to-cart btn-add">
+                                    data-id="<?= $product['id'] ?>" class="add-to-cart btn-add" style="min-width: 266px;">
                                     <span class="text-to-bg">
                                         <?= lang_safe('add_to_cart') ?>
                                     </span>
@@ -400,7 +495,7 @@ th {
 <div id="modalImagePreview" class="modal">
     <div class="image-preview-container">
         <div class="modal-content">
-            <div class="inner-prev-container">
+            <div class="inner-prev-container" >
                 <img id="img01" alt="">
                 <span class="close">&times;</span>
                 <span class="img-series"></span>
@@ -427,7 +522,7 @@ th {
                         <div class="col-md-5">
                             <img class="" style="width: 100%; margin-top: -20px"
                                 src="<?= base_url('/attachments/shop_images/' . $product['image']) ?>" alt="product image">
-
+                                
                         </div>
                         <div class="col-md-7">
                             <p style="font-weight:bold; -webkit-hyphens: none; -ms-hyphens: none; hyphens: none;">
@@ -791,6 +886,90 @@ th {
 
 // Attempt to add custom text when the script loads
 </script>
+<script>
+function imageZoom(imgID, resultID) {
+  var img, lens, result, cx, cy;
+  img = document.getElementById(imgID);
+  result = document.getElementById(resultID);
+  lens = document.getElementById("img-zoom-lens");
+  cx = result.offsetWidth / lens.offsetWidth;
+  cy = result.offsetHeight / lens.offsetHeight;
+  var imgSrc = img.getAttribute('data-src');
+  result.style.backgroundImage = "url('" + imgSrc + "')";
+  result.style.backgroundSize = (img.width * cx) + "px " + (img.height * cy) + "px";
+  
+
+  img.addEventListener("mouseover", function() {
+    lens.style.visibility = "visible";
+    result.style.visibility = "visible";
+  });
+  lens.addEventListener("mouseover", function() {
+    lens.style.visibility = "visible";
+    result.style.visibility = "visible";
+  });
+
+  img.addEventListener("mouseout", function() {
+    lens.style.visibility = "hidden";
+    result.style.visibility = "hidden";
+  });
+  lens.addEventListener("mouseout", function() {
+    lens.style.visibility = "hidden";
+    result.style.visibility = "hidden";
+  });
+
+  lens.addEventListener("mousemove", moveLens);
+  img.addEventListener("mousemove", moveLens);
+  lens.addEventListener("touchmove", moveLens);
+  img.addEventListener("touchmove", moveLens);
+  function moveLens(e) {
+    var pos, x, y;
+    e.preventDefault();
+    pos = getCursorPos(e);
+    x = pos.x - (lens.offsetWidth / 2);
+    y = pos.y - (lens.offsetHeight / 2);
+    if (x > img.width - lens.offsetWidth) {x = img.width - lens.offsetWidth;}
+    if (x < 0) {x = 0;}
+    if (y > img.height - lens.offsetHeight) {y = img.height - lens.offsetHeight;}
+    if (y < 0) {y = 0;}
+
+    lens.style.left = x + "px";
+    lens.style.top = y + "px";
+    result.style.backgroundPosition = "-" + (x * cx) + "px -" + (y * cy) + "px";
+  }
+  function getCursorPos(e) {
+    var a, x = 0, y = 0;
+    e = e || window.event;
+    /* Get the x and y positions of the image: */
+    a = img.getBoundingClientRect();
+    /* Calculate the cursor's x and y coordinates, relative to the image: */
+    x = e.pageX - a.left;
+    y = e.pageY - a.top;
+    /* Consider any page scrolling: */
+    x = x - window.pageXOffset;
+    y = y - window.pageYOffset;
+    return {x : x, y : y};
+}
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    if (window.innerWidth > 767) { // Only initialize zoom on non-mobile devices
+        var img = document.getElementById("myimage");
+        if (img.complete) {
+            imageZoom("myimage", "myresult");
+        } else {
+            img.onload = function() {
+                imageZoom("myimage", "myresult");
+            };
+        }
+    }
+});
+
+</script>
+
+
+
+
+
 
 
 

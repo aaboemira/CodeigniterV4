@@ -16,12 +16,22 @@
     margin-top: 30px;
 }
 
-@media (min-width: 900px) {
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+    .apps-container .box {
+        margin: 60px 2% 40px;
+    }
+    .apps-container {
+        margin-left: 0;
+        padding-left: 10%;
+    }
+}
+
+@media (min-width: 992px) {
     .apps-container .box{
         margin: 60px 19% 40px;
     }
 }
-
 .apps-container #title {
   position: absolute;
   top: -14px;
@@ -553,8 +563,9 @@ $(document).ready(function() {
     </script>
 <script>
     function removeTrailingSpaces(inputElement) {
-        inputElement.value = inputElement.value.trim();
+        inputElement.value = inputElement.value.replace(/\s+/g, '');
     }
 </script>
+
 </body>
 </html>

@@ -127,6 +127,24 @@
     justify-content: flex-end; /* Push content to the right */
 }
 
+@media(min-width:767px) {
+    #paypal-button-container{
+        width:250px !important;
+        margin-top:20px;
+
+    }
+    .registration-page .steps{
+        padding:0px !important;
+    }
+}
+@media(min-width:767px) and (max-width:991px) {
+    #paypal-button-container{
+        width:250px !important;
+        margin-top:20px;
+
+    }
+
+}
 /* Style for smaller screens */
 @media (max-width: 767px) {
     .checkout-buttons .col-sm-6 {
@@ -191,7 +209,7 @@
     padding-left: 0px !important;
     }
 </style>
-<div class="container registration-page">
+<div class="container container-sm registration-page">
     <?= purchase_steps(1) ?>
     <div class="row">
         <div class="alone title">
@@ -221,7 +239,7 @@
         </div>
         <div class="col-md-6 ">
 
-        <div id="paypal-button-container" style="position:relative;z-index:0;width:260px;margin-left:auto;"></div>
+        <div id="paypal-button-container" style="position:relative;z-index:0;margin-left:auto;"></div>
 
         </div>
     </div>
@@ -240,13 +258,16 @@
             <div class="btn-container">
                 <a class="btn btn-primary btn-new" href="<?= base_url('/checkout1') ?>">
                     <?= lang_safe('continue_address', 'Continue to address') ?>
+                    <span class="glyphicon glyphicon-circle-arrow-right"></span>
                 </a>
                 <form id="guestCheckoutForm" method="post" action="<?= base_url('/checkout1') ?>">
                     <input type="hidden" name="logout_guest" value="1">
                     <input type="hidden" name="guest_checkout" value="1">
                     <button type="submit" name="guest_checkout" class="btn btn-default btn-new">
                         <?= lang_safe('continue_guest', 'Shop as guest') ?>
+                        <span class="glyphicon glyphicon-circle-arrow-right"></span>
                     </button>
+
                 </form>
             </div>
         </div>

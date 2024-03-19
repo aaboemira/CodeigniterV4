@@ -46,6 +46,87 @@
         ?>
             <div class="well well-sm">
             <form method="POST" action="<?= base_url('/address/update') ?>" id="updateAddresses" name="addressesForm">
+                <div id="user-section">
+                    <div class="title alone">
+                        <span>
+                            <?= lang_safe('user_address') ?>
+                        </span>
+                    </div>
+                    <div class="row">
+                        <!-- User Address Form Inputs -->
+                        <div class="form-group col-sm-6">
+                            <label for="userFirstNameInput">
+                                <?= lang_safe('first_name') ?><sup>
+                                    <?= lang_safe('required') ?>
+                                </sup>
+                            </label>
+                            <input id="userFirstNameInput" class="form-control"
+                                placeholder="<?= lang_safe('first_name') ?>" type="text" name="user_first_name"
+                                value="<?= isset($userAddresses['user_address_first_name']) ? esc($userAddresses['user_address_first_name']) : '' ?>">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="userLastNameInput">
+                                <?= lang_safe('last_name') ?><sup>
+                                    <?= lang_safe('required') ?>
+                                </sup>
+                            </label>
+                            <input id="userLastNameInput" class="form-control"
+                                placeholder="<?= lang_safe('last_name') ?>" type="text" name="user_last_name"
+                                value="<?= isset($userAddresses['user_address_last_name']) ? esc($userAddresses['user_address_last_name']) : '' ?>">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="userStreetInput">
+                                <?= lang_safe('street') ?><sup>
+                                    <?= lang_safe('required') ?>
+                                </sup>
+                            </label>
+                            <input id="userStreetInput" class="form-control"
+                                placeholder="<?= lang_safe('street') ?>" type="text" name="user_street"
+                                value="<?= isset($userAddresses['user_address_street']) ? esc($userAddresses['user_address_street']) : '' ?>">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="userHousenrInput">
+                                <?= lang_safe('housenr') ?><sup>
+                                    <?= lang_safe('required') ?>
+                                </sup>
+                            </label>
+                            <input id="userHousenrInput" class="form-control"
+                                placeholder="<?= lang_safe('housenr') ?>" type="text" name="user_housenr"
+                                value="<?= isset($userAddresses['user_address_housenr']) ? esc($userAddresses['user_address_housenr']) : '' ?>">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="userCountry"><?= lang_safe('country') ?><sup><?= lang_safe('required') ?></sup></label>
+                            <select size="1" id="userCountry" name="user_country" class="form-control">
+                                <?php foreach ($countries as $countryName): ?>
+                                    <option value="<?= esc($countryName) ?>" <?= isset($userAddresses['user_address_country']) && $userAddresses['user_address_country'] === $countryName ? 'selected' : '' ?>>
+                                        <?= esc($countryName) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="userPostInput">
+                                <?= lang_safe('post_code') ?><sup>
+                                    <?= lang_safe('required') ?>
+                                </sup>
+                            </label>
+                            <input id="userPostInput" class="form-control"
+                                placeholder="<?= lang_safe('post_code') ?>" type="text" name="user_post_code"
+                                value="<?= isset($userAddresses['user_address_post_code']) ? esc($userAddresses['user_address_post_code']) : '' ?>">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="userCityInput">
+                                <?= lang_safe('city') ?><sup>
+                                    <?= lang_safe('required') ?>
+                                </sup>
+                            </label>
+                            <input id="userCityInput" class="form-control"
+                                placeholder="<?= lang_safe('city') ?>" type="text" name="user_city"
+                                value="<?= isset($userAddresses['user_address_city']) ? esc($userAddresses['user_address_city']) : '' ?>">
+                        </div>
+                    </div>
+                </div>
+                    
                     <div id="billing-section">
                         <div class="title alone">
                             <span>

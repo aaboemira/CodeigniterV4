@@ -218,7 +218,7 @@ if (count($sliderProducts) > 0) {
                             <i class="fa fa-circle-o" aria-hidden="true"></i>
                             <?php } ?>
                             <a href="javascript:void(0);" data-categorie-id="<?= $page['id'] ?>"
-                                class="go-category left-side <?= isset($_GET['category']) && $_GET['category'] == $page['id'] ? 'selected' : '' ?>">
+                                class="go-category left-side upp-text <?= isset($_GET['category']) && $_GET['category'] == $page['id'] ? 'selected' : '' ?>">
                                 <?= $page['name'] ?>
                             </a>
                             <?php
@@ -329,7 +329,7 @@ if (count($sliderProducts) > 0) {
             </div>
             <!-- Produkt Auflistung -->
                 <?php
-                if (!empty($products)) {            
+                if (!empty($products)) {   
                         $load::getProducts($products, 'col-sm-6 col-md-3', false);
                 } else {
                     ?>

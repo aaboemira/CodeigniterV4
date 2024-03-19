@@ -19,7 +19,7 @@
 
         <div class="container">
             <div class="row">
-                <p style="font-size:16px;">
+                <p style="font-size:16px;" class="upp-text">
                     <?= lang_safe('contact_us_text') ?>
                 </p>
             </div>

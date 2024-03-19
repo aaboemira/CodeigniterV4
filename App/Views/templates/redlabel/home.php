@@ -7,14 +7,14 @@
 	}
 
 	#content {
-		margin-top: 138px !important;
+		margin-top: 168px !important;
 		padding: 0px !important;
 		position: relative;
 		overflow-x: hidden;
 	}
 	@media (max-width: 772px) {
     #content {
-        margin-top: 94px !important;
+        margin-top: 114px !important;
         padding: 0px !important;
         position: relative;
     }
@@ -152,7 +152,7 @@
                 <div class="panel panel-default">
 					<div class="panel-heading">
 						<a href="#">
-							<img src="<?=  base_url('/attachments/shop_images/arrival.jpg') ?>" class="img-responsive" alt="Card Image">
+							<img src="<?=  base_url('/attachments/shop_images/arrival_1.jpg') ?>" class="img-responsive" alt="Card Image">
 						</a>
 					</div>
                     <div class="panel-body">
@@ -179,7 +179,7 @@
                 <div class="panel panel-default">
 					<div class="panel-heading">
 						<a href="#">
-							<img src="<?= base_url('/attachments/shop_images/arrival.jpg')  ?>" class="img-responsive" alt="Card Image">
+							<img src="<?= base_url('/attachments/shop_images/arrival_2.jpg')  ?>" class="img-responsive" alt="Card Image">
 						</a>
 					</div>
                     <div class="panel-body">

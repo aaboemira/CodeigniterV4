@@ -197,29 +197,29 @@
 <div id="wrapper">
     <div id="content">
         <div class="top-part " id="top-part">
-            <!-- <div id="languages-bar">
+             <div id="languages-bar">
 						<?php
-            $num_langs = count($allLanguages);
-            if ($num_langs > 0) {
-                ?>
+						$num_langs = count($allLanguages);
+						if ($num_langs > 0) {
+							?>
 							<ul class="header_lang_pull-right">
 								<?php
-                $i = 1;
-                $lang_last = '';
-                foreach ($allLanguages as $key_lang => $lang) {
-                    ?>
+								$i = 1;
+								$lang_last = '';
+								foreach ($allLanguages as $key_lang => $lang) {
+									?>
 									<li <?= $i == $num_langs ? 'class="last-item"' : '' ?>>
 										<img src="<?= base_url('attachments/lang_flags/' . $lang['flag']) ?>"
-											alt="Language-<?= MY_LANGUAGE_ABBR ?>"><a href="<?= LANG_URL .($key_lang) ?>/shop"><?= $lang['name'] ?></a>
+											alt="Language-<?= MY_LANGUAGE_ABBR ?>"><a href="<?= base_url($key_lang) ?>"><?= $lang['name'] ?></a>
 									</li>
 									<?php
-                    $i++;
-                }
-                ?>
+									$i++;
+								}
+								?>
 							</ul>
 						<?php } ?>
 					</div>
-					-->
+					
 
             <nav class="navbar navbar-custom" role="navigation">
                 <div class="container-fluid">
@@ -232,10 +232,16 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand custom-a" href="<?= LANG_URL ?>">
+                        <a class="navbar-brand custom-a" href="<?= LANG_URL . '/shop'?>">
                             <img class="nav_logo " alt="Brand"
                                  src="<?= base_url('jpg/NODEMATIC-BRAND-WEB-171-650.jpg') ?>">
                         </a>
+                        <div class="register-icon-wrapper">
+                            <a href="<?= LANG_URL . '/myaccount' ?>" class="register-icon">
+                                <img src="<?= base_url('png/myaccount_white.png') ?>" alt="Register">
+                            </a>
+                        </div>
+
                         <div class="shopping-cart-dropdown-wrapper">
                             <!-- Existing Shopping Cart Icon -->
                             <a class="shopping_cart_div custom-a" href="<?= base_url() ?>shopping-cart">
@@ -312,7 +318,9 @@
                         }
                         ?>
 
-                        <li><a class="custom-a" href="<?= LANG_URL . '/contacts' ?>"><?= lang_safe('nav_kontakt') ?></a>
+                        <!-- <li><a class="custom-a" href="<?= LANG_URL . '/contacts' ?>"><?= lang_safe('nav_kontakt') ?></a> -->
+                        <li><a class="custom-a" href="<?= LANG_URL . '/support' ?>"><?= lang_safe('nav_support') ?></a></li>
+
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right login-nav">

@@ -1,11 +1,13 @@
+<style>
 
-<div class="container" id="checkout-page">
+</style>
+<div class="container container-sm" id="checkout-page">
     <?php if (isset($cartItems['array']) && $cartItems['array'] != null) { ?>
         <?= purchase_steps(1, 1) ?>
 
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <div class=" col-lg-3 col-md-4 col-xs-12" style="padding-left: 0 !important; margin-bottom: 1.2em; margin-right: 2em">
+                <div class=" col-lg-3 col-md-4 col-sm-6 col-xs-12" style="padding-left: 0 !important; margin-bottom: 1.2em; margin-right: 2em">
                     <div class="title alone">
                         <span><?= lang_safe('billing_address') ?></span>
                     </div>
@@ -26,7 +28,7 @@
                         <?= get_form_field_value($user_data, 'billing_address', 'billing_country') ?>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-4 col-xs-12" style="padding-left: 0 !important; margin-bottom: 1.2em; ">
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" style="padding-left: 0 !important; margin-bottom: 1.2em; ">
                     <!-- Right column for delivery address -->
                     <div class="title alone">
                         <span><?= lang_safe('shipping_address') ?></span>
