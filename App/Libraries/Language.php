@@ -11,7 +11,8 @@ class Language
 
     protected $CI;
     private $urlAbbrevation;
-
+    protected $Home_admin_model;
+    protected $Public_model;
     public function __construct()
     {
         $uri = service('uri');

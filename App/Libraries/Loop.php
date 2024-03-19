@@ -122,7 +122,7 @@ class Loop
                                 <div class="img-container">
                                     <a
                                         href="<?= $article['vendor_url'] == null ? LANG_URL . '/' . $article['url'] : LANG_URL . '/' . $article['vendor_url'] . '/' . $article['url'] ?>">
-                                        <img src="<?= base_url('/attachments/shop_images/' . $article['image']) ?>"
+                                        <img src="<?= base_url('/attachments/shop_images/' . $article['image_name']) ?>"
                                             alt="<?= str_replace('"', "'", $article['title']) ?>" class="img-responsive" alt="">
                                     </a>
                                 </div>

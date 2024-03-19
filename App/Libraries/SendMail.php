@@ -174,7 +174,6 @@ class SendMail
 
         if (!$this->mail->send()) {
             log_message('error', 'Mailer Error: ' . $this->mail->ErrorInfo);
-            die();
             return false;
         }
 
