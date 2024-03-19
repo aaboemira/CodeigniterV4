@@ -68,8 +68,19 @@ $routes->add('templatecss/(:segment)', "Loader::templateCss/$1");
 $routes->add('templatejs/(:segment)', "Loader::templateJs/$1");
 
 // Products urls style
+// Optional category segment
+$routes->add('(:segment)/(:segment)-(:num)', "Home::viewProduct/$3");
+$routes->add('(\w{2})/(:segment)/(:segment)-(:num)', "Home::viewProduct/$4");
+$routes->add('shop-product-(:num)', "Home::viewProduct/$1");
+
+// Routes for URLs with two categories
+$routes->add('(:segment)/(:segment)/(:segment)-(:num)', "Home::viewProduct/$4");
+$routes->add('(\w{2})/(:segment)/(:segment)/(:segment)-(:num)', "Home::viewProduct/$5");
+
+// Routes for URLs without categories
 $routes->add('(:segment)-(:num)', "Home::viewProduct/$2");
 $routes->add('(\w{2})/(:segment)-(:num)', "Home::viewProduct/$3");
+
 $routes->add('shop-product-(:num)', "Home::viewProduct/$3");
 
 $routes->add('create-paypal-order', "PaypalPayment::createOrder");
@@ -141,6 +152,8 @@ $routes->get('/smartdevices/editDevice/(:num)', 'SmartDevices::editDevice/$1');
 $routes->post('/smartdevices/updateDevice', 'SmartDevices::updateDevice');
 $routes->post('smartdevices/controlDevice', 'SmartDevices::controlDevice');
 
+$routes->get('smartdevices/speechControl/(:num)', 'SmartDevices::speechControl/$1');
+$routes->post('smartdevices/speechControl', 'SmartDevices::updateSpeechControl');
 
 $routes->get('/smartdevices/accessControl/(:num)', 'SmartDevices::accessControl/$1');
 $routes->post('/smartdevices/addGuest', 'SmartDevices::addGuest');
@@ -173,7 +186,10 @@ $routes->post('/paypal/update-paypal-order', 'PaypalController::updatePaypalOrde
 
 $routes->add('/support', "Support::index");
 
+$routes->add('API/enddevice/report', 'HomeGraphController::sendReportState');
+$routes->post('API/enddevice/check-report', 'HomeGraphController::checkReportState');
 
+//Oauth for google
 $routes->get('/oauth/authorize', 'OAuthController::showAuthorize');
 $routes->post('/oauth/authorize', 'OAuthController::authorize');
 $routes->post('/oauth/changeAccount', 'OAuthController::changeAccount');
@@ -181,6 +197,7 @@ $routes->post('/oauth/token', 'OAuthController::token');
 $routes->get('/oauth/userinfo', 'OAuthController::userInfo');
 
 $routes->post('/smart-home/fulfilment', 'SmartHomeController::fulfillment');
+$routes->post('/smart-home/fulfillmentAlexa', 'SmartHomeAlexaController::fulfillment');
 
 $routes->post('/app/auth', 'OAuthController::appLogin');
 $routes->post('/app-sync/fulfillment', 'SyncController::fulfillment');
