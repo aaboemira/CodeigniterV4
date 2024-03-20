@@ -3,7 +3,7 @@
 namespace App\Controllers;
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\admin\Auth_model; // Add the use statement for Auth_model
-use App\Models\Public_model;
+use App\Models\SmartDevice_model;
 
 class HomeGraphController extends ResourceController
 {
@@ -11,7 +11,7 @@ class HomeGraphController extends ResourceController
     protected $oauthModel;
     protected $logger;
     protected $aes_key;
-    protected $Public_model;
+    protected $smartDevice;
     public function __construct()
     {
         $this->oauthModel=new Auth_model();
@@ -19,7 +19,7 @@ class HomeGraphController extends ResourceController
 
         helper(['oauth']);
         helper(['api_helper']);
-        $this->Public_model = new Public_model();
+        $this->smartDevice = new SmartDevice_model();
 
 
     }
@@ -200,7 +200,7 @@ class HomeGraphController extends ResourceController
         $this->logger->alert($messageParts);
 
         // Get the devices associated with the serial number
-        $devices = $this->Public_model->getSmartDevicesBySerial($messageParts['serial']);
+        $devices = $this->smartDevice->getSmartDevicesBySerial($messageParts['serial']);
         if (!$devices) {
             return false;
         }
@@ -272,7 +272,7 @@ class HomeGraphController extends ResourceController
 
         // Check if the device is Google linked
         // Use the modified model function to check if the device is Google linked
-        $isGoogleLinked = $this->Public_model->getSmartDeviceBySerial($serialNumber);
+        $isGoogleLinked = $this->smartDevice->getSmartDeviceBySerial($serialNumber);
 
         // The report state reflects the google_linked status directly
         $reportState = $isGoogleLinked ? 1 : 0;
