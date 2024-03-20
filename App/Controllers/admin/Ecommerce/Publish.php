@@ -232,16 +232,19 @@ class Publish extends ADMIN_Controller
              $files = $this->request->getFiles();
              // Get the image name from POST request
              $imageName = $this->request->getPost('image_name');
-     
+             $uploadedImageCount = $this->request->getPost('uploaded_image_count') ?? 0;
+
+             // Initialize the counter with the uploaded image count
              if ($files) {
-                 $counter = 1; // Initialize a counter for unique file names
-                 foreach ($files['others_' . $langAbbr] as $index => $file) {
+                $counter = (int)$uploadedImageCount + 1;
+                foreach ($files['others_' . $langAbbr] as $index => $file) {
                      if ($file->isValid() && !$file->hasMoved()) {
                          $allowedMimeTypes = ['image/jpeg', 'image/png'];
                          if (in_array($file->getMimeType(), $allowedMimeTypes)) {
                              // Use imageName with counter if not empty, otherwise use a random name
                              $fileExtension = $file->getClientExtension();
                              $baseName = !empty($imageName) ? $imageName . '-' . $counter : pathinfo($file->getRandomName(), PATHINFO_FILENAME);
+                             
                              // Move the resized versions for each uploaded file
                              foreach (['250','650', '1200','2400','3500'] as $size) {
                                  if (isset($files["others_{$langAbbr}_{$size}"][$index])) {
