@@ -190,7 +190,6 @@ public function index($page = 0)
     {
         $deviceId = $this->request->getPost('deviceId');
         $device = $this->smartDevice->getSmartDeviceById($deviceId);
-
         $guestId = $this->request->getPost('guestID');
 
         $devicePassword = $device['password'];
@@ -226,7 +225,6 @@ public function index($page = 0)
 
         $updateData['state'] = lang_safe('gate_position_' . $updateData['state']);
         $updateData['connection_message']=lang_safe('connection' . $responseData['status']);
-
         return $this->response->setJSON($updateData);
     }
     public function editDevice($deviceId)

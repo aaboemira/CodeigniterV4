@@ -60,8 +60,8 @@ class SyncController extends ResourceController
             return [
                 'device_name' => $device['device_name'],
                 'serial_number' => $device['serial_number'],
-                'UID' => decryptData($device['UID'], '@@12@@'),
-                'password' => decryptData($device['password'], '@@12@@'),
+                'UID' => $device['UID'],
+                'password' => $device['password'],
                 'is_guest' => 0,
                 'can_control'=> 1,
                 'pin_enabled' => $device['pin_enabled'], // Add this line
@@ -78,8 +78,8 @@ class SyncController extends ResourceController
             return [
                 'device_name' => $device['device_name'],
                 'serial_number' => $device['serial_number'],
-                'UID' => decryptData($device['UID'], '@@12@@'),
-                'password' => decryptData($device['guest_password'], '@@12@@'),
+                'UID' => $device['UID'],
+                'password' => $device['guest_password'],
                 'is_guest' => 1,
                 'can_control' => $device['can_control'],
                 'pin_enabled' => $device['guest_pin_enabled'], // Add this line
@@ -195,8 +195,8 @@ class SyncController extends ResourceController
             }
             $serial = $deviceData['serial_number'];
             $deviceName = $deviceData['device_name'];
-            $UID = encryptData($deviceData['UID'], '@@12@@');
-            $password = encryptData($deviceData['password'], '@@12@@');
+            $UID = $deviceData['UID'];
+            $password = $deviceData['password'];
             $pinEnabled = $deviceData['pin_enabled'] ?? 0; // Add this line
             $pinCode = $deviceData['pin_code'] ?? ''; // Add this line
     
@@ -244,7 +244,7 @@ class SyncController extends ResourceController
                 }
             }
             $serial = $guestDeviceData['serial_number'];
-            $password = encryptData($guestDeviceData['guest_password'], '@@12@@');
+            $password = $guestDeviceData['guest_password'];
             $canControl = $guestDeviceData['can_control'] ?? 1;
             $userEmail = $this->publicModel->getUserEmail($userId);
             $pinEnabled = $guestDeviceData['pin_enabled'] ?? 0; // Add this line
