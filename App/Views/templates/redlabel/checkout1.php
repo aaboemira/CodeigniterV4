@@ -26,7 +26,7 @@
         <?php
         }
         ?>
-        <div class="row">
+        <div class="row" style="margin: 0 -10px;">
             <?php if (!session()->has('logged_user')): ?>
 	
             <div class="title alone">

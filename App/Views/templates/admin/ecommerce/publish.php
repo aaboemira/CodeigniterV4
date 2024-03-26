@@ -236,7 +236,7 @@ if (session('result_publish')) {
             <?php } ?>
             <label for="userfile">Cover Image</label>
             <input type="file" id="cover_image" name="cover_image_<?= $language->abbr ?>" class="form-control">
-        </div>
+        </div>formElement
 
         <div class="form-group bordered-group">
             <div class="others-images-container_<?= $language->abbr ?>">
@@ -362,7 +362,7 @@ if (session('result_publish')) {
     <?php } ?>
 </form>
 <?php foreach ($languages as $language) { ?>
-    <div class="modal fade" id="modalMoreImages_<?= $language->abbr ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" id="modalMoreImages_<?= $language->abbr ?>" data-lang="<?= $language->abbr ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

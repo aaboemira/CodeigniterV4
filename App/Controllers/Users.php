@@ -8,6 +8,7 @@ use DateTimeZone;
 use Mobicms\Captcha\Code;
 use Mobicms\Captcha\Image;
 use App\Libraries\SendMail;
+use App\Models\LoginAttempt_model;
 
 class Users extends BaseController
 {
@@ -18,17 +19,21 @@ class Users extends BaseController
 
     protected $Public_model;
     protected $sendmail;
-
+    protected $loginAttemptModel;
     public function __construct()
     {
         $this->Public_model = new Public_model();
         $this->sendmail = new SendMail();
+        $this->loginAttemptModel = new LoginAttempt_model();
+
     }
 
 
 
     public function register()
     {
+        $ipAddress = $this->request->getIPAddress();
+
         if (isset($_POST['signup'])) {
             $result = $this->registerValidate();
             if ($result == false) {
@@ -48,6 +53,11 @@ class Users extends BaseController
 
         $head = array();
         $data = array();
+        $failedAttempts = $this->loginAttemptModel->getFailedAttempts($ipAddress);
+        $this->logger->alert("attempt:{$failedAttempts}");
+
+        $data['failedAttempts'] = $failedAttempts;
+
         $head['title'] = lang_safe('user_register');
         $head['description'] = lang_safe('user_register');
         $head['keywords'] = str_replace(" ", ",", $head['title']);
@@ -88,7 +98,7 @@ class Users extends BaseController
             // Redirect to a success page or show a success message
             return redirect()->to(LANG_URL . '/user/successMessage');
         } else {
-            session()->setFlashdata('error', lang_safe('verify_failed', 'Email is not confirmed'));
+            session()->setFlashdata('error', lang_safe('verify_failed', 'Email verfication Failed'));
             return redirect()->to(LANG_URL . '/register');
         }
     }
@@ -398,6 +408,7 @@ class Users extends BaseController
         echo json_encode($response); die;
         echo new Image($code);
     }
+    
     function validateCaptcha($result, $session) {
         if ($result !== null && $session !== null) {
             return strtolower($result) === strtolower($session);
@@ -405,37 +416,104 @@ class Users extends BaseController
 
         return false;
     }
+
+    public function loginCaptcha() {
+        $code = (string) new Code(4, 4, '23456789ABCDEGHJKMNPQRSTUVXYZ');
+        session()->set('loginCaptcha', $code); // separate session variable for login captcha
+        $image = new Image($code);
+        $response['image'] = (string)$image;
+        echo json_encode($response);
+        exit;
+    }
+    
+    function validateLoginCaptcha($result) {
+        $sessionCaptcha = session()->get('loginCaptcha');
+        return strtolower($result) === strtolower($sessionCaptcha);
+    }
+    
     function generateResetToken($length = 32)
     {
         return bin2hex(random_bytes($length));
     }
-    public function performLogin($email, $password)
+    function performLogin($email, $password,$ipAddress=null)
     {
-        $validation = \Config\Services::validation();
-        $validation->setRule('email', 'required|valid_email', lang_safe('invalid_email'));
-        $validation->setRule('pass', 'required', lang_safe('enter_password'));
+        if($ipAddress==null)
+            $ipAddress = $this->request->getIPAddress(); // Get the client's IP address
+        $failedAttempts = $this->loginAttemptModel->getFailedAttempts($ipAddress);
+
+
+        $this->logger->alert("attempt:{$failedAttempts}");
+
+        // Check if account is locked out due to too many failed attempts
+        if ($failedAttempts >= 5) {
+            // If locked out, check if captcha is correct
+            $captcha = $this->request->getPost('captcha');
+            if (!$this->validateLoginCaptcha($captcha)) {
+                session()->setFlashdata('loginError', lang_safe('captcha_wrong'));
+                // Re-show the login form with the captcha
+                return false;
+            }
+        }
+    
+
+    
         $loginData = [
             'email' => $email,
             'pass' => $password,
         ];
-
+    
         $result = $this->Public_model->checkPublicUserIsValid($loginData);
         if ($result !== false) {
             if ($result['verified'] == 0) {
-                session()->setFlashdata('loginError', lang_safe('verify_first', 'Please verify your email first'));
+                session()->setFlashdata('loginError', lang_safe('verify_first'));
+                $this->loginAttemptModel->recordFailedLogin($ipAddress);
                 return false;
-            } else {
-                session()->set([
-                    'logged_user' => $result['id'],
-                    'user_name' => $result['first_name'] .' '. $result['last_name'],
-                    'email' => $result['email'],
-                ]);
-                return true;
             }
+    
+            // Reset failed login attempts on successful login
+            $this->loginAttemptModel->resetFailedLogin($ipAddress);
+    
+            // Set session data and proceed with login
+            session()->set([
+                'logged_user' => $result['id'],
+                'user_name' => $result['first_name'] . ' ' . $result['last_name'],
+                'email' => $result['email'],
+            ]);
+            return true;
+        } else {
+            // Invalid login credentials, record the failed login attempt
+            $this->loginAttemptModel->recordFailedLogin($ipAddress);
+            session()->setFlashdata('loginError', lang_safe('wrong_user'));
+            return false;
         }
-        session()->setFlashdata('loginError', lang_safe('wrong_user'));
-        return false;
     }
+    function performLoginApi($email, $password,$ipAddress=null)
+    {
+   
+        $loginData = [
+            'email' => $email,
+            'pass' => $password,
+        ];
+    
+        $result = $this->Public_model->checkPublicUserIsValid($loginData);
+        if ($result !== false) {
+            if ($result['verified'] == 0) {
+                session()->setFlashdata('loginError', lang_safe('verify_first'));
+                return false;
+            }
+    
+            // Set session data and proceed with login
+            session()->set([
+                'logged_user' => $result['id'],
+                'user_name' => $result['first_name'] . ' ' . $result['last_name'],
+                'email' => $result['email'],
+            ]);
+            return true;
+        } else {
+            session()->setFlashdata('loginError', lang_safe('wrong_user'));
+            return false;
+        }
+    }   
 
     private function password_check($password)
 {

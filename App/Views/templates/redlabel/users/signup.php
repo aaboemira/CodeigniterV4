@@ -72,6 +72,7 @@ $languages = [
                 <div class="well well-sm">
                     <form method="POST" action="">
                         <div class="row">
+
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="email">
@@ -103,7 +104,22 @@ $languages = [
                                         </span>
                                     </div>
                                 </div>
+                            <?php if ($failedAttempts >= 5): ?>
+                                    <div class="form-group">
+                                        <img alt="Login Verification code" id="loginCaptchaImage" src="">
+                                        <button type="button" id="refreshLoginCaptcha" class="btn btn-secondary">
+                                            <i class="fa fa-refresh"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="capcha">
+                                            <?= lang_safe('capcha', 'Please enter captcha') ?>
+                                        </label>
+                                        <input type="text" name="captcha" class="form-control" placeholder="<?= lang_safe('please_enter_capcha') ?>" />
+                                    </div>
+                            <?php endif; ?>
                             </div>
+
                             <div class="col-md-12" style="margin-bottom: 0.5em">
                                 <a href="password/recover">
                                     <?= lang_safe('forget_password') ?>
@@ -169,6 +185,14 @@ $languages = [
                     <?php
                 }
                 ?>
+                <?php if (session('error')) { ?>
+                    <div class="alert alert-danger">
+                        <?= session('error') ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                <?php } ?>
                 <div class="well well-sm">
                     <form method="POST" action="">
                         <div class="row">
@@ -415,26 +439,36 @@ $languages = [
 </div>
 
 <script>
-
-    fetch('<?= base_url('captcha') ?>')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('captcha').setAttribute('src', data.image);
-        })
+    function refreshCaptcha() {
+        fetch('<?= base_url('captcha') ?>')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('captcha').setAttribute('src', data.image);
+            })
+            .catch(error => console.error('Error refreshing captcha:', error));
+    }
+    function refreshLoginCaptcha() {
+        fetch('<?= base_url('login-captcha') ?>')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loginCaptchaImage').setAttribute('src', data.image);
+            })
+            .catch(error => console.error('Error refreshing captcha:', error));
+    }
+    refreshLoginCaptcha();
+    refreshCaptcha();
     document.addEventListener('DOMContentLoaded', function () {
-        // Function to refresh the captcha image
-        function refreshCaptcha() {
-            fetch('<?= base_url('captcha') ?>')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('captcha').setAttribute('src', data.image);
-                })
-                .catch(error => console.error('Error refreshing captcha:', error));
+        const loginRefreshButton = document.getElementById('refreshLoginCaptcha');
+        if (loginRefreshButton) {
+            loginRefreshButton.addEventListener('click', refreshLoginCaptcha);
         }
-
         // Add click event for the "Refresh" button
         const refreshButton = document.getElementById('refreshCaptcha');
         refreshButton.addEventListener('click', refreshCaptcha);
     });
+</script>
+<script>
+
+
 </script>
 

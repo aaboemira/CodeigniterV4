@@ -113,7 +113,7 @@ th {
 }
 </style>
 <div class="container" id="view-product">
-    <div class="row">
+    <div class="row" style="margin: 0-10px;">
         <div class="col-sm-6 " id="img-zoom-container"style="position:relative;">
             <div <?= $product['folder'] != null ? 'style="margin-bottom:20px; position:relative;"' : '' ?>>
             <?php if (!empty($product['image_text'])):  ?>
@@ -143,8 +143,9 @@ th {
 
             <?php
             if ($product['folder'] != null) {
-                $dir = "attachments/shop_images/de/" . $product['folder'] . '/';
-                
+                $lang = (strpos(LANG_URL, '/en') !== false) ? 'en' : 'de';
+                $dir = "attachments/shop_images/" . $lang . "/" . $product['folder'] . '/';
+
                 ?>
                 <div class="row">
                     <?php
@@ -480,10 +481,8 @@ th {
         <?php
     }
     ?>
-</div>
-<div class="container">
-    <div class="row">
-        <div class="col-sm-6">
+    <div class="row" style="margin:0;">
+        <div class="col-sm-12 checkout-buttons" >
             <br>
             <a href="<?= LANG_URL . '/shop' ?>" class="btn btn-primary btn-new go-shop">
                 <span class="glyphicon glyphicon-circle-arrow-left"></span>
@@ -492,6 +491,7 @@ th {
         </div>
     </div>
 </div>
+
 <div id="modalImagePreview" class="modal">
     <div class="image-preview-container">
         <div class="modal-content">

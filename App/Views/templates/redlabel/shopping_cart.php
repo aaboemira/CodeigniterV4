@@ -197,7 +197,6 @@ if (!isset($cartItems['array'])) { ?>
                             <span class="glyphicon glyphicon-circle-arrow-left"></span>
                         <?= lang_safe('back_to_shop') ?>
                         </a>
-                        <div style="margin-top:60px"></div>
                     </div>
                 </div>
             </div>

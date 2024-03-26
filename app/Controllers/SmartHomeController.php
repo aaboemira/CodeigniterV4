@@ -4,12 +4,15 @@ namespace App\Controllers;
 use App\Models\Public_model;
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\admin\Auth_model; // Add the use statement for Auth_model
+use App\Models\SmartDevice_model;
 
 class SmartHomeController extends ResourceController
 {
     protected $authModel; // Add a protected member variable for Auth_model
     protected $publicModel;
     protected  $url ;
+    protected $smartDevice;
+
     private $errorCodeMapping = [
         -1 => 'serviceOutage', // Assuming a custom TTS code; adjust as necessary
         -2 => 'deviceOffline',
@@ -25,6 +28,7 @@ class SmartHomeController extends ResourceController
         $this->authModel = new Auth_model();
         $this->publicModel = new Public_model();
         $this->url = getenv('SMART_DEVICES_API');
+        $this->smartDevice = new SmartDevice_model();
 
 
     }
@@ -66,8 +70,8 @@ class SmartHomeController extends ResourceController
         if (!$userId) {
             return $this->failUnauthorized("Invalid or missing access token");
         }
-        $userDevices = $this->publicModel->getSmartHomeDevicesByUID($userId);
-        $guestDevices = $this->publicModel->getGuestDevicesByUserIdAndControl($userId, true);
+        $userDevices = $this->smartDevice->getSmartHomeDevicesByUID($userId);
+        $guestDevices = $this->smartDevice->getGuestDevicesByUserIdAndControl($userId, true);
     
         // Combine the user's own devices and guest devices
         $allDevices = array_merge($userDevices, $guestDevices);
@@ -85,7 +89,7 @@ class SmartHomeController extends ResourceController
                 ],
                 'willReportState' => true, // Whether the device reports state changes to Google
             ];
-            $result=$this->publicModel->connectGoogleHome($device['device_id']);
+            $result=$this->smartDevice->connectGoogleHome($device['device_id']);
             $this->logger->alert("Connect Google Home with id {$device['device_id']}, Serial number{$device['serial_number']} result:{$result}");
         }
         // Example response structure
@@ -226,12 +230,12 @@ class SmartHomeController extends ResourceController
         return false;
     }
     private function getDeviceStatus($deviceId){
-        $device = $this->publicModel->getSmartDeviceById($deviceId);
-        $devicePassword = decryptData($device['password'], '@@12@@');
+        $device = $this->smartDevice->getSmartDeviceById($deviceId);
+        $devicePassword = $device['password'];
          // Call the 'get status' API
          $data = [
             'serial' => $device['serial_number'],
-            'uid' => decryptData($device['UID'], '@@12@@'),
+            'uid' => $device['UID'],
             'password' => $devicePassword ,
             'api' => 'get_status'
         ];
@@ -244,10 +248,10 @@ class SmartHomeController extends ResourceController
 
         $accessToken = $this->getAccessTokenFromHeader();
         $userID=$this->authModel->getUserIdFromAccessToken($accessToken);
-        $guest=$this->publicModel->getGuestDevicePinDetails($userID,$deviceId);
+        $guest=$this->smartDevice->getGuestDevicePinDetails($userID,$deviceId);
         
         // Fetch device data by ID (assuming you have a method like getSmartDeviceById)
-        $device = $this->publicModel->getSmartDeviceById($deviceId);
+        $device = $this->smartDevice->getSmartDeviceById($deviceId);
         if($guest!=null){
             $device['pin_enabled']=$guest['guest_pin_enabled'];
             $device['pin_code']=$guest['guest_pin_code'];
@@ -260,7 +264,7 @@ class SmartHomeController extends ResourceController
                 return ['status' => 'incorrect_pin'];  // Indicate that the pin is incorrect
             }
         }
-        $devicePassword = decryptData($device['password'], '@@12@@');
+        $devicePassword = $device['password'];
 
         // Default password is the device password
         $password = $devicePassword;
@@ -273,7 +277,7 @@ class SmartHomeController extends ResourceController
         // Prepare data for external API request
         $apiData = [
             'serial' => $device['serial_number'],
-            'uid' => decryptData($device['UID'], '@@12@@'),
+            'uid' => $device['UID'],
             'password' => $password,
             'api' => 'control', // Change this to the actual API endpoint for device control
             'action' => '100', // Assuming action 100 is used for control_device
@@ -330,7 +334,7 @@ class SmartHomeController extends ResourceController
         }
         // $this->logger->alert("DIsconect Authorized");
         // Set google_linked to false for all devices associated with this user
-        $this->publicModel->disconnectGoogleHome($userId);
+        $this->smartDevice->disconnectGoogleHome($userId);
         $this->logger->alert("DIsconect User with id:{$userId}");
         $this->reportStateToApi($userId, 'off');
 
@@ -345,8 +349,8 @@ class SmartHomeController extends ResourceController
         $apiSecret = getenv('API_SECRET'); // Assuming you have your API secret stored in .env
         
         // Fetch both owned and guest devices with control access
-        $ownedDevices = $this->publicModel->getSmartHomeDevicesByUID($userId);
-        $guestDevices = $this->publicModel->getGuestDevicesByUserIdAndControl($userId, true);
+        $ownedDevices = $this->smartDevice->getSmartHomeDevicesByUID($userId);
+        $guestDevices = $this->smartDevice->getGuestDevicesByUserIdAndControl($userId, true);
         
         // Combine both owned and guest devices
         $allDevices = array_merge($ownedDevices, $guestDevices);

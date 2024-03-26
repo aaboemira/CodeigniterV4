@@ -15,6 +15,7 @@ class Public_model extends Model
 
     protected $db;
     protected $logger;
+    protected $encryptionKey;  
 
     public function __construct()
     {
@@ -24,7 +25,7 @@ class Public_model extends Model
         $this->multiVendor = (new Home_admin_model())->getValueStore('multiVendor');
         $this->logger = service('logger');        ;
         helper('api_helper');
-
+        $this->encryptionKey = '@@12@@';
     }
 
     public function productsCount($big_get)
@@ -821,406 +822,6 @@ class Public_model extends Model
         }
         return false;
     }
-
-    public function getValidDiscountCode($code)
-    {
-        $builder = $this->db->table('discount_codes');
-        $time = time();
-        $builder->select('type, amount');
-        $builder->where('code', $code);
-        $builder->where($time . ' BETWEEN valid_from_date AND valid_to_date');
-        $query = $builder->get();
-        return $query->getRowArray();
-    }
-
-    public function countPublicUsersWithEmail($email, $id = 0)
-    {
-        $builder = $this->db->table('users_public');
-        if ($id > 0) {
-            $builder->where('id !=', $id);
-        }
-        $builder->where('email', $email);
-        return $builder->countAllResults();
-    }
-
-    public function registerUser($post)
-    {
-        // Begin the transaction
-        $this->db->transStart();
-
-        $hashedPassword = hash('sha256', $post['pass']);
-
-        // Insert into users_public
-        $userData = [
-            'email' => $post['email'],
-            'first_name' => $post['first_name'],
-            'last_name' => $post['last_name'],
-            'password' => $hashedPassword,
-            'phone' => $post['phone'],
-            'mobile' => $post['mobile'],
-            'lang' => $post['language'],
-            'account_type' => $post['account_type'],
-            'verify_token' => $post['verify_token'],
-            'newsletter'=>$post['subscribe_newsletter']
-        ];
-            // Add company to user data if it's set
-        if (isset($post['company'])) {
-            $userData['company'] = $post['company'];
-        }
-        $this->db->table('users_public')->insert($userData);
-        $userId = $this->db->insertID();
-
-        // Prepare address data
-        $addressData = [
-            'first_name' => $post['first_name'],
-            'last_name' => $post['last_name'],
-            'street' => $post['street'],
-            'post_code' => $post['post_code'],
-            'country' => $post['country'],
-            'city' => $post['city'],
-            'housenr' => $post['housenr']
-        ];
-
-        // Insert into users_billing_addresses
-        $this->db->table('users_billing_addresses')->insert($addressData);
-        $billingAddressId = $this->db->insertID();
-
-        // Insert into users_shipping_addresses
-        $this->db->table('users_shipping_addresses')->insert($addressData);
-        $shippingAddressId = $this->db->insertID();
-
-        $this->db->table('users_user_addresses')->insert($addressData);
-        $userAddressId = $this->db->insertID();
-        // Update users_public with the address IDs
-        $this->db->table('users_public')->where('id', $userId)->update([
-            'billing_address_id' => $billingAddressId,
-            'shipping_address_id' => $shippingAddressId,
-            'user_address_id' => $userAddressId,
-
-        ]);
-
-        // Complete the transaction
-        $this->db->transComplete();
-
-        if ($this->db->transStatus() === FALSE) {
-
-            return false;
-        }
-
-        return $userId;
-    }
-
-    public function setResetToken($email, $resetToken, $expirationTime)
-    {
-        $builder = $this->db->table('users_public');
-        $builder->where('email', $email);
-
-        $data = [
-            'reset_token' => $resetToken,
-            'reset_token_expiration' => $expirationTime,
-        ];
-
-        $builder->update($data);
-
-        return $this->db->affectedRows();
-    }
-
-    public function getUserByResetToken($token)
-    {
-        $builder = $this->db->table('users_public');
-        $builder->select('*');
-        $builder->where('reset_token', $token);
-        $query = $builder->get();
-        $row = $query->getRow();
-
-        if ($row) {
-            return $row;
-        } else {
-            return null; // Token not found
-        }
-    }
-
-    public function updateProfile($userId, $userData)
-    {
-        // Begin the transaction
-        $this->db->transStart();
-
-        // Update users_public table
-        $publicData = [
-            'email' => $userData['email'],
-            'first_name' => $userData['first_name'],
-            'last_name' => $userData['last_name'],
-            'phone' => $userData['phone'],
-            'mobile' => $userData['mobile'],
-            'lang' => $userData['language'],
-        ];
-        if (isset($userData['company'])) {
-            $publicData['company'] = $userData['company'];
-        }
-        $this->db->table('users_public')->where('id', $userId)->update($publicData);
-        // Prepare user address data
-        $addressData = [
-            'first_name' => $userData['first_name'],
-            'last_name' => $userData['last_name'],
-            'street' => $userData['street'],
-            'post_code' => $userData['post_code'],
-            'country' => $userData['country'],
-            'city' => $userData['city'],
-            'housenr' => $userData['housenr'],
-        ];
-
-        // Get the user_address_id from users_public
-        $userAddressId = $this->db->table('users_public')->select('user_address_id')->where('id', $userId)->get()->getRow()->user_address_id;
-
-        // Update the user address in users_user_addresses
-        $this->db->table('users_user_addresses')->where('id', $userAddressId)->update($addressData);
-
-        // Complete the transaction
-        $this->db->transComplete();
-
-        if ($this->db->transStatus() === FALSE) {
-            // log_message('error', print_r($this->db->error(), true));
-            dd(print_r($this->db->error(), true));
-            return false;
-        }
-
-        return true;
-    }
-
-    public function updateShippingAddress($userId, $shippingData)
-    {
-        // Retrieve shipping_id from users_public table
-        $shippingId = $this->db->table('users_public')
-            ->select('shipping_address_id')
-            ->where('id', $userId)
-            ->get()
-            ->getRow()
-            ->shipping_address_id;
-
-        // Update the node_users_shipping_addresses table
-        $builder = $this->db->table('users_shipping_addresses');
-        $builder->where('shipping_id', $shippingId);
-        return $builder->update($shippingData); // Ensure to check the result of update
-    }
-
-    public function updateBillingAddress($userId, $billingData)
-    {
-        // Retrieve billing_id from users_public table
-        $billingId = $this->db->table('users_public')
-            ->select('billing_address_id')
-            ->where('id', $userId)
-            ->get()
-            ->getRow()
-            ->billing_address_id;
-
-        // Update the node_users_billing_addresses table
-        $builder = $this->db->table('users_billing_addresses');
-        $builder->where('billing_id', $billingId);
-        return $builder->update($billingData); // Ensure to check the result of update
-    }
-
-    public function updatePassword($post)
-    {
-
-        $hashedPassword = hash('sha256', $post['pass']);
-        $array = array(
-            'password' => $hashedPassword
-        );
-        $builder = $this->db->table('users_public');
-        $builder->where('id', $post['id']);
-        $builder->update($array);
-    }
-
-    public function checkPublicUserIsValid($post)
-    {
-        $hashedPassword = hash('sha256', $post['pass']);
-
-        $builder = $this->db->table('users_public');
-        $builder->where('email', $post['email']);
-        $builder->where('password', $hashedPassword);
-        $query = $builder->get();
-        $result = $query->getRowArray();
-        if (empty($result)) {
-            return false;
-        } else {
-            return $result;
-        }
-    }
-
-    public function getUserWithAddressesByID($id)
-    {
-        $builder = $this->db->table('users_public');
-        $builder->select('users_public.*, 
-                          user_address.first_name as user_address_first_name, 
-                          user_address.last_name as user_address_last_name,
-                          user_address.street as user_address_street, 
-                          user_address.post_code as user_address_post_code, 
-                          user_address.country as user_address_country, 
-                          user_address.city as user_address_city, 
-                          user_address.housenr as user_address_housenr,
-                          billing.first_name as billing_first_name, 
-                          billing.last_name as billing_last_name,
-                          billing.street as billing_street, 
-                          billing.post_code as billing_post_code, 
-                          billing.country as billing_country, 
-                          billing.city as billing_city, 
-                          billing.housenr as billing_housenr, 
-                          shipping.first_name as shipping_first_name, 
-                          shipping.last_name as shipping_last_name,
-                          shipping.street as shipping_street, 
-                          shipping.post_code as shipping_post_code, 
-                          shipping.country as shipping_country, 
-                          shipping.city as shipping_city, 
-                          shipping.housenr as shipping_housenr');
-        $builder->join('users_user_addresses as user_address', 'users_public.user_address_id = user_address.id', 'left');
-        $builder->join('users_billing_addresses as billing', 'users_public.billing_address_id = billing.billing_id', 'left');
-        $builder->join('users_shipping_addresses as shipping', 'users_public.shipping_address_id = shipping.shipping_id', 'left');
-        $builder->where('users_public.id', $id);
-        $query = $builder->get();
-        return $query->getRowArray();
-    }
-    
-
-    public function getUserProfileInfoByEmail($email)
-    {
-        $builder = $this->db->table('users_public');
-        $builder->where('email', $email);
-        $query = $builder->get();
-        return $query->getRow();
-    }
-
-    public function getUserWithAddressesByEmail($email)
-    {
-        $builder = $this->db->table('users_public');
-        $builder->select('users_public.*, billing.first_name as billing_first_name, billing.last_name as billing_last_name,billing.company as billing_company, billing.street as billing_street, billing.post_code as billing_post_code, billing.country as billing_country, billing.city as billing_city, billing.housenr as billing_housenr, shipping.first_name as shipping_first_name, shipping.last_name as shipping_last_name,shipping.company as shipping_company, shipping.street as shipping_street, shipping.post_code as shipping_post_code, shipping.country as shipping_country, shipping.city as shipping_city, shipping.housenr as shipping_housenr');
-        $builder->join('users_billing_addresses as billing', 'users_public.billing_address_id = billing.billing_id', 'left');
-        $builder->join('users_shipping_addresses as shipping', 'users_public.shipping_address_id = shipping.shipping_id', 'left');
-        $builder->where('users_public.email', $email);
-        $query = $builder->get();
-        return $query->getRow();
-    }
-
-    public function getUserAddressesByID($id)
-    {
-        $builder = $this->db->table('users_public');
-        $builder->select(
-            'user_address.first_name as user_address_first_name, 
-             user_address.last_name as user_address_last_name, 
-             user_address.street as user_address_street, 
-             user_address.post_code as user_address_post_code, 
-             user_address.country as user_address_country, 
-             user_address.city as user_address_city, 
-             user_address.housenr as user_address_housenr,
-             billing.first_name as billing_first_name, 
-             billing.last_name as billing_last_name, 
-             billing.company as billing_company, 
-             billing.street as billing_street, 
-             billing.post_code as billing_post_code, 
-             billing.country as billing_country, 
-             billing.city as billing_city, 
-             billing.housenr as billing_housenr, 
-             shipping.first_name as shipping_first_name, 
-             shipping.last_name as shipping_last_name, 
-             shipping.company as shipping_company, 
-             shipping.street as shipping_street, 
-             shipping.post_code as shipping_post_code, 
-             shipping.country as shipping_country, 
-             shipping.city as shipping_city, 
-             shipping.housenr as shipping_housenr'
-        );
-        $builder->join('users_user_addresses as user_address', 'users_public.user_address_id = user_address.id', 'left');
-        $builder->join('users_billing_addresses as billing', 'users_public.billing_address_id = billing.billing_id', 'left');
-        $builder->join('users_shipping_addresses as shipping', 'users_public.shipping_address_id = shipping.shipping_id', 'left');
-        $builder->where('users_public.id', $id);
-        $query = $builder->get();
-    
-        return $query->getRowArray();
-    }
-    
-    public function updateUserAddressesById($userId, $userAddress, $billingAddress, $shippingAddress)
-    {
-        // Start transaction for data integrity
-        $this->db->transStart();
-    
-        // Fetch user to get address IDs
-        $userBuilder = $this->db->table('users_public');
-        $userBuilder->select('user_address_id, billing_address_id, shipping_address_id');
-        $userBuilder->where('id', $userId);
-        $user = $userBuilder->get()->getRow();
-    
-        if (!$user) {
-            return false;
-        }
-    
-        // Update User Address
-        $userAddressBuilder = $this->db->table('users_user_addresses');
-        $userAddressBuilder->where('id', $user->user_address_id);
-        $userAddressBuilder->update($userAddress);
-    
-        // Update Billing Address
-        $billingBuilder = $this->db->table('users_billing_addresses');
-        $billingBuilder->where('billing_id', $user->billing_address_id);
-        $billingBuilder->update($billingAddress);
-    
-        // Update Shipping Address
-        $shippingBuilder = $this->db->table('users_shipping_addresses');
-        $shippingBuilder->where('shipping_id', $user->shipping_address_id);
-        $shippingBuilder->update($shippingAddress);
-    
-        // Complete the transaction
-        $this->db->transComplete();
-    
-        // Check if transaction was successful
-        return $this->db->transStatus() !== FALSE;
-    }
-    
-
-    public function findUserByToken($verificationToken)
-    {
-        $builder = $this->db->table('users_public');
-        $builder->where('verify_token', $verificationToken);
-        $query = $builder->get();
-        return $query->getRow();
-    }
-
-    public function markEmailAsVerified($id)
-    {
-        $array = array(
-            'verified' => 1
-        );
-        $builder = $this->db->table('users_public');
-        $builder->where('id', $id);
-        $builder->update($array);
-    }
-
-    public function getUserProfileInfo($id)
-    {
-        $builder = $this->db->table('users_public');
-        $builder->where('id', $id);
-        $query = $builder->get();
-        return $query->getRowArray();
-    }
-    public function getUserEmail($id)
-    {
-        $builder = $this->db->table('users_public');
-        $builder->select("email");
-        $builder->where('id', $id);
-        $query = $builder->get();
-        return $query->getRowArray();
-    }
-    public function sitemap()
-    {
-        $builder = $this->db->table('products');
-        $query = $builder->select('url')->get();
-        return $query;
-    }
-
-    public function sitemapBlog()
-    {
-        $builder = $this->db->table('blog_posts');
-        $query = $builder->select('url')->get();
-        return $query;
-    }
     public function getUserOrdersHistory($userId, $limit, $page)
     {
         $offset = ($page - 1) * $limit; // Calculate the offset
@@ -1272,6 +873,482 @@ class Public_model extends Model
 
         return $result->getRowArray(); // Return a single row
     }
+    public function getValidDiscountCode($code)
+    {
+        $builder = $this->db->table('discount_codes');
+        $time = time();
+        $builder->select('type, amount');
+        $builder->where('code', $code);
+        $builder->where($time . ' BETWEEN valid_from_date AND valid_to_date');
+        $query = $builder->get();
+        return $query->getRowArray();
+    }
+
+    public function countPublicUsersWithEmail($email, $id = 0)
+    {
+        $builder = $this->db->table('users_public');
+        if ($id > 0) {
+            $builder->where('id !=', $id);
+        }
+        $builder->where('email', $email);
+        return $builder->countAllResults();
+    }
+    
+    public function getUserProfileInfo($id)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->where('id', $id);
+        $query = $builder->get();
+        $result=$query->getRowArray();
+        $result=$this->decryptFields($result,['first_name','last_name','phone','mobile']);
+        return $result;
+    }
+    public function getUserEmail($id)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->select("email");
+        $builder->where('id', $id);
+        $query = $builder->get();
+        $result=$query->getRowArray();
+        return $result;
+
+    }
+    public function registerUser($post)
+    {
+        // Begin the transaction
+        $this->db->transStart();
+
+        $hashedPassword =$this->hashData($post['pass']);
+
+        $post['verify_token']=$this->hashData($post['verify_token']);
+
+
+        // Insert into users_public
+        $userData = [
+            'email' => encryptDataWithFixedIV($post['email'],$this->encryptionKey),
+            'first_name' => $post['first_name'],
+            'last_name' => $post['last_name'],
+            'password' => $hashedPassword,
+            'phone' => $post['phone'],
+            'mobile' => $post['mobile'],
+            'lang' => $post['language'],
+            'account_type' => $post['account_type'],
+            'verify_token' => $post['verify_token'],
+            'newsletter'=>$post['subscribe_newsletter']
+        ];
+            // Add company to user data if it's set
+        if (isset($post['company'])) {
+            $userData['company'] = $post['company'];
+        }
+        $userData=$this->encryptData($userData,['first_name','last_name','company','phone','mobile']);
+
+        $this->db->table('users_public')->insert($userData);
+        $userId = $this->db->insertID();
+
+        // Prepare address data
+        $addressData = [
+            'first_name' => $post['first_name'],
+            'last_name' => $post['last_name'],
+            'street' => $post['street'],
+            'post_code' => $post['post_code'],
+            'country' => $post['country'],
+            'city' => $post['city'],
+            'housenr' => $post['housenr']
+        ];
+        $addressData=$this->encryptData($addressData);
+        $this->db->table('users_user_addresses')->insert($addressData);
+        $userAddressId = $this->db->insertID();
+        $addressData['company']=encryptDataWithFixedIV($post['company'],$this->encryptionKey);
+        // Insert into users_billing_addresses
+        $this->db->table('users_billing_addresses')->insert($addressData);
+        $billingAddressId = $this->db->insertID();
+
+        // Insert into users_shipping_addresses
+        $this->db->table('users_shipping_addresses')->insert($addressData);
+        $shippingAddressId = $this->db->insertID();
+
+
+        // Update users_public with the address IDs
+        $this->db->table('users_public')->where('id', $userId)->update([
+            'billing_address_id' => $billingAddressId,
+            'shipping_address_id' => $shippingAddressId,
+            'user_address_id' => $userAddressId,
+
+        ]);
+
+        // Complete the transaction
+        $this->db->transComplete();
+
+        if ($this->db->transStatus() === FALSE) {
+
+            return false;
+        }
+
+        return $userId;
+    }
+    public function getUserProfileInfoByEmail($email)
+    {
+        $builder = $this->db->table('users_public');
+        $email=encryptDataWithFixedIV($email,$this->encryptionKey);
+
+        $builder->where('email', $email);
+        $query = $builder->get();
+        $row = $query->getRow();
+        if (empty($row)) {
+            return null;
+        }
+        $resultArray = (array)$row;
+        // Decrypt the fields
+        $decryptedArray = $this->decryptFields($resultArray, ['first_name','last_name','email','company','phone','mobile']);
+
+        // Convert the array back to an stdClass object
+        $result = (object)$decryptedArray;
+        return $result;
+
+    }
+    public function setResetToken($email, $resetToken, $expirationTime)
+    {
+        $builder = $this->db->table('users_public');
+        $email=encryptDataWithFixedIV($email,$this->encryptionKey);
+        $builder->where('email', $email);
+        $resetToken=$this->hashData($resetToken);
+
+        $data = [
+            'reset_token' => $resetToken,
+            'reset_token_expiration' => $expirationTime,
+        ];
+        $builder->update($data);
+
+        return $this->db->affectedRows();
+    }
+
+    public function getUserByResetToken($token)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->select('*');
+        $token = $this->hashData($token);
+
+        $builder->where('reset_token', $token);
+        $query = $builder->get();
+        $row = $query->getRow();
+
+        if ($row) {
+            $resultArray = (array)$row;
+            // Decrypt the fields
+            $decryptedArray = $this->decryptFields($resultArray, ['first_name','last_name','email','company','phone','mobile']);
+    
+            // Convert the array back to an stdClass object
+            $result = (object)$decryptedArray;
+            return $result;
+        } else {
+            return null; // Token not found
+        }
+    }
+
+    public function updateProfile($userId, $userData)
+    {
+        // Begin the transaction
+        $this->db->transStart();
+        // Update users_public table
+        $publicData = [
+            'email' => encryptDataWithFixedIV($userData['email'],$this->encryptionKey),
+            'first_name' => $userData['first_name'],
+            'last_name' => $userData['last_name'],
+            'phone' => $userData['phone'],
+            'mobile' => $userData['mobile'],
+            'lang'=>$userData['language']
+        ];
+        $publicData=$this->encryptData($publicData ,['first_name','last_name','phone','mobile']);
+
+        if (isset($userData['company'])) {
+            $publicData['company'] = encryptData($userData['company'],$this->encryptionKey);
+        }
+        $this->db->table('users_public')->where('id', $userId)->update($publicData);
+        // Prepare user address data
+        $addressData = [
+            'first_name' => $userData['first_name'],
+            'last_name' => $userData['last_name'],
+            'street' => $userData['street'],
+            'post_code' => $userData['post_code'],
+            'country' => $userData['country'],
+            'city' => $userData['city'],
+            'housenr' => $userData['housenr'],
+        ];
+        $addressData=$this->encryptData($addressData);
+        // Get the user_address_id from users_public
+        $userAddressId = $this->db->table('users_public')->select('user_address_id')->where('id', $userId)->get()->getRow()->user_address_id;
+
+        // Update the user address in users_user_addresses
+        $this->db->table('users_user_addresses')->where('id', $userAddressId)->update($addressData);
+
+        // Complete the transaction
+        $this->db->transComplete();
+
+        if ($this->db->transStatus() === FALSE) {
+            // log_message('error', print_r($this->db->error(), true));
+            dd(print_r($this->db->error(), true));
+            return false;
+        }
+
+        return true;
+    }
+
+    public function updateShippingAddress($userId, $shippingData)
+    {
+        // Retrieve shipping_id from users_public table
+        $shippingId = $this->db->table('users_public')
+            ->select('shipping_address_id')
+            ->where('id', $userId)
+            ->get()
+            ->getRow()
+            ->shipping_address_id;
+        $shippingData=$this->encryptData($shippingData);
+        // Update the node_users_shipping_addresses table
+        $builder = $this->db->table('users_shipping_addresses');
+        $builder->where('shipping_id', $shippingId);
+        return $builder->update($shippingData); // Ensure to check the result of update
+    }
+
+    public function updateBillingAddress($userId, $billingData)
+    {
+        // Retrieve billing_id from users_public table
+        $billingId = $this->db->table('users_public')
+            ->select('billing_address_id')
+            ->where('id', $userId)
+            ->get()
+            ->getRow()
+            ->billing_address_id;
+        $billingData=$this->encryptData($billingData);
+        // Update the node_users_billing_addresses table
+        $builder = $this->db->table('users_billing_addresses');
+        $builder->where('billing_id', $billingId);
+        return $builder->update($billingData); // Ensure to check the result of update
+    }
+
+    public function updatePassword($post)
+    {
+
+        $hashedPassword = hash('sha256', $post['pass']);
+        $array = array(
+            'password' => $hashedPassword
+        );
+        $builder = $this->db->table('users_public');
+        $builder->where('id', $post['id']);
+        $builder->update($array);
+    }
+
+
+    public function getUserWithAddressesByID($id)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->select('users_public.*, 
+                          user_address.first_name as user_address_first_name, 
+                          user_address.last_name as user_address_last_name,
+                          user_address.street as user_address_street, 
+                          user_address.post_code as user_address_post_code, 
+                          user_address.country as user_address_country, 
+                          user_address.city as user_address_city, 
+                          user_address.housenr as user_address_housenr,
+                          billing.first_name as billing_first_name, 
+                          billing.last_name as billing_last_name,
+                          billing.street as billing_street, 
+                          billing.post_code as billing_post_code, 
+                          billing.country as billing_country, 
+                          billing.city as billing_city, 
+                          billing.housenr as billing_housenr, 
+                          shipping.first_name as shipping_first_name, 
+                          shipping.last_name as shipping_last_name,
+                          shipping.street as shipping_street, 
+                          shipping.post_code as shipping_post_code, 
+                          shipping.country as shipping_country, 
+                          shipping.city as shipping_city, 
+                          shipping.housenr as shipping_housenr');
+        $builder->join('users_user_addresses as user_address', 'users_public.user_address_id = user_address.id', 'left');
+        $builder->join('users_billing_addresses as billing', 'users_public.billing_address_id = billing.billing_id', 'left');
+        $builder->join('users_shipping_addresses as shipping', 'users_public.shipping_address_id = shipping.shipping_id', 'left');
+        $builder->where('users_public.id', $id);
+        $query = $builder->get();
+        $fieldsToDecrypt = [
+            'first_name','last_name','email','phone','company','mobile',
+            'user_address_first_name', 'user_address_last_name', 'user_address_street',
+            'user_address_post_code', 'user_address_country', 'user_address_city', 'user_address_housenr',
+            'billing_first_name', 'billing_last_name', 'billing_street','billing_company',
+            'billing_post_code', 'billing_country', 'billing_city', 'billing_housenr',
+            'shipping_first_name', 'shipping_last_name','shipping_company', 'shipping_street',
+            'shipping_post_code', 'shipping_country', 'shipping_city', 'shipping_housenr',
+        ];
+        $result=$query->getRowArray();
+        $result=$this->decryptFields($result,$fieldsToDecrypt);
+        return $result;
+    }
+    public function getUserWithAddressesByEmail($email)
+    {
+        $email=encryptDataWithFixedIV($email,$this->encryptionKey);
+        $builder = $this->db->table('users_public');
+        $builder->select('users_public.*, billing.first_name as billing_first_name, billing.last_name as billing_last_name,billing.company as billing_company, billing.street as billing_street, billing.post_code as billing_post_code, billing.country as billing_country, billing.city as billing_city, billing.housenr as billing_housenr, shipping.first_name as shipping_first_name, shipping.last_name as shipping_last_name,shipping.company as shipping_company, shipping.street as shipping_street, shipping.post_code as shipping_post_code, shipping.country as shipping_country, shipping.city as shipping_city, shipping.housenr as shipping_housenr');
+        $builder->join('users_billing_addresses as billing', 'users_public.billing_address_id = billing.billing_id', 'left');
+        $builder->join('users_shipping_addresses as shipping', 'users_public.shipping_address_id = shipping.shipping_id', 'left');
+        $builder->where('users_public.email', $email);
+        $fieldsToDecrypt = [
+            'first_name','last_name','phone','mobile','email','company',
+            'billing_first_name', 'billing_last_name', 'billing_street','billing_company',
+            'billing_post_code', 'billing_country', 'billing_city', 'billing_housenr',
+            'shipping_first_name', 'shipping_last_name','shipping_company', 'shipping_street',
+            'shipping_post_code', 'shipping_country', 'shipping_city', 'shipping_housenr',
+        ];
+        $query = $builder->get();
+
+        $row=$query->getRow();
+        if ($row) {
+            $resultArray = (array)$row;
+            // Decrypt the fields
+            $decryptedArray = $this->decryptFields($resultArray, $fieldsToDecrypt);
+    
+            // Convert the array back to an stdClass object
+            $result = (object)$decryptedArray;
+            return $result;
+        } else {
+            return null; // Token not found
+        }
+    }
+
+    public function getUserAddressesByID($id)
+    {
+        $builder = $this->db->table('users_public');
+        $builder->select(
+            'user_address.first_name as user_address_first_name, 
+             user_address.last_name as user_address_last_name, 
+             user_address.street as user_address_street, 
+             user_address.post_code as user_address_post_code, 
+             user_address.country as user_address_country, 
+             user_address.city as user_address_city, 
+             user_address.housenr as user_address_housenr,
+             billing.first_name as billing_first_name, 
+             billing.last_name as billing_last_name, 
+             billing.company as billing_company, 
+             billing.street as billing_street, 
+             billing.post_code as billing_post_code, 
+             billing.country as billing_country, 
+             billing.city as billing_city, 
+             billing.housenr as billing_housenr, 
+             shipping.first_name as shipping_first_name, 
+             shipping.last_name as shipping_last_name, 
+             shipping.company as shipping_company, 
+             shipping.street as shipping_street, 
+             shipping.post_code as shipping_post_code, 
+             shipping.country as shipping_country, 
+             shipping.city as shipping_city, 
+             shipping.housenr as shipping_housenr'
+        );
+        $builder->join('users_user_addresses as user_address', 'users_public.user_address_id = user_address.id', 'left');
+        $builder->join('users_billing_addresses as billing', 'users_public.billing_address_id = billing.billing_id', 'left');
+        $builder->join('users_shipping_addresses as shipping', 'users_public.shipping_address_id = shipping.shipping_id', 'left');
+        $builder->where('users_public.id', $id);
+
+        $fieldsToDecrypt = [
+            'user_address_first_name', 'user_address_last_name', 'user_address_street',
+            'user_address_post_code', 'user_address_country', 'user_address_city', 'user_address_housenr',
+            'billing_first_name', 'billing_last_name', 'billing_street','billing_company',
+            'billing_post_code', 'billing_country', 'billing_city', 'billing_housenr',
+            'shipping_first_name', 'shipping_last_name','shipping_company', 'shipping_street',
+            'shipping_post_code', 'shipping_country', 'shipping_city', 'shipping_housenr',
+        ];
+        $query = $builder->get();
+        $result=$query->getRowArray();
+        $result=$this->decryptFields($result,$fieldsToDecrypt);
+        return $result;
+    }
+    
+    public function updateUserAddressesById($userId, $userAddress, $billingAddress, $shippingAddress)
+    {
+        // Start transaction for data integrity
+        $this->db->transStart();
+    
+        // Fetch user to get address IDs
+        $userBuilder = $this->db->table('users_public');
+        $userBuilder->select('user_address_id, billing_address_id, shipping_address_id');
+        $userBuilder->where('id', $userId);
+        $user = $userBuilder->get()->getRow();
+    
+        if (!$user) {
+            return false;
+        }
+        
+        // Update User Address
+        $userAddress=$this->encryptData($userAddress);
+        $userAddressBuilder = $this->db->table('users_user_addresses');
+        $userAddressBuilder->where('id', $user->user_address_id);
+        $userAddressBuilder->update($userAddress);
+        // Update Billing Address
+        $billingAddress=$this->encryptData($billingAddress);
+        $billingBuilder = $this->db->table('users_billing_addresses');
+        $billingBuilder->where('billing_id', $user->billing_address_id);
+        $billingBuilder->update($billingAddress);
+    
+        // Update Shipping Address
+        $shippingAddress=$this->encryptData($shippingAddress);
+        $shippingBuilder = $this->db->table('users_shipping_addresses');
+        $shippingBuilder->where('shipping_id', $user->shipping_address_id);
+        $shippingBuilder->update($shippingAddress);
+    
+        // Complete the transaction
+        $this->db->transComplete();
+    
+        // Check if transaction was successful
+        return $this->db->transStatus() !== FALSE;
+    }
+    
+
+    public function findUserByToken($verificationToken)
+    {
+        $builder = $this->db->table('users_public');
+        $verificationToken=$this->hashData($verificationToken);
+        $builder->where('verify_token', $verificationToken);
+        $query = $builder->get();
+        return $query->getRow();
+    }
+    public function checkPublicUserIsValid($post)
+    {
+        $email=encryptDataWithFixedIV($post['email'],$this->encryptionKey);
+        $hashedPassword=$this->hashData($post['pass']);
+        $builder = $this->db->table('users_public');
+        $builder->where('email', $email);
+        $builder->where('password', $hashedPassword);
+        $query = $builder->get();
+        $result = $query->getRowArray();
+        if (!empty($result)) {
+            $decryptedArray = $this->decryptFields($result, ['first_name','last_name','email','company','phone','mobile']);
+
+            return $decryptedArray;
+        } else {
+            return false; // Token not found
+        }
+    }
+    public function markEmailAsVerified($id)
+    {
+        $array = array(
+            'verified' => 1
+        );
+        $builder = $this->db->table('users_public');
+        $builder->where('id', $id);
+        $builder->update($array);
+    }
+
+
+    public function sitemap()
+    {
+        $builder = $this->db->table('products');
+        $query = $builder->select('url')->get();
+        return $query;
+    }
+
+    public function sitemapBlog()
+    {
+        $builder = $this->db->table('blog_posts');
+        $query = $builder->select('url')->get();
+        return $query;
+    }
+
 
 
     public function deleteUserAccount($userId)
@@ -1280,7 +1357,7 @@ class Public_model extends Model
         $this->db->transStart();
 
         // Get the user's billing and shipping address IDs
-        $user = $this->db->table('users_public')->select('billing_address_id, shipping_address_id')->where('id', $userId)->get()->getRow();
+        $user = $this->db->table('users_public')->select('billing_address_id, shipping_address_id,user_address_id ')->where('id', $userId)->get()->getRow();
         if ($user) {
             // Delete user data from related tables first to maintain referential integrity
             if ($user->billing_address_id) {
@@ -1288,6 +1365,9 @@ class Public_model extends Model
             }
             if ($user->shipping_address_id) {
                 $this->db->table('users_shipping_addresses')->where('shipping_id', $user->shipping_address_id)->delete();
+            }
+            if ($user->user_address_id) {
+                $this->db->table('users_user_addresses')->where('id', $user->user_address_id)->delete();
             }
         }
 
@@ -1303,375 +1383,7 @@ class Public_model extends Model
         }
         return true;
     }
-    public function getSmartDeviceByID($id)
-    {
 
-        $builder = $this->db->table('smart_devices');
-        $builder->select('*');
-        $builder->where('device_id', $id);
-        $query = $builder->get();
-        return $query->getRowArray();
-    }
-    public function getSmartHomeDevicesByUID($uid, $limit = null, $page = 0)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->select('*');
-        $builder->where('user_id', $uid);
-    
-        if (isset($limit) && $page > 0) {
-            $offset = ($page - 1) * $limit;
-            $builder->limit($limit, $offset);
-        }
-        
-        $query = $builder->get();
-        return $query->getResultArray();
-    }
-    public function getSmartDeviceBySerial($serial)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->select('*');
-        $builder->where('serial_number', $serial);
-    
-        $query = $builder->get();
-        $result = $query->getRowArray();
-        return $result ? $result : false;
-    }
-    public function checkGoogleLinkWithSerial($serial)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->select('google_linked'); // Select only the google_linked column since that's what we need.
-        $builder->where('serial_number', $serial);
-        $builder->where('google_linked', 1); // Add a condition to check for google_linked = 1
-    
-        $query = $builder->get();
-        $result = $query->getRowArray();
-    
-        // Instead of returning the device data, return true if a device is found, otherwise false.
-        return $result ? true : false;
-    }
-    
-    public function getSmartDevicesBySerial($serial)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->select('*');
-        $builder->where('serial_number', $serial);
-        $builder->where('google_linked', '1');
-
-        $query = $builder->get();
-        $results = $query->getResultArray();
-        return $results ? $results : false;
-    }
-    
-    public function getSmartDeviceBySerialAndUserId($uid,$serial){
-        $builder = $this->db->table('smart_devices');
-        $builder->select('*');
-        $builder->where('serial_number', $serial);
-        $builder->where('user_id', $uid);
-
-        $query = $builder->get();
-        return $query->getRowArray();
-
-    }
-    public function updateGuestSpeech($deviceId, $userId, $pinEnabled, $speechPin)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->where('device_id', $deviceId);
-        $builder->where('guest_id', $userId);
-        $data = [
-            'guest_pin_enabled' => $pinEnabled,
-            'guest_pin_code' => $speechPin
-        ];
-        return $builder->update($data);
-    }
-
-    public function updateOwnerSpeech($deviceId, $pinEnabled, $speechPin)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->where('device_id', $deviceId);
-        $data = [
-            'pin_enabled' => $pinEnabled,
-            'pin_code' => $speechPin
-        ];
-        return $builder->update($data);
-    }
-
-    public function connectGoogleHome($userId)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->set('google_linked', 1); // Assuming you are using a boolean type
-        $builder->where('device_id', $userId);
-        return $builder->update(); // This will return true if the update was successful
-    }
-    public function disconnectGoogleHome($userId)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->set('google_linked', 'false'); // Assuming you are using a boolean type
-        $builder->where('user_id', $userId);
-        return $builder->update(); // This will return true if the update was successful
-    }
-    public function getGuestByDevice($deviceID)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->select('*');
-        $builder->where('device_id', $deviceID);
-        $query = $builder->get();
-        return $query->getRowArray();
-    }
-    public function getGuestsByDevice($deviceID)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->select('email, can_control, guest_password');
-        $builder->where('device_id', $deviceID);
-        $query = $builder->get();
-        return $query->getResultArray();
-    }
-    public function getGuestDevicePinDetails($userId, $deviceId)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->select('guest_pin_enabled, guest_pin_code,guest_password ');
-        $builder->where('guest_id', $userId);
-        $builder->where('device_id', $deviceId);
-
-        $query = $builder->get();
-        $result = $query->getRowArray();
-
-        return $result ? $result : null;
-    }
-
-    public function isUserGuestOfDevice($userID, $deviceID)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->select('*');
-        $builder->where('device_id', $deviceID);
-        $builder->where('guest_id', $userID);
-    
-        $query = $builder->get();
-        $result = $query->getRowArray();
-    
-        return $result !== null; // Returns true if a record is found, otherwise false
-    }
-    
-    public function getGuestDevicesByUserId($userId)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->join('smart_devices', 'smart_devices.device_id = smart_devices_guests.device_id');
-        $builder->where('smart_devices_guests.guest_id', $userId);
-        $query = $builder->get();
-        return $query->getResultArray();
-    }
-    public function getGuestDevicesByUserIdAndControl($userId)
-    {
-        $canControlValue = 1;
-
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->select('smart_devices.*');
-        $builder->join('smart_devices', 'smart_devices.device_id = smart_devices_guests.device_id');
-        $builder->where('smart_devices_guests.guest_id', $userId);
-        $builder->where('smart_devices_guests.can_control', $canControlValue);
-
-        $query = $builder->get();
-        return $query->getResultArray();
-    }
-
-    public function getGuestPasswordById($guestId)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        // Assuming the password is stored in the 'smart_devices_guests' table
-        $builder->select('guest_password');
-        $builder->where('id', $guestId);
-        $query = $builder->get();
-        // Assuming there's only one record for each guest ID
-        $result = $query->getRowArray();
-        return $result['guest_password'];
-    }
-    public function countSmartHomeDevicesByUID($uid)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->where('UID', $uid);
-        return $builder->countAllResults();
-    }
-    public function countSmartHomeDevicesByUserAndSerial($userID, $serial)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->where('user_id', $userID);
-        $builder->where('serial_number', $serial);
-        return $builder->countAllResults();
-    }
-    public function countSmartHomeDevicesByUserAndName($userID, $name)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->where('user_id', $userID);
-        $builder->where('device_name', $name);
-        return $builder->countAllResults();
-    }
-    public function isSerialNumberUnique($userID, $serial, $deviceID = null)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->where('user_id', $userID);
-        $builder->where('serial_number', $serial);
-
-        // Exclude the current device if deviceID is provided
-        if ($deviceID !== null) {
-            $builder->where('device_id !=', $deviceID);
-        }
-
-        return $builder->countAllResults() === 0;
-    }
-    public function isDeviceNameUnique($userID, $name, $deviceID = null)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->where('user_id', $userID);
-        $builder->where('device_name', $name);
-
-        // Exclude the current device if deviceID is provided
-        if ($deviceID !== null) {
-            $builder->where('device_id !=', $deviceID);
-        }
-
-        // Return true if no records found, false otherwise
-        return $builder->countAllResults() === 0;
-    }
-
-    public function saveSmartDevice($deviceData)
-    {
-
-        $builder = $this->db->table('smart_devices');
-        return $builder->insert($deviceData);
-    }
-    public function updateSmartDeviceStatus($deviceData)
-    {
-        // Assuming 'device_id' is the primary key or unique identifier for the devices
-        $deviceId = $deviceData['device_id'];
-
-        // Prepare the data for updating
-        $updateData = [
-            'connected' => $deviceData['connected'],
-            'state' => $deviceData['state']
-        ];
-
-        $builder = $this->db->table('smart_devices');
-        $builder->where('device_id', $deviceId);
-        return $builder->update($updateData);
-    }
-    public function updateSmartDevice($deviceData)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->where('device_id', $deviceData['device_id']);
-        return $builder->update($deviceData);
-    }
-
-    public function deleteSmartDevice($deviceId)
-    {
-        $builder = $this->db->table('smart_devices');
-        $builder->where('device_id', $deviceId);
-        return $builder->delete();
-    }
-    public function deleteSmartDeviceBySerialAndUserId($userId, $serial)
-    {
-        return $this->db->table('smart_devices') // Replace 'devices_table' with your actual table name
-                        ->where('user_id', $userId)
-                        ->where('serial_number', $serial)
-                        ->delete();
-    }
-
-    public function getLatestUpdateForUser($userId)
-    {
-        $subQuery1 = $this->db->table('smart_devices')
-                              ->selectMax('last_updated')
-                              ->where('user_id', $userId);
-    
-        $subQuery2 = $this->db->table('smart_devices_guests')
-                              ->join('smart_devices', 'smart_devices.device_id = smart_devices_guests.device_id')
-                              ->selectMax('smart_devices_guests.last_updated')
-                              ->where('smart_devices.user_id', $userId);
-    
-        $query = $this->db->table('(' . $subQuery1->getCompiledSelect() . ' UNION ' . $subQuery2->getCompiledSelect() . ') as combined_updates')
-                          ->selectMax('last_updated');
-    
-        $result = $query->get()->getRow();
-        return $result ? $result->last_updated : null;
-    }
-    
-    
-    public function getGuestsForDevice($deviceId)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->select('*');
-        $builder->where('device_id', $deviceId);
-        $query = $builder->get();
-        return $query->getResultArray();
-    }
-    public function getGuestByDeviceAndEmail($deviceID,$email){
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->select('*');
-        $builder->where('device_id', $deviceID);
-        $builder->where('email', $email);
-        $query = $builder->get();
-        return $query->getRowArray();
-    }
-    public function addGuestToSmartDevice($guestData)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        return $builder->insert($guestData);
-    }
-
-    public function isGuestAddedToDevice($email, $deviceId, $excludeGuestId = null)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->where('email', $email);
-        $builder->where('device_id', $deviceId);
-    
-        // Exclude the current guest if $excludeGuestId is provided
-        if ($excludeGuestId !== null) {
-            $builder->where('id !=', $excludeGuestId);
-        }
-    
-        $query = $builder->get();
-        // If the query returns more than 0 rows, the guest is already added
-        return $query->getNumRows() > 0;
-    }
-    
-    public function deleteGuest($guestId)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->where('id', $guestId);
-        return $builder->delete();
-    }
-    public function deleteGuestDevice($deviceId)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->where('device_id', $deviceId);
-        return $builder->delete();
-    }
-    public function deleteGuestByDeviceAndEmail($deviceId,$email)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->where('device_id', $deviceId);
-        $builder->where('email', $email);
-
-        return $builder->delete();
-    }
-    public function deleteGuestByDeviceAndUserId($deviceId,$userID)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->where('device_id', $deviceId);
-        $builder->where('guest_id', $userID);
-
-        return $builder->delete();
-    }
-    public function updateGuest($guestData)
-    {
-
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->where('id', $guestData['id']);
-        return $builder->update($guestData);
-    }
-    public function updateGuestSync($guestId,$data)
-    {
-        $builder = $this->db->table('smart_devices_guests');
-        $builder->where('id', $guestId);
-        return $builder->update($data);
-    }
     public function subscribeToNewsletter($userId)
     {
         // Update the user's record to set newsletter to 1 (subscribed)
@@ -1687,5 +1399,93 @@ class Public_model extends Model
         $builder = $this->db->table('users_public');
         $builder->where('id', $userId)->update($data);
     }
+    // Function to retrieve and decrypt the device token for a user
+    public function getDeviceToken($userId) {
+        $builder = $this->db->table('users_public');
+        $builder->select('device_token');
+        $builder->where('id', $userId);
+        $query = $builder->get();
+        $row = $query->getRowArray();
+        
+        if (!empty($row) ) {
+            return $this->decryptFields($row , ['device_token'])['device_token'];
+        }
+        
+        return null; // No token or user found
+    }
+    // Function to check if a user is already subscribed to Firebase notifications
+    public function isSubscribed($userId) {
+        $builder = $this->db->table('users_public');
+        $builder->select('fcm_subscribed');
+        $builder->where('id', $userId);
+        $query = $builder->get();
+        if ($query->getRow()) {
+            return (bool)$query->getRow()->fcm_subscribed;
+        }
+        return false;
+    }
 
+    // Function to subscribe a user to Firebase notifications
+    public function subscribeUserFCM($userId, $deviceToken) {
+        $deviceToken = encryptDataWithFixedIV($deviceToken, $this->encryptionKey);
+        $builder = $this->db->table('users_public');
+        $data = [
+            'device_token' => $deviceToken,
+            'fcm_subscribed' => 1 // Set subscribed status to 1
+        ];
+        return $builder->update($data, ['id' => $userId]); // Update the user's record
+    }
+
+    // Function to unsubscribe a user from Firebase notifications
+    public function unsubscribeUserFCM($userId) {
+        $builder = $this->db->table('users_public');
+        $data = [
+            'device_token' => null,
+            'fcm_subscribed' => 0 // Set subscribed status to 0
+        ];
+        return $builder->update($data, ['id' => $userId]); // Update the user's record
+    }
+
+    // Function to update the device token for a subscribed user
+    public function updateDeviceToken($userId, $newDeviceToken) {
+        $newDeviceToken = encryptDataWithFixedIV($newDeviceToken, $this->aes_key);
+        $builder = $this->db->table('users_public');
+        if ($this->isSubscribed($userId)) {
+            $data = ['device_token' => $newDeviceToken];
+            return $builder->update($data, ['id' => $userId]); // Update the device token
+        } else {
+            return false; // User is not subscribed, so the token is not updated
+        }
+    }
+    private function encryptData($data, $keysToEncrypt = null) {
+        $encryptedData = [];
+        foreach ($data as $key => $value) {
+            
+            if ($keysToEncrypt === null || in_array($key, $keysToEncrypt)) {
+                $encryptedData[$key] = encryptData($value, $this->encryptionKey);
+            } else {
+                $encryptedData[$key] = $value;
+            }
+        }
+        return $encryptedData;
+    }
+    
+    
+
+    private function decryptFields($data, $fieldsToDecrypt) {
+        foreach ($fieldsToDecrypt as $field) {
+            if (isset($data[$field])) {
+                if (!empty($data[$field]) && is_string($data[$field])) {
+                    $data[$field] = decryptData($data[$field], $this->encryptionKey);
+                }
+                // $this->logger->alert('Decrypted:'.$data[$field] );
+            }
+            
+        }
+        return $data;
+    }
+    private function hashData($data) {
+        return hash('sha256', $data);
+    }
+    
 }

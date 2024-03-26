@@ -179,8 +179,28 @@ public function index($page = 0)
             'state' => 'none'
         ];
     
-        $this->smartDevice->saveSmartDevice($deviceData);
-    
+        if ($this->smartDevice->saveSmartDevice($deviceData)) {
+            if ($this->Public_model->isSubscribed($userId)) {
+                $title="New Device Added";
+                $body="Your new device '{$deviceName}' has been added.";
+                $deviceToken=$this->Public_model->getDeviceToken($userId);
+                $messageData = [
+                    "message" => [
+                        "token" => $deviceToken,
+                        "notification" => [
+                            "title" => $title,
+                            "body" => $body,
+                        ]
+                    ]
+                ];
+                $firebaseController = new FirebaseController();
+                $response=$firebaseController->sendMessage($messageData);
+                $this->logger->alert($response);
+            }
+        }else{
+            session()->setFlashdata('error', lang_safe('error_save_device'));
+            return redirect()->back()->withInput(); 
+        }
         // Redirect back to the form
         return redirect()->to('/smart-home');
     }
@@ -350,6 +370,23 @@ public function index($page = 0)
 
         if ($this->smartDevice->updateSmartDevice($deviceData)) {
             session()->setFlashdata('success', lang_safe('device_update_success'));
+            if ($this->Public_model->isSubscribed($userId)) {
+                $title="New Device Updated";
+                $body="Device '{$deviceName}' has been updated.";
+                $deviceToken=$this->Public_model->getDeviceToken($userId);
+                $messageData = [
+                    "message" => [
+                        "token" => $deviceToken,
+                        "notification" => [
+                            "title" => $title,
+                            "body" => $body,
+                        ]
+                    ]
+                ];
+                $firebaseController = new FirebaseController();
+                $response=$firebaseController->sendMessage($messageData);
+                $this->logger->alert($response);
+            }
         } else {
             session()->setFlashdata('error', lang_safe('device_update_error'));
         }
@@ -359,7 +396,7 @@ public function index($page = 0)
 
     public function deleteDevice($deviceId)
     {
-
+        $userId=session()->get('logged_user');
         if (!$this->isUserDeviceOwner($deviceId)) {
             session()->setFlashdata('error', lang_safe('unauthorized_user'));
             return redirect()->to('/smart-home');
@@ -367,6 +404,23 @@ public function index($page = 0)
         if ($this->smartDevice->deleteSmartDevice($deviceId)) {
             // Device deleted successfully
             session()->setFlashdata('success', lang_safe('device_delete_success'));
+            if ($this->Public_model->isSubscribed($userId)) {
+                $title="New Device Updated";
+                $body="Device with ID'{$deviceId}' has been deleted.";
+                $deviceToken=$this->Public_model->getDeviceToken($userId);
+                $messageData = [
+                    "message" => [
+                        "token" => $deviceToken,
+                        "notification" => [
+                            "title" => $title,
+                            "body" => $body,
+                        ]
+                    ]
+                ];
+                $firebaseController = new FirebaseController();
+                $response=$firebaseController->sendMessage($messageData);
+                $this->logger->alert($response);
+            }
         } else {
             // Error in deletion
             session()->setFlashdata('error', lang_safe('device_delete_error'));
@@ -489,7 +543,26 @@ public function index($page = 0)
             'guest_pin_enabled'=>$pinEnabled,
             'guest_pin_code'=>$speechPin
         ];
+
         if ($this->smartDevice->addGuestToSmartDevice($guestData)) {
+            if ($this->Public_model->isSubscribed($userId)) {
+                $deviceName=$this->smartDevice->getSmartDeviceNameByID($deviceId);
+                $title="New Guest Device Added";
+                $body="Guest Device with name :{$deviceName} has been added to your guests.";
+                $deviceToken=$this->Public_model->getDeviceToken($userId);
+                $messageData = [
+                    "message" => [
+                        "token" => $deviceToken,
+                        "notification" => [
+                            "title" => $title,
+                            "body" => $body,
+                        ]
+                    ]
+                ];
+                $firebaseController = new FirebaseController();
+                $response=$firebaseController->sendMessage($messageData);
+                $this->logger->alert($response);
+            }
             session()->setFlashdata('success', lang_safe('guest_add_success'));
         } else {
             session()->setFlashdata('error', lang_safe('guest_add_error'));
@@ -497,10 +570,29 @@ public function index($page = 0)
 
         return redirect()->back();
     }
-    public function deleteGuest($guestId)
+    public function deleteGuest($guestDeviceId)
     {
-        if ($this->smartDevice->deleteGuest($guestId)) {
+        $guestDevice=$this->smartDevice->getGuestDeviceById($guestDeviceId);
+        $deviceName=$this->smartDevice->getSmartDeviceNameByID($guestDevice['device_id']);
+        if ($this->smartDevice->deleteGuest($guestDeviceId)) {
             session()->setFlashdata('success', lang_safe('guest_deleted_successfully'));
+            if ($this->Public_model->isSubscribed($guestDevice['guest_id'])) {
+                $title="Guest Device Removed";
+                $body="Guest Device with name :{$deviceName} has been removed from your guests.";
+                $deviceToken=$this->Public_model->getDeviceToken($guestDevice['guest_id']);
+                $messageData = [
+                    "message" => [
+                        "token" => $deviceToken,
+                        "notification" => [
+                            "title" => $title,
+                            "body" => $body,
+                        ]
+                    ]
+                ];
+                $firebaseController = new FirebaseController();
+                $response=$firebaseController->sendMessage($messageData);
+                $this->logger->alert($response);
+            }
         } else {
             session()->setFlashdata('error', lang_safe('error_deleting_guest'));
         }
@@ -510,8 +602,28 @@ public function index($page = 0)
 
     public function deleteGuestDevice($deviceId)
     {
-        if ($this->smartDevice->deleteGuestDevice($deviceId)) {
+        $userId=session()->get('logged_user');
+        $deviceName=$this->smartDevice->getSmartDeviceNameByID($deviceId);
+
+        if ($this->smartDevice->deleteGuestDevice($deviceId,$userId)) {
             session()->setFlashdata('success', lang_safe('device_removed_successfully'));
+            if ($this->Public_model->isSubscribed($userId)) {
+                $title="Guest Device Removed";
+                $body="Guest Device with name :{$deviceName} has been removed from your guests.";
+                $deviceToken=$this->Public_model->getDeviceToken($userId);
+                $messageData = [
+                    "message" => [
+                        "token" => $deviceToken,
+                        "notification" => [
+                            "title" => $title,
+                            "body" => $body,
+                        ]
+                    ]
+                ];
+                $firebaseController = new FirebaseController();
+                $response=$firebaseController->sendMessage($messageData);
+                $this->logger->alert($response);
+            }
         } else {
             session()->setFlashdata('error', lang_safe('error_deleting_guest'));
         }
@@ -579,7 +691,25 @@ public function index($page = 0)
         ];
         // Update the guest information in the database
         if ($this->smartDevice->updateGuest($data)) {
+            $deviceName=$this->smartDevice->getSmartDeviceNameByID($deviceId);
             session()->setFlashdata('success', lang_safe('guest_update_success'));
+            if ($this->Public_model->isSubscribed($userId)) {
+                $title="Guest Device Updated";
+                $body="Guest Device with name :{$deviceName} has been updated.";
+                $deviceToken=$this->Public_model->getDeviceToken($userId);
+                $messageData = [
+                    "message" => [
+                        "token" => $deviceToken,
+                        "notification" => [
+                            "title" => $title,
+                            "body" => $body,
+                        ]
+                    ]
+                ];
+                $firebaseController = new FirebaseController();
+                $response=$firebaseController->sendMessage($messageData);
+                $this->logger->alert($response);
+            }
         } else {
             session()->setFlashdata('error', lang_safe('guest_update_error'));
         }

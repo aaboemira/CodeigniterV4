@@ -4603,6 +4603,15 @@ li.login-dropdown-li .login-icon:hover{
 
             z-index: 2; /* Ensure it's above the image */
         }
+        #checkout-page,.registration-page{
+            margin-bottom:40px;
+        }
+        .pl-0{
+        padding-left:0px !important;
+        }
+        .checkout0-r-buttons .btn-container{
+            align-items:end !important;
+        }
 	  /* Checkout Steps */
 .checkout-panel-steps {
     margin-bottom: 30px;

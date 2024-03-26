@@ -117,6 +117,7 @@ $routes->add('(\w{2})/login', "Users::login");
 
 // Get Captcha
 $routes->get('captcha', "Users::captcha");
+$routes->get('login-captcha', "Users::loginCaptcha");
 
 // Register Public Users Page
 $routes->add('register', "Users::register");
@@ -195,9 +196,18 @@ $routes->post('/oauth/authorize', 'OAuthController::authorize');
 $routes->post('/oauth/changeAccount', 'OAuthController::changeAccount');
 $routes->post('/oauth/token', 'OAuthController::token');
 $routes->get('/oauth/userinfo', 'OAuthController::userInfo');
+$routes->post('oauth/create_client', 'OAuthController::createClient');
+
+$routes->get('/firebase','FirebaseController::getJwtToken');
+$routes->post('/firebase/subscribe', 'FirebaseController::subscribe');
+$routes->get('/firebase/unsubscribe', 'FirebaseController::unsubscribe');
+$routes->post('/firebase/update-token', 'FirebaseController::updateToken');
+$routes->get('/firebase/token', 'FirebaseController::getJwtToken');
+$routes->get('/firebase/test', 'FirebaseController::fcm_test');
+
 
 $routes->post('/smart-home/fulfilment', 'SmartHomeController::fulfillment');
-$routes->post('/smart-home/fulfillmentAlexa', 'SmartHomeAlexaController::fulfillment');
+$routes->post('/smart-home/fulfillment/alexa', 'SmartHomeAlexaController::fulfillment');
 
 $routes->post('/app/auth', 'OAuthController::appLogin');
 $routes->post('/app-sync/fulfillment', 'SyncController::fulfillment');

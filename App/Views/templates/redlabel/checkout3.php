@@ -64,7 +64,7 @@
             <form method="POST" id="goOrder">
                 <div class="container ">
                     <div class="row">
-                        <div class="col-md-3 col-sm-7 col-xs-12"
+                        <div class="col-lg-3 col-md-4 col-sm-7 col-xs-12"
                             style="padding-left: 0 !important;margin-bottom: 1.2em; margin-right: 2em">
                             <div class="title alone chk3_address_title">
                                 <span><?= lang_safe('billing_address') ?></span>
@@ -87,7 +87,7 @@
                             </div>
                         </div>
 </div>
-                        <div class="col-md-3 col-sm-7 col-xs-12"
+                        <div class="col-lg-3 col-md-4 col-sm-7 col-xs-12"
                             style="padding-left: 0 !important;margin-bottom: 1.2em; ">
                             <!-- Right column for delivery address -->
                             <div class="title alone chk3_address_title">

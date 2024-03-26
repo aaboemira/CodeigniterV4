@@ -119,14 +119,13 @@
 /* Align the left button to the left and right buttons to the right */
 .checkout-buttons .col-sm-6 {
     display: flex;
-    align-items: center; /* Vertically align the content */
 }
 
-/* Align the right-side buttons to the end (right) */
-.checkout-buttons .col-sm-6.text-right {
-    justify-content: flex-end; /* Push content to the right */
-}
+.checkout0-r-buttons  {
+    flex-direction: column;
+    align-items: flex-end; /* Align buttons to the left */
 
+}
 @media(min-width:767px) {
     #paypal-button-container{
         width:250px !important;
@@ -198,7 +197,6 @@
 
     /* Since .col-sm-6 has a padding that affects the alignment, you may need to adjust it */
     .col-md-6 {
-        /* ... existing styles ... */
         padding-left: 15px; /* Align with user info left space */
         padding-right: 15px; /* Consistent padding on the right */
     }
@@ -209,9 +207,9 @@
     padding-left: 0px !important;
     }
 </style>
-<div class="container container-sm registration-page">
+<div class="container container-sm  registration-page">
     <?= purchase_steps(1) ?>
-    <div class="row">
+    <div class="row" style="margin:0;">
         <div class="alone title">
             <span>
             <?= lang_safe('user_login') ?>
@@ -221,7 +219,7 @@
             <?= lang_safe('already_logged', 'You are already logged in') ?>
         </h3>
     <!-- Registration Section -->
-        <div class="col-md-6">
+        <div class="col-md-6 pl-0">
             <div class="payment-type-box">
                 <div class="user-info">
                     <div class="icon-container">
@@ -241,8 +239,6 @@
         </div>
         <div class="col-md-6 ">
 
-        <div id="paypal-button-container" style="position:relative;z-index:0;margin-left:auto;"></div>
-
         </div>
     </div>
     <!-- ... existing HTML above ... -->
@@ -256,7 +252,9 @@
         </div>
         
         <!-- Buttons stacked on the right -->
-        <div class="col-sm-6 text-right">
+        <div class="col-sm-6 checkout0-r-buttons text-right">
+            <div id="paypal-button-container" style="position:relative;z-index:0;"></div>
+            
             <div class="btn-container">
                 <a class="btn btn-primary btn-new" href="<?= base_url('/checkout1') ?>">
                     <?= lang_safe('continue_address', 'Continue to address') ?>

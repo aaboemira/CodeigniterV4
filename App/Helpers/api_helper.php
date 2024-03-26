@@ -85,6 +85,22 @@ function encryptData($data, $encryptionKey) {
 }
 
 function decryptData($data, $encryptionKey) {
+
     list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
     return openssl_decrypt($encrypted_data, 'AES-128-CBC', $encryptionKey, 0, $iv);
+}
+function encryptDataWithFixedIV($data, $encryptionKey) {
+    // Retrieve the fixed IV from an environment variable
+    $iv = getenv('FIXED_IV');
+    
+    // Check if the IV is the correct length for AES-128-CBC
+    if (strlen($iv) !== openssl_cipher_iv_length('AES-128-CBC')) {
+        throw new Exception('Invalid IV length');
+    }
+
+    // Encrypt the data using the fixed IV
+    $encrypted = openssl_encrypt($data, 'AES-128-CBC', $encryptionKey, 0, $iv);
+
+    // Return the base64-encoded encrypted data and the IV
+    return base64_encode($encrypted . '::' . $iv);
 }

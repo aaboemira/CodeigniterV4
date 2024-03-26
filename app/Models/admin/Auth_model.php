@@ -6,15 +6,28 @@ use Config\Database;
 
 class Auth_model extends Model
 {
-
-
     protected $db;
-
+    protected $logger;
+    protected $encryptionKey;  
     public function __construct()
     {
         $this->db = Database::connect();
+        helper('api_helper');
+        $this->encryptionKey = '@@12@@';
     }
-
+    public function createOAuthClient( $clientId, $clientSecret,$redirectUri)
+    {
+        $clientSecret=encryptDataWithFixedIV($clientSecret,$this->encryptionKey);
+        $data = [
+            'client_id' => $clientId,
+            'client_secret' => $clientSecret,
+            'redirect_uri'=>$redirectUri
+        ];
+    
+        $builder = $this->db->table('oauth_clients');
+        return $builder->insert($data);
+    }
+    
     // Validate client credentials
     public function validateClient($clientId, $redirectUri)
     {
@@ -35,6 +48,7 @@ class Auth_model extends Model
     }
     public function validateClientCredentials($clientId, $clientSecret)
     {
+        $clientSecret=encryptDataWithFixedIV($clientSecret,$this->encryptionKey);
         $builder = $this->db->table('oauth_clients');
         $builder->where('client_id', $clientId);
         $builder->where('client_secret', $clientSecret);
@@ -147,16 +161,16 @@ class Auth_model extends Model
         return false; // No valid code found
     }
     public function invalidateUserTokens($userId)
-{
-    // Invalidate or delete the access and refresh tokens for the user
-    $builder = $this->db->table('oauth_access_tokens');
-    $builder->where('user_id', $userId);
-    $builder->delete();
+    {
+        // Invalidate or delete the access and refresh tokens for the user
+        $builder = $this->db->table('oauth_access_tokens');
+        $builder->where('user_id', $userId);
+        $builder->delete();
 
-    $builder = $this->db->table('oauth_refresh_tokens');
-    $builder->where('user_id', $userId);
-    $builder->delete();
+        $builder = $this->db->table('oauth_refresh_tokens');
+        $builder->where('user_id', $userId);
+        $builder->delete();
 
-}
+    }
 
 }

@@ -24,6 +24,32 @@ class OAuthController extends BaseController
         helper(['api_helper']);
 
     }
+    public function createClient()
+    {
+        try {
+            $jsonData = $this->request->getJSON(true);
+            $clientId = $jsonData['client_id'] ?? null;
+            $clientSecret = $jsonData['client_secret'] ?? null;
+            $redirect_uri = $jsonData['redirect_uri'] ?? null;
+
+            // Validate required parameters
+            if ( is_null($clientId) || is_null($clientSecret)) {
+                return $this->fail('Missing required parameters', 400);
+            }
+
+            // Save the client details to the database
+            $result = $this->oauthModel->createOAuthClient( $clientId, $clientSecret,$redirect_uri);
+
+            if ($result) {
+                return $this->respondSuccess(['message' => 'OAuth client created successfully']);
+            } else {
+                return $this->fail('Failed to create OAuth client', 500);
+            }
+        } catch (\Exception $e) {
+            return $this->failServerError('An error occurred: ' . $e->getMessage());
+        }
+    }
+
     public function showAuthorize()
     {
         $head['title'] = 'Authorization';
@@ -76,7 +102,7 @@ class OAuthController extends BaseController
             $password = $request->getPost('password');
 
             $usersController = new \App\Controllers\Users();
-            return $usersController->performLogin($email, $password);
+            return $usersController->performLoginApi($email, $password);
         }
         return false;
     }
@@ -216,7 +242,7 @@ class OAuthController extends BaseController
     
             // Attempt to log in the user
             $usersController = new \App\Controllers\Users();
-            $loginSuccess = $usersController->performLogin($email, $password);
+            $loginSuccess = $usersController->performLoginApi($email, $password);
             if (!$loginSuccess) {
                 return $this->failUnauthorized("Invalid user credentials");
             }

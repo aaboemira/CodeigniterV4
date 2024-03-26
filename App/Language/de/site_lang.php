@@ -653,4 +653,6 @@ $lang['signup_login_text'] = 'Welcome Back!<br>
 Please enter your email and password to access your account and continue where you left off. Your journey to exceptional technology solutions is just a login away!';
 $lang['signup_register_text'] = 'Create an account and start enjoying a personalized and streamlined experience. Whether for personal or business use, sign up and let us tailor our innovative solutions to your needs. Welcome to the future of tech with us!';
 
+
+$lang['error_save_device']='Unexpected error happened try again later ';
 return $lang;

@@ -222,7 +222,7 @@
                                 <?= $guest['can_control'] ? lang_safe('yes') : lang_safe('no') ?>
                             </td>
                             <td>
-                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editGuestModal" data-guest-id="<?= $guest['id'] ?>" data-guest-email="<?= $guest['email'] ?>" data-guest-password="<?= $guest['guest_password'] ?>" data-can-control="<?= $guest['can_control'] ?>" data-guest-speech-pin-enabled="<?= $guest['guest_pin_enabled'] ?>" data-guest-speech-pin="<?= $guest['guest_pin_code'] ?>">
+                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editGuestModal" data-guest-id="<?= $guest['id'] ?>" data-guest-email="<?= $guest['email'] ?>" data-device-id="<?=$guest['device_id']?>" data-guest-password="<?= $guest['guest_password'] ?>" data-can-control="<?= $guest['can_control'] ?>" data-guest-speech-pin-enabled="<?= $guest['guest_pin_enabled'] ?>" data-guest-speech-pin="<?= $guest['guest_pin_code'] ?>">
                                     <i class="fa fa-pencil"></i> <?= lang_safe('edit') ?>
                                 </button>
                                 <a href="<?= LANG_URL.'/smartdevices/deleteGuest/' . $guest['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('<?= lang_safe('confirm_delete_guest') ?>');">
@@ -271,10 +271,13 @@
                         <form action="<?= base_url('/smartdevices/updateGuest') ?>" method="post" id="edit-guest-form">
                             <div class="modal-body">
                                 <input type="hidden" id="edit_guest_id" name="guest_id">
+                                <input type="hidden" id="edit_device_id" name="device_id">
+
                                 <div class="form-group">
                                     <label for="edit_user_email"><?= lang_safe('email') ?></label>
                                     <input type="text" class="form-control" id="edit_user_email" name="user_email" required>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="edit_can_control"><?= lang_safe('can_control') ?></label>
                                     <select size="1" id="edit_can_control" name="can_control" class="form-control">
@@ -329,6 +332,9 @@ $('#editGuestModal').on('show.bs.modal', function(event) {
     var guestPassword = button.data('guest-password');
     var guestSpeechPinEnabled = button.data('guest-speech-pin-enabled');
     var guestSpeechPin = button.data('guest-speech-pin');
+    var deviceId = button.data('device-id');
+    console.log(deviceId);  
+    console.log('---------------------------');
 
     var modal = $(this);
     modal.find('.modal-body #edit_guest_id').val(guestId);
@@ -336,7 +342,8 @@ $('#editGuestModal').on('show.bs.modal', function(event) {
     modal.find('.modal-body #edit_guest_password').val(guestPassword);
     modal.find('.modal-body #edit_can_control').val(canControl ? '1' : '0');
     modal.find('.modal-body #edit_guest_speech_pin_enabled').val(guestSpeechPinEnabled ? '1' : '0');
-
+    modal.find('.modal-body #edit_device_id').val(deviceId);
+    console.log('---------------------------');
     // Store the original speech pin value
     modal.data('originalSpeechPin', guestSpeechPinEnabled ? guestSpeechPin : 'N/A');
     updateSpeechPinField(guestSpeechPinEnabled ? '1' : '0', modal);

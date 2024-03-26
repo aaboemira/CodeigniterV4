@@ -231,7 +231,7 @@ $languages = [
                             </div>
 
                             <hr>
-
+                            <input type="hidden" name ="language" value="<?= set_value('language', $userInfo['lang']) ?>"
                             <!-- Change Password Button -->
                             <div class="form-group">
                                 <button type="button" id="change_password_button" class="btn btn-secondary"><?= lang_safe('change_password') ?></button>

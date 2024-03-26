@@ -385,12 +385,15 @@ $('button[type="submit"]').click(function (e) {
 });
 
 $('.finish-upload').click(async function () {
-    var langAbbr = $(this).attr('data-lang-abbr');
+    var langAbbr = $(this).attr('data-lang-abbr'); //
+    var uploadedImageCount = $('.others-images-container_' + langAbbr + ' .other-img').length;
+    console.log('Uploaded Image Cound is '+uploadedImageCount)
     $('.finish-upload .finish-text').hide();
     $('.finish-upload .loadUploadOthers').show();
     var formElement = document.getElementById('uploadImagesForm_' + langAbbr);
-    var formData = new FormData(formElement);
 
+    var formData = new FormData(formElement);
+    console.log("Uploaded image cound"+uploadedImageCount)
     console.time('resizeAndUploadImages');
 
     // Resize and append the images for all sizes before the AJAX request
@@ -403,10 +406,12 @@ $('.finish-upload').click(async function () {
                 const resizedImage = await resizeImage(file, size);
                 const fileNameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
                 formData.append(`others_${langAbbr}_${size}[]`, resizedImage, `other_${fileNameWithoutExtension}_${size}.${resizedImage.type.split('/')[1]}`);
+
             }
         }
         var image_name = document.getElementById('imageName').value;
         formData.append('image_name', image_name);
+        formData.append('uploaded_image_count', uploadedImageCount);
 
         console.timeEnd('resizeAndUploadImages');
         // Once all files are resized and appended, send the AJAX request
@@ -418,7 +423,8 @@ $('.finish-upload').click(async function () {
             cache: false,
             processData: false,
             success: function (data) {
-                // Success callback code
+                uploadedImageCount += files.length; // Assuming 'files' is the list/array of File objects you uploaded
+
             },
             complete: function () {
                 // Always executed after success/error callbacks

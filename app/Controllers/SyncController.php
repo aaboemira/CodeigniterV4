@@ -4,17 +4,20 @@ namespace App\Controllers;
 use App\Models\Public_model;
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\admin\Auth_model;
+use App\Models\SmartDevice_model;
 
 class SyncController extends ResourceController
 {
     protected $authModel;
     protected $publicModel;
-
+    protected $smartDevice;
     public function __construct()
     {
         helper('api_helper');
         $this->authModel = new Auth_model();
         $this->publicModel = new Public_model();
+        $this->smartDevice = new SmartDevice_model();
+
     }
 
     
@@ -53,7 +56,7 @@ class SyncController extends ResourceController
     public function sync($requestId, $userId)
     {
         // Retrieve the list of devices owned by the user
-        $ownedDevices = $this->publicModel->getSmartHomeDevicesByUID($userId);
+        $ownedDevices = $this->smartDevice->getSmartHomeDevicesByUID($userId);
     
         // Format the owned devices array
         $formattedOwnedDevices = array_map(function ($device) {
@@ -70,7 +73,7 @@ class SyncController extends ResourceController
         }, $ownedDevices);
     
         // Retrieve the list of devices where the user is a guest
-        $guestDevices = $this->publicModel->getGuestDevicesByUserId($userId);
+        $guestDevices = $this->smartDevice->getGuestDevicesByUserId($userId);
     
         // Format the guest devices array
         // Format the guest devices array
@@ -124,7 +127,7 @@ class SyncController extends ResourceController
         }
     
         // Proceed with SYNC intent
-        $lastUpdate = $this->publicModel->getLatestUpdateForUser($userId);
+        $lastUpdate = $this->smartDevice->getLatestUpdateForUser($userId);
 
         if (is_null($lastUpdate)) {
             // No devices found for this user, return an error message
@@ -201,7 +204,7 @@ class SyncController extends ResourceController
             $pinCode = $deviceData['pin_code'] ?? ''; // Add this line
     
             // Check if the device already exists for the user
-            $existingDevice = $this->publicModel->getSmartDeviceBySerialAndUserId($userId, $serial);
+            $existingDevice = $this->smartDevice->getSmartDeviceBySerialAndUserId($userId, $serial);
             if ($existingDevice) {
                 // Update the existing device
                 $updateData = [
@@ -213,7 +216,7 @@ class SyncController extends ResourceController
                     'pin_enabled' => $pinEnabled, // Add this line
                     'pin_code' => $pinCode // Add this line
                 ];
-                $this->publicModel->updateSmartDevice($updateData);
+                $this->smartDevice->updateSmartDevice($updateData);
             } else {
                 // Add a new device for the user
                 $newDeviceData = [
@@ -225,7 +228,7 @@ class SyncController extends ResourceController
                     'pin_enabled' => $pinEnabled, // Add this line
                     'pin_code' => $pinCode // Add this line
                 ];
-                $this->publicModel->saveSmartDevice($newDeviceData);
+                $this->smartDevice->saveSmartDevice($newDeviceData);
             }
         }
     
@@ -250,9 +253,9 @@ class SyncController extends ResourceController
             $pinEnabled = $guestDeviceData['pin_enabled'] ?? 0; // Add this line
             $pinCode = $guestDeviceData['pin_code'] ?? ''; // Add this line
     
-            $device = $this->publicModel->getSmartDeviceBySerial($serial);
+            $device = $this->smartDevice->getSmartDeviceBySerial($serial);
             if ($device) {
-                $existingGuest = $this->publicModel->getGuestByDeviceAndEmail($device['device_id'], $userEmail);
+                $existingGuest = $this->smartDevice->getGuestByDeviceAndEmail($device['device_id'], $userEmail);
                 if ($existingGuest) {
                     // Update guest
                     $guestUpdateData = [
@@ -261,7 +264,7 @@ class SyncController extends ResourceController
                         'guest_pin_enabled' => $pinEnabled, // Add this line
                         'guest_pin_code' => $pinCode // Add this line
                     ];
-                    $this->publicModel->updateGuestSync($existingGuest['id'], $guestUpdateData);
+                    $this->smartDevice->updateGuestSync($existingGuest['id'], $guestUpdateData);
                 } else {
                     // Add new guest
                     $newGuestData = [
@@ -273,7 +276,7 @@ class SyncController extends ResourceController
                         'guest_pin_enabled' => $pinEnabled, // Add this line
                         'guest_pin_code' => $pinCode // Add this line
                     ];
-                    $this->publicModel->addGuestToSmartDevice($newGuestData);
+                    $this->smartDevice->addGuestToSmartDevice($newGuestData);
                 }
             } else {
                 throw new \Exception("Guest device with serial number '{$serial}' not found", 400);
@@ -286,27 +289,27 @@ class SyncController extends ResourceController
 
     private function cleanupDevices($userId, $devicesList)
     {
-        $currentDevices = $this->publicModel->getSmartHomeDevicesByUID($userId);
+        $currentDevices = $this->smartDevice->getSmartHomeDevicesByUID($userId);
         $currentSerialNumbers = array_column($currentDevices, 'serial_number');
         $uploadedSerialNumbers = array_column($devicesList, 'serial_number');
 
         $devicesToDelete = array_diff($currentSerialNumbers, $uploadedSerialNumbers);
         foreach ($devicesToDelete as $serial) {
-            $this->publicModel->deleteSmartDeviceBySerialAndUserId($userId, $serial);
+            $this->smartDevice->deleteSmartDeviceBySerialAndUserId($userId, $serial);
         }
     }
 
     private function cleanupGuestDevices($userId, $guestDevicesList)
     {
         $allGuestDeviceSerials = array_column($guestDevicesList, 'serial_number');
-        $currentGuestDevices = $this->publicModel->getGuestDevicesByUserId($userId);
+        $currentGuestDevices = $this->smartDevice->getGuestDevicesByUserId($userId);
         $currentGuestDeviceSerials = array_column($currentGuestDevices, 'serial_number');
     
         $guestDevicesToDelete = array_diff($currentGuestDeviceSerials, $allGuestDeviceSerials);
         foreach ($guestDevicesToDelete as $serial) {
-            $device = $this->publicModel->getSmartDeviceBySerial($serial);
+            $device = $this->smartDevice->getSmartDeviceBySerial($serial);
             if ($device) {
-                $this->publicModel->deleteGuestByDeviceAndUserId($device['device_id'], $userId);
+                $this->smartDevice->deleteGuestByDeviceAndUserId($device['device_id'], $userId);
             }
         }
     }
